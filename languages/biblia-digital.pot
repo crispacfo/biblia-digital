@@ -1,0 +1,483 @@
+# Copyright (C) 2026 Claudio Crispim
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Biblia Digital 1.1.59\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/biblia-digital\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-06-12T04:23:24+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: biblia-digital\n"
+
+#. Plugin Name of the plugin
+#: biblia-digital.php
+msgid "Biblia Digital"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: biblia-digital.php
+msgid "https://estudobiblico.org/"
+msgstr ""
+
+#. Description of the plugin
+#: biblia-digital.php
+msgid "Display, search, and import Bible texts using shortcodes, widgets, and a Gutenberg block."
+msgstr ""
+
+#. Author of the plugin
+#: biblia-digital.php
+msgid "Claudio Crispim"
+msgstr ""
+
+#: biblia-digital.php:60
+msgid "An older Biblia Digital version is active. Deactivate the older version before activating this version."
+msgstr ""
+
+#. translators: %s: Plugin display title.
+#: includes/class-bdwp70-plugin.php:440
+#, php-format
+msgid "%s com livros, capítulos, versículos e pesquisa bíblica."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:541
+#: includes/class-bdwp70-plugin.php:579
+#: includes/class-bdwp70-plugin.php:681
+#: includes/class-bdwp70-plugin.php:2250
+#: includes/class-bdwp70-search-widget.php:47
+#: includes/class-bdwp70-search-widget.php:72
+#: includes/class-bdwp70-search-widget.php:103
+msgid "Pesquisar na Bíblia"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:542
+#: includes/class-bdwp70-plugin.php:580
+#: includes/class-bdwp70-plugin.php:682
+#: includes/class-bdwp70-search-widget.php:48
+#: includes/class-bdwp70-search-widget.php:73
+#: includes/class-bdwp70-search-widget.php:104
+msgid "Digite uma palavra ou frase"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:543
+#: includes/class-bdwp70-plugin.php:581
+#: includes/class-bdwp70-plugin.php:607
+#: includes/class-bdwp70-plugin.php:683
+msgid "Pesquisar"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:605
+msgid "Buscar na Bíblia"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:606
+msgid "Digite uma palavra, expressão ou referência"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:655
+msgid "Digite uma palavra ou frase para iniciar a pesquisa."
+msgstr ""
+
+#. translators: 1: number of results, 2: search term.
+#: includes/class-bdwp70-plugin.php:657
+#, php-format
+msgid "%1$s resultado encontrado para \"%2$s\"."
+msgid_plural "%1$s resultados encontrados para \"%2$s\"."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: search term.
+#: includes/class-bdwp70-plugin.php:659
+#, php-format
+msgid "Nenhum versículo encontrado para \"%s\"."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:717
+msgid "Pesquisar em"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:719
+#: includes/class-bdwp70-random-verse-widget.php:155
+msgid "Todos os livros"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:730
+#: includes/class-bdwp70-plugin.php:2251
+msgid "Palavra ou frase"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:735
+msgid "Frase exata"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:737
+msgid "Modo da busca"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:739
+msgid "Qualquer palavra"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:740
+msgid "Todas as palavras"
+msgstr ""
+
+#. translators: %s: Bible verse reference.
+#: includes/class-bdwp70-plugin.php:952
+#, php-format
+msgid "Compartilhar %s"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1043
+#: includes/class-bdwp70-plugin.php:1088
+#: includes/class-bdwp70-plugin.php:1144
+#: includes/class-bdwp70-plugin.php:1214
+#: includes/class-bdwp70-plugin.php:1277
+#: includes/class-bdwp70-plugin.php:1321
+#: includes/class-bdwp70-random-verse-widget.php:50
+#: includes/class-bdwp70-random-verse-widget.php:120
+#: includes/class-bdwp70-random-verse-widget.php:135
+msgid "Ler o capítulo"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1069
+msgid "Nenhum capítulo disponível. Verifique se os dados bíblicos foram importados."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1078
+msgid "Nenhum versículo disponível para este capítulo."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1168
+msgid "Livro não encontrado para este shortcode."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1186
+msgid "Nenhum versículo disponível para este shortcode."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1271
+#: includes/class-bdwp70-random-verse-widget.php:46
+#: includes/class-bdwp70-random-verse-widget.php:130
+msgid "Versículo do momento"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1295
+#: includes/class-bdwp70-random-verse-widget.php:73
+msgid "Nenhum versículo disponível. Verifique se os dados bíblicos foram importados."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1443
+#: includes/view-shortcode.php:87
+msgid "Bíblia Digital Online"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1455
+msgid "Pesquisar capítulo"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1456
+msgid "Encontre capítulos, palavras ou temas específicos."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1463
+msgid "Leitura do dia"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1464
+msgid "Sugestão de leitura diária para edificar sua fé."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1471
+msgid "Versículo do dia"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1472
+msgid "Inspiração diária baseada na Palavra de Deus."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1479
+msgid "Últimos estudos"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1480
+msgid "Acesse os estudos bíblicos mais recentes."
+msgstr ""
+
+#. translators: %d: chapter number.
+#: includes/class-bdwp70-plugin.php:2183
+#, php-format
+msgid "Capítulo %d"
+msgstr ""
+
+#. translators: %d: verse number.
+#: includes/class-bdwp70-plugin.php:2190
+#, php-format
+msgid "Versículo %d"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:2196
+msgid "Busca"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:2210
+msgid "Breadcrumb"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:2236
+msgid "Navegação do capítulo e busca"
+msgstr ""
+
+#. translators: %s: Bible book name.
+#: includes/class-bdwp70-plugin.php:2238
+#, php-format
+msgid "Capítulos - %s"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:2252
+msgid "Buscar"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:2682
+#: includes/class-bdwp70-plugin.php:2719
+#: includes/class-bdwp70-plugin.php:2732
+#: includes/class-bdwp70-plugin.php:2839
+msgid "Acesso negado."
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:30
+msgid "Bíblia Digital - Versículo aleatório"
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:33
+msgid "Exibe aleatoriamente um versículo bíblico em uma área de widgets."
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:138
+msgid "Bíblia ativa"
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:142
+#: includes/class-bdwp70-search-widget.php:77
+msgid "Título:"
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:147
+msgid "Bíblia / idioma:"
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:150
+msgid "Este widget sempre usa a Bíblia ativa definida em <strong>Configurações &gt; Bíblia Digital</strong> deste site da rede. Assim, o versículo aleatório não mistura idiomas diferentes no frontend."
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:153
+msgid "Livro:"
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:166
+msgid "Exibir referência bíblica"
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:171
+msgid "Linkar referência para a página do versículo"
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:176
+msgid "Exibir link após o versículo"
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:180
+msgid "Texto do link:"
+msgstr ""
+
+#: includes/class-bdwp70-random-verse-widget.php:182
+msgid "Ex.: Ler o capítulo, Read chapter, Leer capítulo."
+msgstr ""
+
+#: includes/class-bdwp70-search-widget.php:26
+msgid "Bíblia Digital - Busca"
+msgstr ""
+
+#: includes/class-bdwp70-search-widget.php:29
+msgid "Exibe um formulário de pesquisa separado para a Bíblia Digital."
+msgstr ""
+
+#: includes/class-bdwp70-search-widget.php:81
+msgid "Texto do campo:"
+msgstr ""
+
+#: includes/class-bdwp70-search-widget.php:87
+msgid "Permitir escolher o livro na busca"
+msgstr ""
+
+#: includes/class-bdwp70-search-widget.php:90
+msgid "A busca sempre usa a Bíblia ativa definida em Configurações > Bíblia Digital."
+msgstr ""
+
+#: includes/view-shortcode.php:73
+msgid "Estudo Bíblico"
+msgstr ""
+
+#: includes/view-shortcode.php:75
+msgid "✥ A Palavra que transforma ✥"
+msgstr ""
+
+#: includes/view-shortcode.php:77
+msgid "Leia, estude e medite na Palavra de Deus onde estiver. Acesso gratuito e completo à Bíblia Sagrada."
+msgstr ""
+
+#: includes/view-shortcode.php:79
+msgid "📖 Ler agora"
+msgstr ""
+
+#: includes/view-shortcode.php:88
+msgid "Acesse todos os livros da Bíblia Sagrada de forma rápida e organizada."
+msgstr ""
+
+#: includes/view-shortcode.php:94
+msgid "Selecionar versão da Bíblia"
+msgstr ""
+
+#: includes/view-shortcode.php:109
+msgid "Acessos rápidos da Bíblia Digital"
+msgstr ""
+
+#: includes/view-shortcode.php:124
+msgid "Antigo Testamento"
+msgstr ""
+
+#: includes/view-shortcode.php:125
+#: includes/view-shortcode.php:139
+msgid "Ver todos"
+msgstr ""
+
+#: includes/view-shortcode.php:138
+msgid "Novo Testamento"
+msgstr ""
+
+#: includes/view-shortcode.php:153
+msgid "Selecione o capítulo que deseja ler."
+msgstr ""
+
+#: includes/view-shortcode.php:165
+msgid "Voltar aos livros"
+msgstr ""
+
+#: includes/view-shortcode.php:175
+msgid "Navegação entre capítulos"
+msgstr ""
+
+#: includes/view-shortcode.php:179
+#: includes/view-shortcode.php:215
+msgid "← Capítulo anterior"
+msgstr ""
+
+#. translators: %s: Bible book name.
+#: includes/view-shortcode.php:180
+#: includes/view-shortcode.php:216
+#, php-format
+msgid "Capítulos de %s"
+msgstr ""
+
+#: includes/view-shortcode.php:184
+#: includes/view-shortcode.php:220
+msgid "Próximo capítulo →"
+msgstr ""
+
+#: includes/view-shortcode.php:186
+msgid "Ajustes de leitura"
+msgstr ""
+
+#: includes/view-shortcode.php:187
+msgid "Ajustes de leitura:"
+msgstr ""
+
+#: includes/view-shortcode.php:188
+msgid "Diminuir tamanho da fonte"
+msgstr ""
+
+#: includes/view-shortcode.php:189
+msgid "Aumentar tamanho da fonte"
+msgstr ""
+
+#: includes/view-shortcode.php:190
+msgid "Fundo claro"
+msgstr ""
+
+#: includes/view-shortcode.php:191
+msgid "Sépia"
+msgstr ""
+
+#: includes/view-shortcode.php:192
+msgid "Suave"
+msgstr ""
+
+#: includes/view-shortcode.php:193
+msgid "Escuro"
+msgstr ""
+
+#: includes/view-shortcode.php:211
+msgid "Navegação entre capítulos no rodapé"
+msgstr ""
+
+#: includes/view-shortcode.php:232
+msgid "Paginação da Bíblia Digital"
+msgstr ""
+
+#: includes/view-shortcode.php:267
+msgid "Bíblia Digital Online por <a href=\"https://estudobiblico.org/\" target=\"_blank\" rel=\"noopener noreferrer\">Estudo Bíblico</a>."
+msgstr ""
+
+#: blocks/search/index.js:23
+msgid "Search settings"
+msgstr ""
+
+#: blocks/search/index.js:25
+msgid "Title"
+msgstr ""
+
+#: blocks/search/index.js:30
+msgid "Field text"
+msgstr ""
+
+#: blocks/search/index.js:35
+msgid "Button text"
+msgstr ""
+
+#: blocks/search/index.js:40
+msgid "Allow book selection in search"
+msgstr ""
+
+#: blocks/search/index.js:47
+msgid "Field: search all books or one specific book"
+msgstr ""
+
+#: blocks/search/index.js:48
+msgid "Enter a word or phrase"
+msgstr ""
+
+#: blocks/search/index.js:49
+msgid "Search"
+msgstr ""
+
+#: blocks/search/index.js:50
+msgid "Search uses the active Bible configured for this site."
+msgstr ""
+
+#: blocks/search/block.json
+msgctxt "block title"
+msgid "Biblia Digital - Search"
+msgstr ""
+
+#: blocks/search/block.json
+msgctxt "block description"
+msgid "Displays the Biblia Digital search form using the active Bible for the site."
+msgstr ""
+
+msgid "Nenhum termo ou palavra foi localizado na Bíblia para \"%s\"."
+msgstr ""
