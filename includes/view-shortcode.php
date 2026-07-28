@@ -250,7 +250,7 @@ if ( 'reader' === $state['mode'] && $bdwp70_selected_book && ! empty( $state['ch
 		<?php else : ?>
 			<?php echo $this->render_search_results_list( $results, $state, $bdwp70_books ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		<?php endif; ?>
-	<?php /* 1.1.61 no-results fallback for primary shortcode search mode. */ ?>
+		<?php /* 1.1.61 no-results fallback for primary shortcode search mode. */ ?>
 	<?php elseif ( 'search' === (string) $state['mode'] && '' !== trim( (string) $state['search'] ) ) : ?>
 		<?php echo $this->render_search_results_list( $results, $state, $bdwp70_books ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php endif; ?>

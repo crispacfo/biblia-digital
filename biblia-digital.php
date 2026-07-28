@@ -3,7 +3,7 @@
  * Plugin Name: Biblia Digital
  * Plugin URI: https://estudobiblico.org/
  * Description: Display, search, and import Bible texts using shortcodes, widgets, and a Gutenberg block.
- * Version: 1.1.65
+ * Version: 1.1.68
  * Requires at least: 6.6
  * Tested up to: 7.0
  * Requires PHP: 7.4
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'BDWP70_VERSION' ) ) {
-	define( 'BDWP70_VERSION', '1.1.65' );
+	define( 'BDWP70_VERSION', '1.1.68' );
 }
 
 if ( ! defined( 'BDWP70_FILE' ) ) {
@@ -98,9 +98,12 @@ register_activation_hook( __FILE__, array( 'BDWP70_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'BDWP70_Activator', 'deactivate' ) );
 
 // Multisite: prepare tables/options automatically when a new site is created
-// while the plugin is network-active.
+// while the plugin is network-active. Only wp_initialize_site is registered:
+// the legacy wpmu_new_blog hook is deprecated since WP 5.1 and the plugin's
+// minimum is WP 6.6, so registering it would only emit a deprecation notice on
+// site creation. BDWP70_Activator::activate_new_blog() is kept as a callable
+// for third-party integrations that still hook the legacy action themselves.
 add_action( 'wp_initialize_site', array( 'BDWP70_Activator', 'activate_new_site' ), 10, 2 );
-add_action( 'wpmu_new_blog', array( 'BDWP70_Activator', 'activate_new_blog' ), 10, 6 );
 
 if ( ! function_exists( 'bdwp70_bootstrap' ) ) {
 	add_action( 'plugins_loaded', 'bdwp70_bootstrap' );
@@ -114,10 +117,15 @@ if ( ! function_exists( 'bdwp70_bootstrap' ) ) {
 	 * @return void
 	 */
 	function bdwp70_bootstrap() {
+		// Self-heals the schema on plugin updates and on legacy-loader activations,
+		// where register_activation_hook() never fired for this file. Runs before
+		// init() so upgraded tables/indexes are present for the rest of the request.
+		BDWP70_Activator::maybe_upgrade();
+
 		$plugin = BDWP70_Plugin::instance();
 		$plugin->init();
 
-		// Sitemap dedicado
+		// Sitemap dedicado.
 		if ( class_exists( 'BDWP70_Sitemap', false ) ) {
 			( new BDWP70_Sitemap( $plugin ) )->init();
 		}

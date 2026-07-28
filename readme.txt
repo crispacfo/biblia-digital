@@ -4,7 +4,7 @@ Tags: bible, scripture, search, shortcode, gutenberg
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1.65
+Stable tag: 1.1.68
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -332,6 +332,28 @@ Adds an organized admin panel with enterprise-style tabs and documents all short
 Keeps the functional translation selector below the book lists and improves dropdown stacking.
 
 == Changelog ==
+
+= 1.1.68 =
+* Consolida a linha 1.1.67 (abuse-fix) com o auto-reparo de schema, o reforço de importação por ZIP e o ferramental de qualidade.
+* Database: adiciona `BDWP70_Activator::maybe_upgrade()`, que cria/atualiza tabelas e índices em atualizações do plugin e em ativações pelos loaders legados, sem exigir reativação. A verificação inline anterior foi centralizada nesse método, agora com trava de concorrência e limpeza dos caches de runtime.
+* Segurança: `validate_uploaded_zip_archive()` passa a recusar o upload com `WP_Error` quando a extensão PHP zip está ausente, em vez de ignorar silenciosamente as validações de path traversal, contagem e tamanho.
+* Compatibilidade: `str_getcsv()` passa a receber `$escape` explícito, eliminando o aviso de depreciação no PHP 8.4/8.5; removido o registro do hook `wpmu_new_blog`, depreciado desde o WP 5.1.
+* Internacionalização: mensagens de importação e de validação de ZIP passam a usar `__()`; catálogo `.pot` regenerado e tradução pt_BR incluída.
+* Qualidade/distribuição: workflow de CI (lint PHP 7.4–8.5, PHPCS/WPCS, PHPUnit em WordPress 6.6 e 7.0.x, Plugin Check sobre o ZIP), `composer.json`, `phpcs.xml.dist`, `.distignore` e testes de integração.
+* Correções de defeito preexistente: `.gitignore` versionado continha o comando que o gerou; doze comentários corrompidos nos arquivos de sitemap foram restaurados.
+* Nenhuma alteração em dados, opções, slugs, nomes canônicos de livros, tabelas, shortcodes, hooks ou no prefixo BDWP70.
+
+= 1.1.67 =
+* Abuse report hardening: elimina consultas aleatórias com GROUP BY/OFFSET em runtime e usa seleção por faixa de ID indexada.
+* Performance: cache persistente para existência de versões, Bíblia ativa e contagens do sitemap, reduzindo SELECT id repetido e COUNT(*) em acessos de bots.
+* Database: índices complementares para contagens e seleção aleatória por bible_id/published/id.
+
+= 1.1.66 =
+* Performance: sitemap físico deixou de validar em toda requisição pública; verificação agora usa transient e só revalida periodicamente.
+* Performance: versículo e capítulo aleatórios não usam mais ordenação randômica no banco.
+* Performance: importação CSV usa inserção em lote real para livros e versículos.
+* Performance: consultas de busca recebem cache transitório curto e índices auxiliares.
+* Performance: contexto SEO possui cache interno por requisição.
 
 = 1.1.65 =
 * Remove o card automático interno de capítulos do layout do leitor, evitando que o texto bíblico seja estreitado em temas com sidebar própria.

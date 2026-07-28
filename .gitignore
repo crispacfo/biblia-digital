@@ -1,13 +1,27 @@
-@"
+# Local development artefacts only. Nothing required by the plugin or by the
+# distributable ZIP is ignored here.
+
+# OS metadata
 .DS_Store
 Thumbs.db
+
+# Editor/IDE state
 .vscode/
 .idea/
+
+# Dependency trees installed by Composer/npm.
+# composer.lock is not versioned: the plugin ships no runtime dependency, the
+# require-dev entries are tooling only, and CI keys its cache on composer.json.
 node_modules/
 vendor/
+composer.lock
+
+# Local environment and logs
 .env
 *.log
-*.zip
+
+# Build output and tooling reports
 dist/
 build/
-"@ | Set-Content -Encoding UTF8 .gitignore
+*.zip
+phpcs-report.xml

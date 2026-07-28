@@ -50,7 +50,14 @@ trait BDWP70_SEO {
 	}
 
 	public function build_seo_context() {
+		static $bdwp70_seo_context_cache = null;
+
+		if ( null !== $bdwp70_seo_context_cache ) {
+			return $bdwp70_seo_context_cache;
+		}
+
 		if ( ! $this->is_bible_seo_context() ) {
+			$bdwp70_seo_context_cache = false;
 			return false;
 		}
 
@@ -60,19 +67,22 @@ trait BDWP70_SEO {
 
 		if ( ! $book_name || empty( $state['chapter'] ) ) {
 			if ( $book_name && ! empty( $state['book'] ) ) {
-				return array(
+				$bdwp70_seo_context_cache = array(
 					'title'       => $book_name . ' - ' . $this->display_title(),
 					'description' => 'Leia os capitulos de ' . $book_name . ' em ' . $this->display_title() . '.',
 					'canonical'   => $this->maybe_add_bible_version_arg_to_url( home_url( user_trailingslashit( $this->seo_base() . '/' . $this->book_slug_from_seq( (int) $state['book'], $books ) ) ), (int) $state['bible_id'] ),
 				);
+				return $bdwp70_seo_context_cache;
 			}
 			if ( is_page( $this->seo_base() ) || get_query_var( 'bdwp_bible' ) ) {
-				return array(
+				$bdwp70_seo_context_cache = array(
 					'title'       => 'Livros da Biblia - ' . $this->display_title(),
 					'description' => 'Lista dos livros da Biblia, organizada em Antigo Testamento e Novo Testamento, com acesso aos capitulos e versiculos.',
 					'canonical'   => $this->maybe_add_bible_version_arg_to_url( home_url( user_trailingslashit( $this->seo_base() ) ), (int) $state['bible_id'] ),
 				);
+				return $bdwp70_seo_context_cache;
 			}
+			$bdwp70_seo_context_cache = false;
 			return false;
 		}
 
@@ -96,11 +106,12 @@ trait BDWP70_SEO {
 			}
 		}
 
-		return array(
+		$bdwp70_seo_context_cache = array(
 			'title'       => $title_ref . ' - ' . $this->display_title(),
 			'description' => wp_trim_words( $description, 34, '...' ),
 			'canonical'   => $canonical,
 		);
+		return $bdwp70_seo_context_cache;
 	}
 
 	public function document_title_parts( $parts ) {
