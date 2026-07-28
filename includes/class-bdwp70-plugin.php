@@ -402,13 +402,9 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 		add_rewrite_rule( '^' . preg_quote( $base, '/' ) . '/([^/]+)/([0-9]+)/?$', 'index.php?bdwp_bible=1&bdwp_livro_slug=$matches[1]&bdwp_capitulo=$matches[2]', 'top' );
 		add_rewrite_rule( '^' . preg_quote( $base, '/' ) . '/([^/]+)/?$', 'index.php?bdwp_bible=1&bdwp_livro_slug=$matches[1]', 'top' );
 
-		if ( get_option( BDWP70_Activator::OPTION_VERSION ) !== BDWP70_VERSION ) {
-			BDWP70_Activator::create_tables();
-			BDWP70_Activator::clear_runtime_caches();
-			update_option( BDWP70_Activator::OPTION_VERSION, BDWP70_VERSION );
-			update_option( self::OPTION_FLUSH, 1 );
-		}
-
+		// Schema upgrades and runtime-cache invalidation are handled centrally by
+		// BDWP70_Activator::maybe_upgrade() on plugins_loaded (with a concurrency
+		// lock and option preservation), so no inline upgrade check runs here.
 		$this->maybe_flush_rewrite_rules_once();
 	}
 
@@ -4247,7 +4243,13 @@ JS;
 	 */
 	private function validate_uploaded_zip_archive( $path ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			return true;
+			// Without ext-zip the archive cannot be inspected before extraction,
+			// so every traversal, file-count and size guard below would be
+			// bypassed. Refuse the upload instead of silently trusting PclZip.
+			return new WP_Error(
+				'bdwp70_zip_ext_missing',
+				'A extensão zip do PHP é necessária para validar o arquivo enviado. Solicite a ativação da ext-zip ao seu provedor de hospedagem.'
+			);
 		}
 
 		$zip = new ZipArchive();

@@ -114,6 +114,11 @@ if ( ! function_exists( 'bdwp70_bootstrap' ) ) {
 	 * @return void
 	 */
 	function bdwp70_bootstrap() {
+		// Self-heals the schema on plugin updates and on legacy-loader activations,
+		// where register_activation_hook() never fired for this file. Runs before
+		// init() so upgraded tables/indexes are present for the rest of the request.
+		BDWP70_Activator::maybe_upgrade();
+
 		$plugin = BDWP70_Plugin::instance();
 		$plugin->init();
 

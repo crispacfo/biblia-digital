@@ -67,6 +67,61 @@ class BDWP70_Activator {
 	}
 
 	/**
+	 * Ensures the database structure matches the running plugin version.
+	 *
+	 * WordPress does not re-run activation hooks on plugin updates, so schema
+	 * changes shipped in a new version would never reach existing installs.
+	 * This also covers sites activated through the legacy loader filenames
+	 * (biblia-digital-wp.php / biblia-digital-wp70.php), where the activation
+	 * hook registered against biblia-digital.php never fires.
+	 *
+	 * Runs on every request but short-circuits on a single autoloaded option
+	 * read when the stored version already matches.
+	 *
+	 * @return void
+	 */
+	public static function maybe_upgrade() {
+		$stored = (string) get_option( self::OPTION_VERSION, '' );
+
+		if ( defined( 'BDWP70_VERSION' ) && BDWP70_VERSION === $stored ) {
+			return;
+		}
+
+		// Prevents concurrent requests from running dbDelta simultaneously.
+		$lock = 'bdwp70_upgrade_lock';
+		if ( get_transient( $lock ) ) {
+			return;
+		}
+		set_transient( $lock, 1, MINUTE_IN_SECONDS );
+
+		self::create_tables();
+
+		// Stale count/bounds/version transients from the previous version are
+		// dropped so cached data reflects the upgraded schema (1.1.66/1.1.67).
+		self::clear_runtime_caches();
+
+		// Defaults are only added when absent, so administrator settings survive.
+		add_option( 'bdwp70_seo_base', 'biblia-digital' );
+		add_option( self::OPTION_ACTIVE_BIBLE, 0 );
+		add_option( self::OPTION_DELETE_DATA_ON_UNINSTALL, 0 );
+		add_option( 'bdwp70_sitemap_enabled', 1 );
+		add_option( 'bdwp70_sitemap_include_verses', 1 );
+		add_option( 'bdwp70_sitemap_per_page', 2000 );
+		add_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
+
+		// A fresh install reached here without activation (legacy loader path).
+		if ( '' === $stored ) {
+			add_option( self::OPTION_STATUS, 'pending' );
+			add_option( self::OPTION_PROGRESS, 'Bíblia Digital foi ativado. Para começar, importe uma Bíblia em formato ZIP contendo books.csv e verses.csv.' );
+		}
+
+		update_option( 'bdwp70_flush_rewrite', 1 );
+		update_option( self::OPTION_VERSION, defined( 'BDWP70_VERSION' ) ? BDWP70_VERSION : '0' );
+
+		delete_transient( $lock );
+	}
+
+	/**
 	 * Deactivates the plugin. Tables are preserved intentionally.
 	 *
 	 * @param bool $network_wide Whether the plugin is being network-deactivated.
