@@ -231,7 +231,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 	 */
 	private function sitemap_bible_id() {
 		$key    = $this->cache_key( 'sitemap_bid' );
-		$cached = wp_cache_get( $key, self::CACHE_GROUP );
+		$cached = $this->cache_get( $key );
 		if ( false !== $cached ) {
 			return (int) $cached;
 		}
@@ -239,12 +239,12 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		$active_id = absint( $this->plugin->site_active_bible_id() );
 
 		if ( $active_id > 0 && $this->bible_has_content( $active_id ) ) {
-			wp_cache_set( $key, $active_id, self::CACHE_GROUP, self::CACHE_TTL );
+			$this->cache_set( $key, $active_id );
 			return $active_id;
 		}
 
 		$fallback_id = $this->find_first_bible_with_content();
-		wp_cache_set( $key, $fallback_id, self::CACHE_GROUP, self::CACHE_TTL );
+		$this->cache_set( $key, $fallback_id );
 		return $fallback_id;
 	}
 
@@ -312,20 +312,54 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 	 */
 	private function cache_key( $base ) {
 		$lastmod = get_option( BDWP70_Sitemap::OPTION_LASTMOD, 'x' );
-		return $base . '_' . substr( md5( $lastmod ), 0, 8 );
+		return 'bdwp70_sitemap_' . $base . '_' . substr( md5( $lastmod ), 0, 8 );
+	}
+
+
+	/**
+	 * Lê cache em duas camadas: object cache quando disponível e transient persistente.
+	 * Isso reduz consultas repetidas ao sitemap em hospedagens sem object cache persistente.
+	 *
+	 * @param string $key Chave já versionada pelo lastmod.
+	 * @return mixed
+	 */
+	private function cache_get( $key ) {
+		$cached = wp_cache_get( $key, self::CACHE_GROUP );
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
+		$cached = get_transient( $key );
+		if ( false !== $cached ) {
+			wp_cache_set( $key, $cached, self::CACHE_GROUP, self::CACHE_TTL );
+		}
+
+		return $cached;
+	}
+
+	/**
+	 * Grava cache em duas camadas.
+	 *
+	 * @param string $key Chave já versionada pelo lastmod.
+	 * @param mixed  $value Valor a armazenar.
+	 * @return void
+	 */
+	private function cache_set( $key, $value ) {
+		wp_cache_set( $key, $value, self::CACHE_GROUP, self::CACHE_TTL );
+		set_transient( $key, $value, self::CACHE_TTL );
 	}
 
 	private function count_books_for_bible( $bible_id ) {
 		$bible_id = absint( $bible_id );
 		$key      = $this->cache_key( 'prov_bkcnt_' . $bible_id );
-		$cached   = wp_cache_get( $key, self::CACHE_GROUP );
+		$cached   = $this->cache_get( $key );
 		if ( false !== $cached ) {
 			return (int) $cached;
 		}
 
 		$count = count( $this->get_sitemap_books( $bible_id ) );
 
-		wp_cache_set( $key, $count, self::CACHE_GROUP, self::CACHE_TTL );
+		$this->cache_set( $key, $count );
 		return $count;
 	}
 
@@ -334,7 +368,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 
 		$bible_id = absint( $bible_id );
 		$key      = $this->cache_key( 'prov_chtotal_' . $bible_id );
-		$cached   = wp_cache_get( $key, self::CACHE_GROUP );
+		$cached   = $this->cache_get( $key );
 		if ( false !== $cached ) {
 			return (int) $cached;
 		}
@@ -362,7 +396,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 			);
 		}
 
-		wp_cache_set( $key, $count, self::CACHE_GROUP, self::CACHE_TTL );
+		$this->cache_set( $key, $count );
 		return $count;
 	}
 
@@ -371,7 +405,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 
 		$bible_id = absint( $bible_id );
 		$key      = $this->cache_key( 'prov_vtotal_' . $bible_id );
-		$cached   = wp_cache_get( $key, self::CACHE_GROUP );
+		$cached   = $this->cache_get( $key );
 		if ( false !== $cached ) {
 			return (int) $cached;
 		}
@@ -399,7 +433,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 			);
 		}
 
-		wp_cache_set( $key, $count, self::CACHE_GROUP, self::CACHE_TTL );
+		$this->cache_set( $key, $count );
 		return $count;
 	}
 
@@ -422,7 +456,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		$table          = BDWP70_Activator::verses_table();
 		$published_only = $this->should_filter_published( $table, $bible_id );
 		$key            = $this->cache_key( 'prov_chpaged_' . $bible_id . '_' . $limit . '_' . $offset . '_' . ( $published_only ? 'p' : 'a' ) );
-		$cached         = wp_cache_get( $key, self::CACHE_GROUP );
+		$cached         = $this->cache_get( $key );
 		if ( false !== $cached ) {
 			return is_array( $cached ) ? $cached : array();
 		}
@@ -456,7 +490,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		}
 
 		$rows = is_array( $rows ) ? $rows : array();
-		wp_cache_set( $key, $rows, self::CACHE_GROUP, self::CACHE_TTL );
+		$this->cache_set( $key, $rows );
 		return $rows;
 	}
 
@@ -475,7 +509,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		$table          = BDWP70_Activator::verses_table();
 		$published_only = $this->should_filter_published( $table, $bible_id );
 		$key            = $this->cache_key( 'prov_vpaged_' . $bible_id . '_' . $limit . '_' . $offset . '_' . ( $published_only ? 'p' : 'a' ) );
-		$cached         = wp_cache_get( $key, self::CACHE_GROUP );
+		$cached         = $this->cache_get( $key );
 		if ( false !== $cached ) {
 			return is_array( $cached ) ? $cached : array();
 		}
@@ -509,7 +543,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		}
 
 		$rows = is_array( $rows ) ? $rows : array();
-		wp_cache_set( $key, $rows, self::CACHE_GROUP, self::CACHE_TTL );
+		$this->cache_set( $key, $rows );
 		return $rows;
 	}
 
@@ -533,7 +567,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		}
 
 		$key    = $this->cache_key( 'prov_books_' . $bible_id );
-		$cached = wp_cache_get( $key, self::CACHE_GROUP );
+		$cached = $this->cache_get( $key );
 		if ( false !== $cached ) {
 			return is_array( $cached ) ? $cached : array();
 		}
@@ -541,7 +575,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		$books = $this->plugin->get_books( $bible_id );
 		if ( ! empty( $books ) ) {
 			$books = $this->normalize_sitemap_books( $books );
-			wp_cache_set( $key, $books, self::CACHE_GROUP, self::CACHE_TTL );
+			$this->cache_set( $key, $books );
 			return $books;
 		}
 
@@ -557,7 +591,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		);
 		if ( ! empty( $books ) ) {
 			$books = $this->normalize_sitemap_books( $books );
-			wp_cache_set( $key, $books, self::CACHE_GROUP, self::CACHE_TTL );
+			$this->cache_set( $key, $books );
 			return $books;
 		}
 
@@ -590,7 +624,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		}
 
 		$books = $this->normalize_sitemap_books( is_array( $rows ) ? $rows : array() );
-		wp_cache_set( $key, $books, self::CACHE_GROUP, self::CACHE_TTL );
+		$this->cache_set( $key, $books );
 		return $books;
 	}
 
@@ -660,7 +694,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		}
 
 		$key    = $this->cache_key( 'prov_pub_' . md5( $table . ':' . $bible_id . ':' . $book_seq ) );
-		$cached = wp_cache_get( $key, self::CACHE_GROUP );
+		$cached = $this->cache_get( $key );
 		if ( false !== $cached ) {
 			return (bool) $cached;
 		}
@@ -696,7 +730,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		}
 
 		$use_published = $count > 0;
-		wp_cache_set( $key, $use_published, self::CACHE_GROUP, self::CACHE_TTL );
+		$this->cache_set( $key, $use_published );
 		return $use_published;
 	}
 

@@ -403,6 +403,8 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 		add_rewrite_rule( '^' . preg_quote( $base, '/' ) . '/([^/]+)/?$', 'index.php?bdwp_bible=1&bdwp_livro_slug=$matches[1]', 'top' );
 
 		if ( get_option( BDWP70_Activator::OPTION_VERSION ) !== BDWP70_VERSION ) {
+			BDWP70_Activator::create_tables();
+			BDWP70_Activator::clear_runtime_caches();
 			update_option( BDWP70_Activator::OPTION_VERSION, BDWP70_VERSION );
 			update_option( self::OPTION_FLUSH, 1 );
 		}
@@ -1393,6 +1395,134 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 	}
 
 	/**
+	 * Seleciona um versículo aleatório sem ordenação randômica no banco.
+	 *
+	 * @param int $bible_id Bíblia.
+	 * @param int $book_seq Livro opcional.
+	 * @param int $chapter Capítulo opcional.
+	 * @param int $verse_no Versículo opcional.
+	 * @return object|null
+	 */
+	private function get_random_grouped_verse( $bible_id, $book_seq = 0, $chapter = 0, $verse_no = 0 ) {
+		global $wpdb;
+
+		$table    = BDWP70_Activator::verses_table();
+		$bible_id = absint( $bible_id );
+		$book_seq = ( $book_seq > 0 && $book_seq <= 66 ) ? (int) $book_seq : 0;
+		$chapter  = max( 0, (int) $chapter );
+		$verse_no = max( 0, (int) $verse_no );
+
+		if ( $bible_id < 1 ) {
+			return null;
+		}
+
+		$where  = array( 'published = 1', 'bible_id = %d', 'livroseq BETWEEN 1 AND 66', 'capitulo > 0', 'versiculo > 0' );
+		$params = array( $bible_id );
+
+		if ( $book_seq > 0 ) {
+			$where[]  = 'livroseq = %d';
+			$params[] = $book_seq;
+		}
+		if ( $chapter > 0 ) {
+			$where[]  = 'capitulo = %d';
+			$params[] = $chapter;
+		}
+		if ( $verse_no > 0 ) {
+			$where[]  = 'versiculo = %d';
+			$params[] = $verse_no;
+		}
+
+		$where_sql = implode( ' AND ', $where );
+
+		// Seleção direta quando a referência foi completamente informada.
+		if ( $book_seq > 0 && $chapter > 0 && $verse_no > 0 ) {
+			$direct_sql = 'SELECT id, testamento, livroseq, livro, capitulo, versiculo, palavra, published, hits FROM `' . esc_sql( $table ) . '` WHERE ' . $where_sql . ' ORDER BY id ASC LIMIT 1';
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- WHERE is built from internal placeholders.
+			return $wpdb->get_row( $wpdb->prepare( $direct_sql, $params ) );
+		}
+
+		$bounds_key = 'bdwp70_rand_bounds_' . md5( $table . '|' . $where_sql . '|' . implode( '|', array_map( 'strval', $params ) ) );
+		$bounds     = get_transient( $bounds_key );
+		if ( false === $bounds || ! is_array( $bounds ) ) {
+			$bounds_sql = 'SELECT MIN(id) AS min_id, MAX(id) AS max_id FROM `' . esc_sql( $table ) . '` WHERE ' . $where_sql;
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- WHERE is built from internal placeholders.
+			$row = $wpdb->get_row( $wpdb->prepare( $bounds_sql, $params ), ARRAY_A );
+			$bounds = array(
+				'min' => isset( $row['min_id'] ) ? (int) $row['min_id'] : 0,
+				'max' => isset( $row['max_id'] ) ? (int) $row['max_id'] : 0,
+			);
+			set_transient( $bounds_key, $bounds, 12 * HOUR_IN_SECONDS );
+		}
+
+		$min_id = isset( $bounds['min'] ) ? (int) $bounds['min'] : 0;
+		$max_id = isset( $bounds['max'] ) ? (int) $bounds['max'] : 0;
+		if ( $min_id < 1 || $max_id < $min_id ) {
+			return null;
+		}
+
+		$select_sql = 'SELECT id, testamento, livroseq, livro, capitulo, versiculo, palavra, published, hits FROM `' . esc_sql( $table ) . '` WHERE ' . $where_sql . ' AND id >= %d ORDER BY id ASC LIMIT 1';
+		for ( $attempt = 0; $attempt < 3; $attempt++ ) {
+			$random_id     = wp_rand( $min_id, $max_id );
+			$query_params  = $params;
+			$query_params[] = $random_id;
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- WHERE is built from internal placeholders.
+			$verse = $wpdb->get_row( $wpdb->prepare( $select_sql, $query_params ) );
+			if ( $verse ) {
+				return $verse;
+			}
+		}
+
+		$fallback_sql = 'SELECT id, testamento, livroseq, livro, capitulo, versiculo, palavra, published, hits FROM `' . esc_sql( $table ) . '` WHERE ' . $where_sql . ' ORDER BY id ASC LIMIT 1';
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- WHERE is built from internal placeholders.
+		return $wpdb->get_row( $wpdb->prepare( $fallback_sql, $params ) );
+	}
+
+	/**
+	 * Seleciona um capítulo aleatório sem ordenação randômica no banco.
+	 *
+	 * @param int $bible_id Bíblia.
+	 * @param int $book_seq Livro opcional.
+	 * @return object|null
+	 */
+	private function get_random_grouped_chapter( $bible_id, $book_seq = 0 ) {
+		global $wpdb;
+
+		$table    = BDWP70_Activator::verses_table();
+		$bible_id = absint( $bible_id );
+		$book_seq = ( $book_seq > 0 && $book_seq <= 66 ) ? (int) $book_seq : 0;
+
+		if ( $bible_id < 1 ) {
+			return null;
+		}
+
+		$where  = array( 'published = 1', 'bible_id = %d', 'livroseq BETWEEN 1 AND 66', 'capitulo > 0', 'versiculo > 0' );
+		$params = array( $bible_id );
+
+		if ( $book_seq > 0 ) {
+			$where[]  = 'livroseq = %d';
+			$params[] = $book_seq;
+		}
+
+		$key      = 'bdwp70_rand_chapters_' . md5( $table . '|' . implode( ' AND ', $where ) . '|' . implode( '|', array_map( 'strval', $params ) ) );
+		$chapters = get_transient( $key );
+		if ( false === $chapters || ! is_array( $chapters ) ) {
+			$where_sql = implode( ' AND ', $where );
+			$sql       = 'SELECT livroseq, MIN(livro) AS livro, capitulo FROM `' . esc_sql( $table ) . '` WHERE ' . $where_sql . ' GROUP BY livroseq, capitulo ORDER BY livroseq ASC, capitulo ASC';
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- WHERE is built from internal placeholders.
+			$chapters = $wpdb->get_results( $wpdb->prepare( $sql, $params ) );
+			$chapters = is_array( $chapters ) ? $chapters : array();
+			set_transient( $key, $chapters, 12 * HOUR_IN_SECONDS );
+		}
+
+		if ( empty( $chapters ) ) {
+			return null;
+		}
+
+		$index = array_rand( $chapters );
+		return isset( $chapters[ $index ] ) ? $chapters[ $index ] : null;
+	}
+
+	/**
 	 * Seleciona versículo aleatório respeitando filtros opcionais.
 	 *
 	 * @param int $bible_id Bíblia.
@@ -1402,26 +1532,12 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 	 * @return object|null
 	 */
 	public function get_shortcode_random_verse( $bible_id = null, $book_seq = 0, $chapter = 0, $verse_no = 0 ) {
-		global $wpdb;
-
-		$table    = BDWP70_Activator::verses_table();
 		$bible_id = $bible_id ? absint( $bible_id ) : $this->site_active_bible_id();
 		$book_seq = ( $book_seq > 0 && $book_seq <= 66 ) ? (int) $book_seq : 0;
 		$chapter  = max( 0, (int) $chapter );
 		$verse_no = max( 0, (int) $verse_no );
 
-		return $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT MIN(id) AS id, testamento, livroseq, livro, capitulo, versiculo, MIN(palavra) AS palavra, published, hits FROM `' . esc_sql( $table ) . '` WHERE published = 1 AND bible_id = %d AND livroseq BETWEEN 1 AND 66 AND ( %d = 0 OR livroseq = %d ) AND ( %d = 0 OR capitulo = %d ) AND ( %d = 0 OR versiculo = %d ) GROUP BY livroseq, capitulo, versiculo ORDER BY RAND() LIMIT 1',
-				$bible_id,
-				$book_seq,
-				$book_seq,
-				$chapter,
-				$chapter,
-				$verse_no,
-				$verse_no
-			)
-		);
+		return $this->get_random_grouped_verse( $bible_id, $book_seq, $chapter, $verse_no );
 	}
 
 	public function random_verse_shortcode( $atts = array() ) {
@@ -1976,6 +2092,12 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 	 * @return int
 	 */
 	public function site_active_bible_id() {
+		static $cached_id = null;
+
+		if ( null !== $cached_id ) {
+			return (int) $cached_id;
+		}
+
 		$default_id = BDWP70_Activator::get_active_bible_id();
 		$id         = absint( get_option( self::OPTION_ACTIVE, $default_id ) );
 
@@ -1984,7 +2106,8 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 			update_option( self::OPTION_ACTIVE, $id );
 		}
 
-		return $id;
+		$cached_id = $id;
+		return (int) $cached_id;
 	}
 
 	public function active_bible_id() {
@@ -2098,6 +2221,24 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 		$paged  = max( 1, (int) $state['paged'] );
 		$offset = ( $paged - 1 ) * $per_page;
 		$like   = '%' . $wpdb->esc_like( $search ) . '%';
+		$cache_key = 'bdwp70_qv_' . md5(
+			wp_json_encode(
+				array(
+					'bible_id' => $bible_id,
+					'book'     => $book,
+					'chapter'  => $chapter,
+					'search'   => $search,
+					'exact'    => ! empty( $state['exact'] ) ? 1 : 0,
+					'match'    => isset( $state['match'] ) ? (string) $state['match'] : 'any',
+					'paged'    => $paged,
+					'per_page' => $per_page,
+				)
+			)
+		);
+		$cached = get_transient( $cache_key );
+		if ( is_array( $cached ) && isset( $cached['items'], $cached['total'], $cached['mode'] ) ) {
+			return $cached;
+		}
 
 		if ( '' !== $search && ! empty( $state['exact'] ) ) {
 			$total = (int) $wpdb->get_var(
@@ -2255,13 +2396,15 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 			}
 		}
 
-		return array(
+		$result = array(
 			'items'       => is_array( $items ) ? $items : array(),
 			'total'       => $total,
 			'per_page'    => $per_page,
 			'total_pages' => max( 1, (int) ceil( $total / $per_page ) ),
 			'mode'        => 'search',
 		);
+		set_transient( $cache_key, $result, 5 * MINUTE_IN_SECONDS );
+		return $result;
 	}
 
 	public function get_chapter_counts( $bible_id = null ) {
@@ -2314,26 +2457,10 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 	 * @return object|null
 	 */
 	public function get_random_verse( $book_seq = 0, $bible_id = null ) {
-		global $wpdb;
-		$table    = BDWP70_Activator::verses_table();
 		$bible_id = $bible_id ? absint( $bible_id ) : $this->active_bible_id();
+		$book_seq = ( $book_seq > 0 && $book_seq <= 66 ) ? (int) $book_seq : 0;
 
-		if ( $book_seq > 0 && $book_seq <= 66 ) {
-			return $wpdb->get_row(
-				$wpdb->prepare(
-					'SELECT MIN(id) AS id, testamento, livroseq, livro, capitulo, versiculo, MIN(palavra) AS palavra, published, hits FROM `' . esc_sql( $table ) . '` WHERE published = 1 AND bible_id = %d AND livroseq = %d GROUP BY livroseq, capitulo, versiculo ORDER BY RAND() LIMIT 1',
-					$bible_id,
-					(int) $book_seq
-				)
-			);
-		}
-
-		return $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT MIN(id) AS id, testamento, livroseq, livro, capitulo, versiculo, MIN(palavra) AS palavra, published, hits FROM `' . esc_sql( $table ) . '` WHERE published = 1 AND bible_id = %d GROUP BY livroseq, capitulo, versiculo ORDER BY RAND() LIMIT 1',
-				$bible_id
-			)
-		);
+		return $this->get_random_grouped_verse( $bible_id, $book_seq );
 	}
 
 
@@ -2374,27 +2501,12 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 	 * @return object|null
 	 */
 	public function get_random_chapter( $bible_id = null, $book_seq = 0 ) {
-		global $wpdb;
-		$table    = BDWP70_Activator::verses_table();
 		$bible_id = $bible_id ? absint( $bible_id ) : $this->site_active_bible_id();
+		$book_seq = ( $book_seq > 0 && $book_seq <= 66 ) ? (int) $book_seq : 0;
 
-		if ( $book_seq > 0 && $book_seq <= 66 ) {
-			return $wpdb->get_row(
-				$wpdb->prepare(
-					'SELECT livroseq, MIN(livro) AS livro, capitulo FROM `' . esc_sql( $table ) . '` WHERE published = 1 AND bible_id = %d AND livroseq BETWEEN 1 AND 66 AND capitulo > 0 AND livroseq = %d GROUP BY livroseq, capitulo ORDER BY RAND() LIMIT 1',
-					$bible_id,
-					(int) $book_seq
-				)
-			);
-		}
-
-		return $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT livroseq, MIN(livro) AS livro, capitulo FROM `' . esc_sql( $table ) . '` WHERE published = 1 AND bible_id = %d AND livroseq BETWEEN 1 AND 66 AND capitulo > 0 GROUP BY livroseq, capitulo ORDER BY RAND() LIMIT 1',
-				$bible_id
-			)
-		);
+		return $this->get_random_grouped_chapter( $bible_id, $book_seq );
 	}
+
 
 	/**
 	 * Retorna os versículos de um capítulo.

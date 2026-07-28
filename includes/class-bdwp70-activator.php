@@ -155,26 +155,60 @@ class BDWP70_Activator {
 	}
 
 	public static function get_active_bible_id() {
+		static $cached_id = null;
+
+		if ( null !== $cached_id ) {
+			return (int) $cached_id;
+		}
+
 		$id = absint( get_option( self::OPTION_ACTIVE_BIBLE, 0 ) );
-		return $id > 0 && self::bible_version_exists( $id ) ? $id : self::ensure_default_bible_version();
+		if ( $id > 0 && self::bible_version_exists( $id ) ) {
+			$cached_id = $id;
+			return (int) $cached_id;
+		}
+
+		$cached_id = self::ensure_default_bible_version();
+		return (int) $cached_id;
 	}
 
 	public static function count_books( $bible_id = null ) {
 		global $wpdb;
+
 		$table = self::books_table();
-		if ( null === $bible_id ) {
-			return (int) $wpdb->get_var( 'SELECT COUNT(*) FROM `' . esc_sql( $table ) . '`' );
+		$key   = 'bdwp70_books_count_' . ( null === $bible_id ? 'all' : absint( $bible_id ) );
+		$cached = get_transient( $key );
+		if ( false !== $cached ) {
+			return (int) $cached;
 		}
-		return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM `' . esc_sql( $table ) . '` WHERE bible_id = %d', absint( $bible_id ) ) );
+
+		if ( null === $bible_id ) {
+			$count = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM `' . esc_sql( $table ) . '`' );
+		} else {
+			$count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM `' . esc_sql( $table ) . '` WHERE bible_id = %d', absint( $bible_id ) ) );
+		}
+
+		set_transient( $key, $count, HOUR_IN_SECONDS );
+		return $count;
 	}
 
 	public static function count_verses( $bible_id = null ) {
 		global $wpdb;
+
 		$table = self::verses_table();
-		if ( null === $bible_id ) {
-			return (int) $wpdb->get_var( 'SELECT COUNT(*) FROM `' . esc_sql( $table ) . '`' );
+		$key   = 'bdwp70_verses_count_' . ( null === $bible_id ? 'all' : absint( $bible_id ) );
+		$cached = get_transient( $key );
+		if ( false !== $cached ) {
+			return (int) $cached;
 		}
-		return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM `' . esc_sql( $table ) . '` WHERE bible_id = %d', absint( $bible_id ) ) );
+
+		if ( null === $bible_id ) {
+			$count = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM `' . esc_sql( $table ) . '`' );
+		} else {
+			$count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM `' . esc_sql( $table ) . '` WHERE bible_id = %d', absint( $bible_id ) ) );
+		}
+
+		set_transient( $key, $count, HOUR_IN_SECONDS );
+		return $count;
 	}
 
 	public static function create_tables() {
@@ -225,9 +259,11 @@ class BDWP70_Activator {
             PRIMARY KEY  (id),
             KEY bible_livroseq_capitulo (bible_id, livroseq, capitulo),
             KEY bible_ref (bible_id, livroseq, capitulo, versiculo),
+            KEY bible_published_ref (bible_id, published, livroseq, capitulo, versiculo),
             KEY testamento (testamento),
             KEY capitulo_versiculo (capitulo, versiculo),
-            KEY livro (livro)
+            KEY livro (livro),
+            FULLTEXT KEY palavra_fulltext (palavra)
         ) {$charset_collate};";
 
 		dbDelta( $versions_sql );
@@ -236,6 +272,10 @@ class BDWP70_Activator {
 
 		self::maybe_add_column( $books_table, 'bible_id' );
 		self::maybe_add_column( $verses_table, 'bible_id' );
+		self::maybe_add_index( $verses_table, 'bible_published_ref', 'KEY `bible_published_ref` (`bible_id`, `published`, `livroseq`, `capitulo`, `versiculo`)' );
+		self::maybe_add_index( $verses_table, 'bible_published_id', 'KEY `bible_published_id` (`bible_id`, `published`, `id`)' );
+		self::maybe_add_index( $verses_table, 'bible_published_book_id', 'KEY `bible_published_book_id` (`bible_id`, `published`, `livroseq`, `id`)' );
+		self::maybe_add_index( $verses_table, 'palavra_fulltext', 'FULLTEXT KEY `palavra_fulltext` (`palavra`)' );
 	}
 
 	private static function maybe_add_column( $table, $column ) {
@@ -250,26 +290,79 @@ class BDWP70_Activator {
 		}
 	}
 
+	/**
+	 * Adds an index to a plugin-owned table when missing.
+	 *
+	 * @param string $table Database table name.
+	 * @param string $index_name Index name.
+	 * @param string $definition SQL index definition without ALTER TABLE ADD.
+	 * @return void
+	 */
+	private static function maybe_add_index( $table, $index_name, $definition ) {
+		global $wpdb;
+		$index_name = sanitize_key( $index_name );
+		if ( '' === $index_name ) {
+			return;
+		}
+
+		$exists = $wpdb->get_var(
+			$wpdb->prepare(
+				'SHOW INDEX FROM `' . esc_sql( $table ) . '` WHERE Key_name = %s',
+				$index_name
+			)
+		);
+
+		if ( $exists ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Definition is an internal constant string.
+		$wpdb->query( 'ALTER TABLE `' . esc_sql( $table ) . '` ADD ' . $definition );
+	}
+
 	public static function ensure_default_bible_version() {
 		global $wpdb;
+		static $cached_default = null;
+
+		if ( null !== $cached_default ) {
+			return (int) $cached_default;
+		}
+
 		self::create_tables_safe_for_version_lookup();
 		$table = self::versions_table();
 
 		$active_id = absint( get_option( self::OPTION_ACTIVE_BIBLE, 0 ) );
 		if ( $active_id > 0 && self::bible_version_exists( $active_id ) ) {
-			return $active_id;
+			$cached_default = $active_id;
+			return (int) $cached_default;
 		}
 
-		$id = (int) $wpdb->get_var( 'SELECT id FROM `' . esc_sql( $table ) . '` ORDER BY id ASC LIMIT 1' );
-		return $id > 0 ? $id : 0;
+		$transient = get_transient( 'bdwp70_default_bible_version_id' );
+		if ( false !== $transient ) {
+			$cached_default = absint( $transient );
+			return (int) $cached_default;
+		}
+
+		$id             = (int) $wpdb->get_var( 'SELECT id FROM `' . esc_sql( $table ) . '` ORDER BY id ASC LIMIT 1' );
+		$cached_default = $id > 0 ? $id : 0;
+		set_transient( 'bdwp70_default_bible_version_id', $cached_default, 12 * HOUR_IN_SECONDS );
+		return (int) $cached_default;
 	}
 
 	private static function create_tables_safe_for_version_lookup() {
 		global $wpdb;
+		static $checked = false;
+
+		if ( $checked ) {
+			return;
+		}
+
 		$table = self::versions_table();
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			self::create_tables();
 		}
+
+		$checked = true;
 	}
 
 	public static function import_books( $bible_id = 1 ) {
@@ -293,24 +386,56 @@ class BDWP70_Activator {
 		$bible_id = absint( $bible_id );
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM `' . esc_sql( self::books_table() ) . '` WHERE bible_id = %d', $bible_id ) );
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM `' . esc_sql( self::verses_table() ) . '` WHERE bible_id = %d', $bible_id ) );
+		self::clear_runtime_caches();
 	}
 
 	public static function get_bible_versions() {
 		global $wpdb;
+		static $cached_rows = null;
+
+		if ( null !== $cached_rows ) {
+			return $cached_rows;
+		}
+
+		$transient = get_transient( 'bdwp70_bible_versions_rows' );
+		if ( false !== $transient && is_array( $transient ) ) {
+			$cached_rows = $transient;
+			return $cached_rows;
+		}
+
 		self::create_tables_safe_for_version_lookup();
 		self::ensure_default_bible_version();
-		$rows = $wpdb->get_results( 'SELECT * FROM `' . esc_sql( self::versions_table() ) . '` ORDER BY is_builtin DESC, id ASC' );
-		return is_array( $rows ) ? $rows : array();
+		$rows        = $wpdb->get_results( 'SELECT * FROM `' . esc_sql( self::versions_table() ) . '` ORDER BY is_builtin DESC, id ASC' );
+		$cached_rows = is_array( $rows ) ? $rows : array();
+		set_transient( 'bdwp70_bible_versions_rows', $cached_rows, 12 * HOUR_IN_SECONDS );
+		return $cached_rows;
 	}
 
 	public static function bible_version_exists( $bible_id ) {
 		global $wpdb;
+		static $exists_cache = array();
+
 		$bible_id = absint( $bible_id );
 		if ( $bible_id < 1 ) {
 			return false;
 		}
+
+		if ( array_key_exists( $bible_id, $exists_cache ) ) {
+			return (bool) $exists_cache[ $bible_id ];
+		}
+
+		$key       = 'bdwp70_bible_exists_' . $bible_id;
+		$transient = get_transient( $key );
+		if ( false !== $transient ) {
+			$exists_cache[ $bible_id ] = '1' === (string) $transient;
+			return (bool) $exists_cache[ $bible_id ];
+		}
+
 		self::create_tables_safe_for_version_lookup();
-		return (bool) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM `' . esc_sql( self::versions_table() ) . '` WHERE id = %d LIMIT 1', $bible_id ) );
+		$exists = (bool) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM `' . esc_sql( self::versions_table() ) . '` WHERE id = %d LIMIT 1', $bible_id ) );
+		$exists_cache[ $bible_id ] = $exists;
+		set_transient( $key, $exists ? '1' : '0', 12 * HOUR_IN_SECONDS );
+		return $exists;
 	}
 
 	public static function create_bible_version( $name, $language_code, $source = 'Upload do usuário', $is_builtin = 0 ) {
@@ -335,7 +460,11 @@ class BDWP70_Activator {
 			),
 			array( '%s', '%s', '%s', '%d', '%s' )
 		);
-		return $ok ? (int) $wpdb->insert_id : 0;
+		if ( $ok ) {
+			self::clear_runtime_caches();
+			return (int) $wpdb->insert_id;
+		}
+		return 0;
 	}
 
 	public static function delete_bible_version( $bible_id ) {
@@ -344,9 +473,11 @@ class BDWP70_Activator {
 		if ( $bible_id < 1 ) {
 			return false;
 		}
+		$was_active = absint( get_option( self::OPTION_ACTIVE_BIBLE, 0 ) ) === $bible_id;
 		self::clear_bible_data( $bible_id );
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM `' . esc_sql( self::versions_table() ) . '` WHERE id = %d AND is_builtin = 0', $bible_id ) );
-		if ( self::get_active_bible_id() === $bible_id ) {
+		self::clear_runtime_caches();
+		if ( $was_active ) {
 			update_option( self::OPTION_ACTIVE_BIBLE, self::ensure_default_bible_version() );
 		}
 		return true;
@@ -398,29 +529,25 @@ class BDWP70_Activator {
 			return true;
 		}
 
-		$table    = self::books_table();
-		$inserted = 0;
-		$bible_id = absint( $bible_id );
+		$table        = self::books_table();
+		$bible_id     = absint( $bible_id );
+		$placeholders = array();
+		$values       = array();
 
 		foreach ( $rows as $row ) {
-			$result = $wpdb->insert(
-				$table,
-				array(
-					'bible_id'   => $bible_id,
-					'livro'      => $row['livro'],
-					'livro_desc' => $row['livro_desc'],
-					'livro_seq'  => $row['livro_seq'],
-					'published'  => $row['published'],
-				),
-				array( '%d', '%s', '%s', '%d', '%d' )
-			);
-
-			if ( false !== $result ) {
-				++$inserted;
-			}
+			$placeholders[] = '( %d, %s, %s, %d, %d )';
+			$values[]       = $bible_id;
+			$values[]       = (string) $row['livro'];
+			$values[]       = (string) $row['livro_desc'];
+			$values[]       = (int) $row['livro_seq'];
+			$values[]       = (int) $row['published'];
 		}
 
-		return $inserted;
+		$sql = 'INSERT INTO `' . esc_sql( $table ) . '` (`bible_id`, `livro`, `livro_desc`, `livro_seq`, `published`) VALUES ' . implode( ', ', $placeholders );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Placeholders and values are built above.
+		$result = $wpdb->query( $wpdb->prepare( $sql, $values ) );
+
+		return false === $result ? false : count( $rows );
 	}
 
 	private static function import_verse_sql_file( $file, $bible_id = 1 ) {
@@ -520,33 +647,29 @@ class BDWP70_Activator {
 			return true;
 		}
 
-		$table    = self::verses_table();
-		$inserted = 0;
-		$bible_id = absint( $bible_id );
+		$table        = self::verses_table();
+		$bible_id     = absint( $bible_id );
+		$placeholders = array();
+		$values       = array();
 
 		foreach ( $rows as $row ) {
-			$result = $wpdb->insert(
-				$table,
-				array(
-					'bible_id'   => $bible_id,
-					'testamento' => $row['testamento'],
-					'livroseq'   => $row['livroseq'],
-					'livro'      => $row['livro'],
-					'capitulo'   => $row['capitulo'],
-					'versiculo'  => $row['versiculo'],
-					'palavra'    => $row['palavra'],
-					'published'  => $row['published'],
-					'hits'       => $row['hits'],
-				),
-				array( '%d', '%s', '%d', '%s', '%d', '%d', '%s', '%d', '%d' )
-			);
-
-			if ( false !== $result ) {
-				++$inserted;
-			}
+			$placeholders[] = '( %d, %s, %d, %s, %d, %d, %s, %d, %d )';
+			$values[]       = $bible_id;
+			$values[]       = (string) $row['testamento'];
+			$values[]       = (int) $row['livroseq'];
+			$values[]       = (string) $row['livro'];
+			$values[]       = (int) $row['capitulo'];
+			$values[]       = (int) $row['versiculo'];
+			$values[]       = (string) $row['palavra'];
+			$values[]       = (int) $row['published'];
+			$values[]       = (int) $row['hits'];
 		}
 
-		return $inserted;
+		$sql = 'INSERT INTO `' . esc_sql( $table ) . '` (`bible_id`, `testamento`, `livroseq`, `livro`, `capitulo`, `versiculo`, `palavra`, `published`, `hits`) VALUES ' . implode( ', ', $placeholders );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Placeholders and values are built above.
+		$result = $wpdb->query( $wpdb->prepare( $sql, $values ) );
+
+		return false === $result ? false : count( $rows );
 	}
 
 	public static function import_uploaded_bible_from_csv( $books_file, $verses_file, $name, $language_code, $source = 'Upload CSV' ) {
@@ -592,8 +715,9 @@ class BDWP70_Activator {
 		update_option( self::OPTION_IMPORTED, current_time( 'mysql' ) );
 		update_option( self::OPTION_STATUS, 'done' );
 		update_option( self::OPTION_PROGRESS, 'Upload concluído: ' . number_format_i18n( $count ) . ' versículos importados.' );
-		// Atualiza lastmod do sitemap após importação bem-sucedida.
+		// Atualiza lastmod do sitemap após importação bem-sucedida e invalida caches leves.
 		update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
+		self::clear_runtime_caches();
 		return $bible_id;
 	}
 
@@ -746,6 +870,13 @@ class BDWP70_Activator {
 		}
 		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_operations_fopen, WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		return $count;
+	}
+
+	public static function clear_runtime_caches() {
+		global $wpdb;
+		if ( is_object( $wpdb ) ) {
+			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_bdwp70_qv_%' OR `option_name` LIKE '_transient_timeout_bdwp70_qv_%' OR `option_name` LIKE '_transient_bdwp70_rand_%' OR `option_name` LIKE '_transient_timeout_bdwp70_rand_%' OR `option_name` LIKE '_transient_bdwp70_chapters_%' OR `option_name` LIKE '_transient_timeout_bdwp70_chapters_%' OR `option_name` LIKE '_transient_bdwp70_sitemap_%' OR `option_name` LIKE '_transient_timeout_bdwp70_sitemap_%' OR `option_name` LIKE '_transient_bdwp70_bible_%' OR `option_name` LIKE '_transient_timeout_bdwp70_bible_%' OR `option_name` LIKE '_transient_bdwp70_default_bible_version_id' OR `option_name` LIKE '_transient_timeout_bdwp70_default_bible_version_id' OR `option_name` LIKE '_transient_bdwp70_books_count_%' OR `option_name` LIKE '_transient_timeout_bdwp70_books_count_%' OR `option_name` LIKE '_transient_bdwp70_verses_count_%' OR `option_name` LIKE '_transient_timeout_bdwp70_verses_count_%'" );
+		}
 	}
 
 	private static function csv_has_required_columns( $header, $required ) {
