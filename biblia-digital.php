@@ -3,7 +3,7 @@
  * Plugin Name: Biblia Digital
  * Plugin URI: https://estudobiblico.org/
  * Description: Display, search, and import Bible texts using shortcodes, widgets, and a Gutenberg block.
- * Version: 1.1.65
+ * Version: 1.1.68
  * Requires at least: 6.6
  * Tested up to: 7.0
  * Requires PHP: 7.4
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'BDWP70_VERSION' ) ) {
-	define( 'BDWP70_VERSION', '1.1.65' );
+	define( 'BDWP70_VERSION', '1.1.68' );
 }
 
 if ( ! defined( 'BDWP70_FILE' ) ) {
