@@ -1,10 +1,10 @@
-=== Biblia Digital ===
+=== Bíblia Digital ===
 Contributors: claudio-crispim
 Tags: bible, scripture, search, shortcode, gutenberg
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1.68
+Stable tag: 1.1.69
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -332,6 +332,16 @@ Adds an organized admin panel with enterprise-style tabs and documents all short
 Keeps the functional translation selector below the book lists and improves dropdown stacking.
 
 == Changelog ==
+
+= 1.1.69 =
+* Metadados: cabeçalho do plugin adequado aos requisitos oficiais do WordPress.org.
+* Nome de exibição passa a `Bíblia Digital`, com acentuação, no cabeçalho e no readme. O slug, o text domain, a pasta e o arquivo principal continuam `biblia-digital`.
+* `Plugin URI` passa a apontar para a página do plugin (`https://estudobiblico.org/biblia-sagrada-online/`), distinta da `Author URI`, que permanece na raiz do site.
+* `Description` reescrita em português, alinhada ao público do plugin.
+* `License` normalizada para o identificador SPDX `GPL-2.0-or-later`; a licença em si não muda.
+* Removido `Tested up to` do cabeçalho PHP: não é um campo de cabeçalho de plugin reconhecido pelo WordPress e permanece declarado no readme.txt.
+* Nenhum `Update URI` foi adicionado, para não desviar as atualizações do WordPress.org.
+* Catálogos `.pot` e pt_BR regenerados por refletirem nome, descrição e versão.
 
 = 1.1.68 =
 * Consolida a linha 1.1.67 (abuse-fix) com o auto-reparo de schema, o reforço de importação por ZIP e o ferramental de qualidade.

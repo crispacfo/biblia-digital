@@ -1,15 +1,14 @@
 <?php
 /**
- * Plugin Name: Biblia Digital
- * Plugin URI: https://estudobiblico.org/
- * Description: Display, search, and import Bible texts using shortcodes, widgets, and a Gutenberg block.
- * Version: 1.1.68
+ * Plugin Name: Bíblia Digital
+ * Plugin URI: https://estudobiblico.org/biblia-sagrada-online/
+ * Description: Disponibiliza leitura, pesquisa, navegação e recursos bíblicos no WordPress.
+ * Version: 1.1.69
  * Requires at least: 6.6
- * Tested up to: 7.0
  * Requires PHP: 7.4
  * Author: Claudio Crispim
  * Author URI: https://estudobiblico.org/
- * License: GPLv2 or later
+ * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: biblia-digital
  * Domain Path: /languages
@@ -22,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'BDWP70_VERSION' ) ) {
-	define( 'BDWP70_VERSION', '1.1.68' );
+	define( 'BDWP70_VERSION', '1.1.69' );
 }
 
 if ( ! defined( 'BDWP70_FILE' ) ) {
