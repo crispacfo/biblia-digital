@@ -2,9 +2,9 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Biblia Digital 1.1.68\n"
+"Project-Id-Version: Biblia Digital 1.1.69\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/biblia-digital\n"
-"POT-Creation-Date: 2026-07-28T12:56:45+00:00\n"
+"POT-Creation-Date: 2026-07-28T16:54:14+00:00\n"
 "PO-Revision-Date: 2026-07-27 00:00+0000\n"
 "Last-Translator: Biblia Digital\n"
 "Language-Team: Portuguese (Brazil)\n"
@@ -16,8 +16,8 @@ msgstr ""
 "X-Domain: biblia-digital\n"
 
 #. Plugin Name of the plugin
-#: biblia-digital.php
-msgid "Biblia Digital"
+#: biblia-digital.php includes/class-bdwp70-plugin.php:2941
+msgid "Bíblia Digital"
 msgstr ""
 
 #. Author of the plugin
@@ -28,19 +28,20 @@ msgstr ""
 #. Description of the plugin
 #: biblia-digital.php
 msgid ""
-"Display, search, and import Bible texts using shortcodes, widgets, and a "
-"Gutenberg block."
+"Disponibiliza leitura, pesquisa, navegação e recursos bíblicos no WordPress."
 msgstr ""
-"Exiba, pesquise e importe textos bÃ­blicos usando shortcodes, widgets e um "
-"bloco Gutenberg."
 
-#. Plugin URI of the plugin
 #. Author URI of the plugin
 #: biblia-digital.php
 msgid "https://estudobiblico.org/"
 msgstr ""
 
-#: biblia-digital.php:60
+#. Plugin URI of the plugin
+#: biblia-digital.php
+msgid "https://estudobiblico.org/biblia-sagrada-online/"
+msgstr ""
+
+#: biblia-digital.php:59
 msgid ""
 "An older Biblia Digital version is active. Deactivate the older version "
 "before activating this version."
@@ -434,10 +435,6 @@ msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2922 includes/class-bdwp70-plugin.php:3526
 msgid "Diagnóstico"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:2941
-msgid "Bíblia Digital"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2944
@@ -1435,3 +1432,10 @@ msgid ""
 "Bíblia Digital Online por <a href=\"https://estudobiblico.org/\" "
 "target=\"_blank\" rel=\"noopener noreferrer\">Estudo Bíblico</a>."
 msgstr ""
+
+#~ msgid ""
+#~ "Display, search, and import Bible texts using shortcodes, widgets, and a "
+#~ "Gutenberg block."
+#~ msgstr ""
+#~ "Exiba, pesquise e importe textos bÃ­blicos usando shortcodes, widgets e um "
+#~ "bloco Gutenberg."
