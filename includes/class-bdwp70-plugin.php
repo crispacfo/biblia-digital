@@ -2681,7 +2681,7 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 		}
 		if ( ! empty( $state['chapter'] ) && $book_name ) {
 			$items[] = array(
-				/* translators: %d: chapter number. */
+				/* translators: %d: Chapter number. */
 				'label' => sprintf( __( 'Capítulo %d', 'biblia-digital' ), (int) $state['chapter'] ),
 				'url'   => $this->chapter_url( (int) $state['book'], (int) $state['chapter'], $books, ! empty( $state['bible_id'] ) ? absint( $state['bible_id'] ) : null ),
 			);
@@ -3972,7 +3972,7 @@ JS;
 		$verses_file = $this->find_uploaded_csv( $tmp_dir, 'verses.csv' );
 		if ( ! $books_file || ! $verses_file ) {
 			$this->remove_directory( $tmp_dir );
-			$this->redirect_upload_error( 'O ZIP precisa conter books.csv e verses.csv.' );
+			$this->redirect_upload_error( __( 'The ZIP must contain books.csv and verses.csv.', 'biblia-digital' ) );
 		}
 
 		$id = BDWP70_Activator::import_uploaded_bible_from_csv( $books_file, $verses_file, $name, $lang, $filename );
@@ -4327,13 +4327,13 @@ JS;
 			// bypassed. Refuse the upload instead of silently trusting PclZip.
 			return new WP_Error(
 				'bdwp70_zip_ext_missing',
-				'A extensão zip do PHP é necessária para validar o arquivo enviado. Solicite a ativação da ext-zip ao seu provedor de hospedagem.'
+				__( 'The PHP zip extension is required to validate the uploaded file. Ask your host to enable ext-zip.', 'biblia-digital' )
 			);
 		}
 
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $path ) ) {
-			return new WP_Error( 'bdwp70_zip_open', 'O arquivo enviado não pôde ser aberto como ZIP válido.' );
+			return new WP_Error( 'bdwp70_zip_open', __( 'The uploaded file could not be opened as a valid ZIP.', 'biblia-digital' ) );
 		}
 
 		$max_files = (int) apply_filters( 'bdwp70_upload_max_extracted_files', 8 );
@@ -4349,7 +4349,7 @@ JS;
 			$stat = $zip->statIndex( $i );
 			if ( ! is_array( $stat ) || empty( $stat['name'] ) ) {
 				$zip->close();
-				return new WP_Error( 'bdwp70_zip_entry', 'O ZIP contém uma entrada inválida.' );
+				return new WP_Error( 'bdwp70_zip_entry', __( 'The ZIP contains an invalid entry.', 'biblia-digital' ) );
 			}
 
 			$name = str_replace( '\\', '/', (string) $stat['name'] );
@@ -4359,13 +4359,13 @@ JS;
 
 			if ( false !== strpos( $name, '../' ) || 0 === strpos( $name, '/' ) || preg_match( '#^[A-Za-z]:/#', $name ) || basename( $name ) !== $name ) {
 				$zip->close();
-				return new WP_Error( 'bdwp70_zip_traversal', 'O ZIP contém caminho potencialmente inseguro.' );
+				return new WP_Error( 'bdwp70_zip_traversal', __( 'The ZIP contains a potentially unsafe path.', 'biblia-digital' ) );
 			}
 
 			$basename = strtolower( sanitize_file_name( basename( $name ) ) );
 			if ( ! array_key_exists( $basename, $required ) ) {
 				$zip->close();
-				return new WP_Error( 'bdwp70_zip_unexpected_file', 'O ZIP deve conter somente books.csv e verses.csv.' );
+				return new WP_Error( 'bdwp70_zip_unexpected_file', __( 'The ZIP must contain only books.csv and verses.csv.', 'biblia-digital' ) );
 			}
 
 			++$files;
@@ -4374,12 +4374,12 @@ JS;
 
 			if ( $files > $max_files ) {
 				$zip->close();
-				return new WP_Error( 'bdwp70_zip_file_count', 'O ZIP contém arquivos demais.' );
+				return new WP_Error( 'bdwp70_zip_file_count', __( 'The ZIP contains too many files.', 'biblia-digital' ) );
 			}
 
 			if ( $total > $max_total ) {
 				$zip->close();
-				return new WP_Error( 'bdwp70_zip_total_size', 'O conteúdo extraído do ZIP excede o tamanho permitido.' );
+				return new WP_Error( 'bdwp70_zip_total_size', __( 'The extracted ZIP content exceeds the allowed size.', 'biblia-digital' ) );
 			}
 		}
 
@@ -4387,7 +4387,7 @@ JS;
 
 		foreach ( $required as $found ) {
 			if ( ! $found ) {
-				return new WP_Error( 'bdwp70_zip_missing_file', 'O ZIP precisa conter books.csv e verses.csv.' );
+				return new WP_Error( 'bdwp70_zip_missing_file', __( 'The ZIP must contain books.csv and verses.csv.', 'biblia-digital' ) );
 			}
 		}
 
@@ -4403,7 +4403,7 @@ JS;
 	private function validate_uploaded_zip_contents( $dir ) {
 		$root = realpath( $dir );
 		if ( ! $root || ! is_dir( $root ) ) {
-			return new WP_Error( 'bdwp70_zip_root', 'Não foi possível validar o conteúdo do ZIP.' );
+			return new WP_Error( 'bdwp70_zip_root', __( 'The ZIP content could not be validated.', 'biblia-digital' ) );
 		}
 
 		$max_files = (int) apply_filters( 'bdwp70_upload_max_extracted_files', 8 );
@@ -4419,11 +4419,11 @@ JS;
 		foreach ( $iterator as $file ) {
 			$path = realpath( $file->getPathname() );
 			if ( ! $path || 0 !== strpos( $path, $root . DIRECTORY_SEPARATOR ) ) {
-				return new WP_Error( 'bdwp70_zip_path', 'O ZIP contém caminho inválido.' );
+				return new WP_Error( 'bdwp70_zip_path', __( 'The ZIP contains an invalid path.', 'biblia-digital' ) );
 			}
 
 			if ( $file->isLink() ) {
-				return new WP_Error( 'bdwp70_zip_link', 'O ZIP não pode conter links simbólicos.' );
+				return new WP_Error( 'bdwp70_zip_link', __( 'The ZIP must not contain symbolic links.', 'biblia-digital' ) );
 			}
 
 			if ( ! $file->isFile() ) {
@@ -4432,12 +4432,12 @@ JS;
 
 			$relative = ltrim( str_replace( $root, '', $path ), DIRECTORY_SEPARATOR );
 			if ( false !== strpos( $relative, '..' ) || false !== strpos( $relative, '\\' ) ) {
-				return new WP_Error( 'bdwp70_zip_traversal', 'O ZIP contém caminho potencialmente inseguro.' );
+				return new WP_Error( 'bdwp70_zip_traversal', __( 'The ZIP contains a potentially unsafe path.', 'biblia-digital' ) );
 			}
 
 			$basename = strtolower( $file->getFilename() );
 			if ( ! array_key_exists( $basename, $required ) ) {
-				return new WP_Error( 'bdwp70_zip_unexpected_file', 'O ZIP deve conter somente books.csv e verses.csv.' );
+				return new WP_Error( 'bdwp70_zip_unexpected_file', __( 'The ZIP must contain only books.csv and verses.csv.', 'biblia-digital' ) );
 			}
 
 			++$files;
@@ -4445,17 +4445,17 @@ JS;
 			$required[ $basename ] = true;
 
 			if ( $files > $max_files ) {
-				return new WP_Error( 'bdwp70_zip_file_count', 'O ZIP contém arquivos demais.' );
+				return new WP_Error( 'bdwp70_zip_file_count', __( 'The ZIP contains too many files.', 'biblia-digital' ) );
 			}
 
 			if ( $total > $max_total ) {
-				return new WP_Error( 'bdwp70_zip_total_size', 'O conteúdo extraído do ZIP excede o tamanho permitido.' );
+				return new WP_Error( 'bdwp70_zip_total_size', __( 'The extracted ZIP content exceeds the allowed size.', 'biblia-digital' ) );
 			}
 		}
 
 		foreach ( $required as $name => $found ) {
 			if ( ! $found ) {
-				return new WP_Error( 'bdwp70_zip_missing_file', 'O ZIP precisa conter books.csv e verses.csv.' );
+				return new WP_Error( 'bdwp70_zip_missing_file', __( 'The ZIP must contain books.csv and verses.csv.', 'biblia-digital' ) );
 			}
 		}
 

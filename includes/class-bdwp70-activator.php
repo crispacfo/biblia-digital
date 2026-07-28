@@ -57,7 +57,7 @@ class BDWP70_Activator {
 		add_option( self::OPTION_DELETE_DATA_ON_UNINSTALL, 0 );
 		update_option( 'bdwp70_flush_rewrite', 1 );
 		update_option( self::OPTION_STATUS, 'pending' );
-		update_option( self::OPTION_PROGRESS, 'Bíblia Digital foi ativado. Para começar, importe uma Bíblia em formato ZIP contendo books.csv e verses.csv.' );
+		update_option( self::OPTION_PROGRESS, __( 'Biblia Digital is active. To get started, import a Bible as a ZIP file containing books.csv and verses.csv.', 'biblia-digital' ) );
 
 		// Opções padrão do sitemap — add_option não sobrescreve se já existirem.
 		add_option( 'bdwp70_sitemap_enabled', 1 );
@@ -112,7 +112,7 @@ class BDWP70_Activator {
 		// A fresh install reached here without activation (legacy loader path).
 		if ( '' === $stored ) {
 			add_option( self::OPTION_STATUS, 'pending' );
-			add_option( self::OPTION_PROGRESS, 'Bíblia Digital foi ativado. Para começar, importe uma Bíblia em formato ZIP contendo books.csv e verses.csv.' );
+			add_option( self::OPTION_PROGRESS, __( 'Biblia Digital is active. To get started, import a Bible as a ZIP file containing books.csv and verses.csv.', 'biblia-digital' ) );
 		}
 
 		update_option( 'bdwp70_flush_rewrite', 1 );
@@ -437,7 +437,7 @@ class BDWP70_Activator {
 		self::create_tables();
 		update_option( self::OPTION_STATUS, 'pending' );
 		update_option( self::OPTION_ERROR, 'A base bíblica nativa não é distribuída neste pacote. Importe uma Bíblia em formato ZIP contendo books.csv e verses.csv.' );
-		update_option( self::OPTION_PROGRESS, 'Importação disponível apenas por ZIP/CSV enviado pelo administrador.' );
+		update_option( self::OPTION_PROGRESS, __( 'Import is available only through an administrator-supplied ZIP/CSV.', 'biblia-digital' ) );
 		return false;
 	}
 
@@ -774,7 +774,8 @@ class BDWP70_Activator {
 		update_option( self::OPTION_ACTIVE_BIBLE, $bible_id );
 		update_option( self::OPTION_IMPORTED, current_time( 'mysql' ) );
 		update_option( self::OPTION_STATUS, 'done' );
-		update_option( self::OPTION_PROGRESS, 'Upload concluído: ' . number_format_i18n( $count ) . ' versículos importados.' );
+		/* translators: %s: formatted number of imported verses. */
+		update_option( self::OPTION_PROGRESS, sprintf( __( 'Upload complete: %s verses imported.', 'biblia-digital' ), number_format_i18n( $count ) ) );
 		// Atualiza lastmod do sitemap após importação bem-sucedida e invalida caches leves.
 		update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
 		self::clear_runtime_caches();
@@ -915,7 +916,8 @@ class BDWP70_Activator {
 					return false;
 				}
 				$count += count( $batch );
-				update_option( self::OPTION_PROGRESS, 'Importados ' . number_format_i18n( $count ) . ' versículos.' );
+				/* translators: %s: formatted number of imported verses. */
+				update_option( self::OPTION_PROGRESS, sprintf( __( 'Imported %s verses.', 'biblia-digital' ), number_format_i18n( $count ) ) );
 				$batch = array();
 			}
 		}
