@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<ruleset name="Biblia Digital">
+	<description>Coding standards for the Biblia Digital plugin.</description>
+
+	<file>.</file>
+
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/languages/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/blocks/*/index.js</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="ps"/>
+	<arg name="parallel" value="8"/>
+
+	<config name="minimum_wp_version" value="6.6"/>
+	<config name="testVersion" value="7.4-"/>
+
+	<!--
+		Security, escaping, SQL preparation and i18n are treated as errors.
+		Formatting sniffs are enabled too, but see the exclusions below.
+	-->
+	<rule ref="WordPress">
+		<!--
+			The plugin documents its public API in readme.txt and inline
+			comments rather than exhaustive per-method docblocks. Missing
+			docblocks are reported as warnings instead of blocking CI.
+		-->
+		<exclude name="Squiz.Commenting.FunctionComment.Missing"/>
+		<exclude name="Squiz.Commenting.ClassComment.Missing"/>
+		<exclude name="Squiz.Commenting.FileComment.WrongStyle"/>
+	</rule>
+
+	<!-- Enforce the plugin text domain on every i18n call. -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="biblia-digital"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Enforce the bdwp70_ / BDWP70_ prefix on global symbols. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="bdwp70"/>
+				<element value="BDWP70"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

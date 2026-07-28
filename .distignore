@@ -1,0 +1,19 @@
+# Files excluded from the distributed plugin ZIP.
+.git
+.github
+.gitignore
+.distignore
+.editorconfig
+composer.json
+composer.lock
+phpcs.xml.dist
+phpcs-report.xml
+phpunit.xml.dist
+vendor
+node_modules
+bin
+tests
+dist
+docs
+README.md
+*.zip

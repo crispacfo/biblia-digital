@@ -125,7 +125,7 @@ if ( ! function_exists( 'bdwp70_bootstrap' ) ) {
 		$plugin = BDWP70_Plugin::instance();
 		$plugin->init();
 
-		// Sitemap dedicado
+		// Sitemap dedicado.
 		if ( class_exists( 'BDWP70_Sitemap', false ) ) {
 			( new BDWP70_Sitemap( $plugin ) )->init();
 		}

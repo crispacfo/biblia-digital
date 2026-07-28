@@ -674,7 +674,11 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 			<?php if ( $chapters > 0 ) : ?>
 				<nav class="bdwp70__side-chapters" aria-label="<?php esc_attr_e( 'Capítulos do livro', 'biblia-digital' ); ?>">
 					<?php for ( $i = 1; $i <= $chapters; $i++ ) : ?>
-						<a class="<?php echo $chapter === $i ? 'is-current' : ''; ?>" href="<?php echo esc_url( $this->chapter_url( $book, $i, $books, $active_bible ) ); ?>"<?php if ( $chapter === $i ) : ?> aria-current="page"<?php endif; ?>><?php echo esc_html( (string) $i ); ?></a>
+						<a class="<?php echo $chapter === $i ? 'is-current' : ''; ?>" href="<?php echo esc_url( $this->chapter_url( $book, $i, $books, $active_bible ) ); ?>"
+						<?php
+						if ( $chapter === $i ) :
+							?>
+							aria-current="page"<?php endif; ?>><?php echo esc_html( (string) $i ); ?></a>
 					<?php endfor; ?>
 				</nav>
 			<?php endif; ?>
@@ -1022,7 +1026,7 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 	}
 
 	public function render_search_results_list( $results, $state, $books ) {
-		$search_term = isset( $state['search'] ) ? trim( (string) $state['search'] ) : '';
+		$search_term    = isset( $state['search'] ) ? trim( (string) $state['search'] ) : '';
 		$is_search_mode = isset( $state['mode'] ) && 'search' === (string) $state['mode'];
 
 		if ( empty( $results['items'] ) || ! is_array( $results['items'] ) ) {
@@ -1132,7 +1136,7 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 			return '';
 		}
 
-		$base_args    = array(
+		$base_args = array(
 			'bdwp_livro'         => $state['book'],
 			'bdwp_pesquisa'      => $state['search'],
 			'bdwp_exata'         => $state['exact'],
@@ -1442,7 +1446,7 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 		if ( false === $bounds || ! is_array( $bounds ) ) {
 			$bounds_sql = 'SELECT MIN(id) AS min_id, MAX(id) AS max_id FROM `' . esc_sql( $table ) . '` WHERE ' . $where_sql;
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- WHERE is built from internal placeholders.
-			$row = $wpdb->get_row( $wpdb->prepare( $bounds_sql, $params ), ARRAY_A );
+			$row    = $wpdb->get_row( $wpdb->prepare( $bounds_sql, $params ), ARRAY_A );
 			$bounds = array(
 				'min' => isset( $row['min_id'] ) ? (int) $row['min_id'] : 0,
 				'max' => isset( $row['max_id'] ) ? (int) $row['max_id'] : 0,
@@ -1458,8 +1462,8 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 
 		$select_sql = 'SELECT id, testamento, livroseq, livro, capitulo, versiculo, palavra, published, hits FROM `' . esc_sql( $table ) . '` WHERE ' . $where_sql . ' AND id >= %d ORDER BY id ASC LIMIT 1';
 		for ( $attempt = 0; $attempt < 3; $attempt++ ) {
-			$random_id     = wp_rand( $min_id, $max_id );
-			$query_params  = $params;
+			$random_id      = wp_rand( $min_id, $max_id );
+			$query_params   = $params;
 			$query_params[] = $random_id;
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- WHERE is built from internal placeholders.
 			$verse = $wpdb->get_row( $wpdb->prepare( $select_sql, $query_params ) );
@@ -1620,8 +1624,8 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 		}
 		$bdwp70_versions = $this->get_bible_versions();
 		$books           = $this->get_books( $state['bible_id'] );
-		$bdwp70_books = $books;
-		$results      = array(
+		$bdwp70_books    = $books;
+		$results         = array(
 			'items'       => array(),
 			'total'       => 0,
 			'per_page'    => max( 1, (int) $atts['per_page'] ),
@@ -2060,9 +2064,9 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 					$language_code = isset( $version->language_code ) ? trim( (string) $version->language_code ) : '';
 					$item_label    = trim( $version_name . ( $language_code ? ' (' . $language_code . ')' : '' ) );
 					/* translators: %d: Bible version ID. */
-					$item_label    = $item_label ? $item_label : sprintf( __( 'Bíblia #%d', 'biblia-digital' ), $version_id );
-					$item_url      = $this->bible_version_switch_url( $version_id, $base_url );
-					$is_current    = $version_id === $active_id;
+					$item_label = $item_label ? $item_label : sprintf( __( 'Bíblia #%d', 'biblia-digital' ), $version_id );
+					$item_url   = $this->bible_version_switch_url( $version_id, $base_url );
+					$is_current = $version_id === $active_id;
 					?>
 					<a class="bdwp70__version-switcher-item <?php echo $is_current ? 'is-current' : ''; ?>" href="<?php echo esc_url( $item_url ); ?>" role="listitem" <?php echo $is_current ? 'aria-current="true"' : ''; ?>>
 						<span><?php echo esc_html( $version_name ? $version_name : $item_label ); ?></span>
@@ -2214,9 +2218,9 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 			);
 		}
 
-		$paged  = max( 1, (int) $state['paged'] );
-		$offset = ( $paged - 1 ) * $per_page;
-		$like   = '%' . $wpdb->esc_like( $search ) . '%';
+		$paged     = max( 1, (int) $state['paged'] );
+		$offset    = ( $paged - 1 ) * $per_page;
+		$like      = '%' . $wpdb->esc_like( $search ) . '%';
 		$cache_key = 'bdwp70_qv_' . md5(
 			wp_json_encode(
 				array(
@@ -2231,7 +2235,7 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 				)
 			)
 		);
-		$cached = get_transient( $cache_key );
+		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) && isset( $cached['items'], $cached['total'], $cached['mode'] ) ) {
 			return $cached;
 		}
@@ -2764,7 +2768,11 @@ body.bdwp70-page-with-sidebar .bdwp70__reader-main,
 				</header>
 				<nav class="bdwp70__chapter-picker-grid" aria-label="<?php esc_attr_e( 'Todos os capítulos do livro', 'biblia-digital' ); ?>">
 					<?php for ( $i = 1; $i <= $chapters; $i++ ) : ?>
-						<a class="<?php echo $chapter === $i ? 'is-current' : ''; ?>" href="<?php echo esc_url( $this->chapter_url( $book, $i, $books, $active_bible ) ); ?>"<?php if ( $chapter === $i ) : ?> aria-current="page"<?php endif; ?>><?php echo esc_html( (string) $i ); ?></a>
+						<a class="<?php echo $chapter === $i ? 'is-current' : ''; ?>" href="<?php echo esc_url( $this->chapter_url( $book, $i, $books, $active_bible ) ); ?>"
+						<?php
+						if ( $chapter === $i ) :
+							?>
+							aria-current="page"<?php endif; ?>><?php echo esc_html( (string) $i ); ?></a>
 					<?php endfor; ?>
 				</nav>
 				<div class="bdwp70__chapter-picker-meta">
@@ -2876,7 +2884,6 @@ jQuery(function($){
 });
 JS;
 		wp_add_inline_script( 'jquery', $script );
-
 	}
 
 	public function admin_menu() {
@@ -3003,15 +3010,45 @@ JS;
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 
+	/**
+	 * Builds settings-page URLs for the given tabs.
+	 *
+	 * Keeps add_query_arg() out of the markup so each attribute stays a single
+	 * short PHP block. The returned URLs are unescaped on purpose: escaping is
+	 * applied with esc_url() at the point of output.
+	 *
+	 * @param string[] $tabs Tab slugs.
+	 * @return array<string,string> Tab slug => URL.
+	 */
+	private function admin_tab_urls( $tabs ) {
+		$urls = array();
+
+		foreach ( $tabs as $tab ) {
+			$urls[ $tab ] = add_query_arg(
+				array(
+					'page' => 'bdwp70-settings',
+					'tab'  => $tab,
+				),
+				admin_url( 'options-general.php' )
+			);
+		}
+
+		return $urls;
+	}
+
 	private function render_admin_tab_overview( $versions, $active_bible, $books, $verses, $status, $progress, $error, $base ) {
 		$active_label = $this->admin_bible_version_label( $active_bible, $versions );
+
+		// Settings-tab URLs are built here so the markup below keeps one short
+		// PHP block per attribute. Escaping stays late, at the output point.
+		$tab_urls = $this->admin_tab_urls( array( 'import', 'versions', 'shortcodes', 'translation' ) );
 		?>
 		<div class="bdwp70-admin-hero">
 			<div>
 				<h2><?php esc_html_e( 'Painel enterprise da Bíblia Digital', 'biblia-digital' ); ?></h2>
 				<p><?php esc_html_e( 'Gerencie importação, versões bíblicas, tradução do frontend e shortcodes em seções separadas. O plugin cuida das funcionalidades persistentes; o tema deve cuidar apenas da apresentação visual.', 'biblia-digital' ); ?></p>
 			</div>
-			<a class="button button-primary" href="<?php echo esc_url( add_query_arg( array( 'page' => 'bdwp70-settings', 'tab' => 'import' ), admin_url( 'options-general.php' ) ) ); ?>"><?php esc_html_e( 'Importar Bíblia', 'biblia-digital' ); ?></a>
+			<a class="button button-primary" href="<?php echo esc_url( $tab_urls['import'] ); ?>"><?php esc_html_e( 'Importar Bíblia', 'biblia-digital' ); ?></a>
 		</div>
 
 		<div class="bdwp70-admin-cards bdwp70-admin-cards--summary">
@@ -3026,10 +3063,10 @@ JS;
 				<h3><?php esc_html_e( 'Links rápidos', 'biblia-digital' ); ?></h3>
 				<p><?php esc_html_e( 'Acesse diretamente as áreas mais usadas do plugin.', 'biblia-digital' ); ?></p>
 				<p class="bdwp70-admin-actions">
-					<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => 'bdwp70-settings', 'tab' => 'import' ), admin_url( 'options-general.php' ) ) ); ?>"><?php esc_html_e( 'Importar Bíblia', 'biblia-digital' ); ?></a>
-					<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => 'bdwp70-settings', 'tab' => 'versions' ), admin_url( 'options-general.php' ) ) ); ?>"><?php esc_html_e( 'Versões', 'biblia-digital' ); ?></a>
-					<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => 'bdwp70-settings', 'tab' => 'shortcodes' ), admin_url( 'options-general.php' ) ) ); ?>"><?php esc_html_e( 'Shortcodes', 'biblia-digital' ); ?></a>
-					<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => 'bdwp70-settings', 'tab' => 'translation' ), admin_url( 'options-general.php' ) ) ); ?>"><?php esc_html_e( 'Tradução do Frontend', 'biblia-digital' ); ?></a>
+					<a class="button" href="<?php echo esc_url( $tab_urls['import'] ); ?>"><?php esc_html_e( 'Importar Bíblia', 'biblia-digital' ); ?></a>
+					<a class="button" href="<?php echo esc_url( $tab_urls['versions'] ); ?>"><?php esc_html_e( 'Versões', 'biblia-digital' ); ?></a>
+					<a class="button" href="<?php echo esc_url( $tab_urls['shortcodes'] ); ?>"><?php esc_html_e( 'Shortcodes', 'biblia-digital' ); ?></a>
+					<a class="button" href="<?php echo esc_url( $tab_urls['translation'] ); ?>"><?php esc_html_e( 'Tradução do Frontend', 'biblia-digital' ); ?></a>
 				</p>
 			</div>
 			<div class="bdwp70-admin-box">
@@ -3039,8 +3076,14 @@ JS;
 						<tr><th><?php esc_html_e( 'Status', 'biblia-digital' ); ?></th><td><?php echo esc_html( $status ); ?></td></tr>
 						<tr><th><?php esc_html_e( 'Base/slug', 'biblia-digital' ); ?></th><td><code><?php echo esc_html( $base ); ?></code></td></tr>
 						<tr><th><?php esc_html_e( 'Última importação', 'biblia-digital' ); ?></th><td><?php echo esc_html( get_option( BDWP70_Activator::OPTION_IMPORTED, __( 'não registrada', 'biblia-digital' ) ) ); ?></td></tr>
-						<?php if ( $progress ) : ?><tr><th><?php esc_html_e( 'Progresso', 'biblia-digital' ); ?></th><td><?php echo esc_html( $progress ); ?></td></tr><?php endif; ?>
-						<?php if ( $error ) : ?><tr><th><?php esc_html_e( 'Último erro', 'biblia-digital' ); ?></th><td><?php echo esc_html( $error ); ?></td></tr><?php endif; ?>
+						<?php
+						if ( $progress ) :
+							?>
+							<tr><th><?php esc_html_e( 'Progresso', 'biblia-digital' ); ?></th><td><?php echo esc_html( $progress ); ?></td></tr><?php endif; ?>
+						<?php
+						if ( $error ) :
+							?>
+							<tr><th><?php esc_html_e( 'Último erro', 'biblia-digital' ); ?></th><td><?php echo esc_html( $error ); ?></td></tr><?php endif; ?>
 					</tbody>
 				</table>
 			</div>
@@ -3225,7 +3268,10 @@ JS;
 					<td>
 						<input type="hidden" id="bdwp70_title_image_id" name="bdwp70_title_image_id" value="<?php echo esc_attr( $title_image_id ); ?>">
 						<div id="bdwp70_title_image_preview" class="bdwp70-title-image-preview">
-							<?php if ( $title_image_url ) : ?><img src="<?php echo esc_url( $title_image_url ); ?>" alt=""><?php endif; ?>
+							<?php
+							if ( $title_image_url ) :
+								?>
+								<img src="<?php echo esc_url( $title_image_url ); ?>" alt=""><?php endif; ?>
 						</div>
 						<button type="button" class="button" id="bdwp70_select_title_image"><?php esc_html_e( 'Selecionar imagem', 'biblia-digital' ); ?></button>
 						<button type="button" class="button" id="bdwp70_remove_title_image" <?php echo $title_image_url ? '' : 'style="display:none"'; ?>><?php esc_html_e( 'Remover imagem', 'biblia-digital' ); ?></button>
@@ -3237,12 +3283,12 @@ JS;
 				<tr><th scope="row"><?php esc_html_e( 'Crédito público', 'biblia-digital' ); ?></th><td><label for="bdwp70_show_credit"><input type="checkbox" id="bdwp70_show_credit" name="bdwp70_show_credit" value="1" <?php checked( 1, (int) get_option( self::OPTION_CREDIT, 0 ) ); ?>> <?php esc_html_e( 'Exibir crédito com link para Estudo Bíblico no frontend.', 'biblia-digital' ); ?></label></td></tr>
 				<tr><th scope="row"><?php esc_html_e( 'Dados ao desinstalar', 'biblia-digital' ); ?></th><td><label for="bdwp70_delete_data_on_uninstall"><input type="checkbox" id="bdwp70_delete_data_on_uninstall" name="bdwp70_delete_data_on_uninstall" value="1" <?php checked( 1, (int) get_option( self::OPTION_DELETE_DATA_ON_UNINSTALL, 0 ) ); ?>> <?php esc_html_e( 'Apagar tabelas, opções e Bíblias importadas quando o plugin for excluído.', 'biblia-digital' ); ?></label><p class="description"><strong><?php esc_html_e( 'Atenção:', 'biblia-digital' ); ?></strong> <?php esc_html_e( 'desativar o plugin nunca remove dados. Ao excluir, os dados também são preservados por padrão.', 'biblia-digital' ); ?></p></td></tr>
 				<?php
-				$sitemap_enabled    = (int) get_option( self::OPTION_SITEMAP_ENABLED, 1 );
-				$sitemap_incl_v     = (int) get_option( BDWP70_Sitemap::OPTION_INCL_VERSES, 1 );
-				$sitemap_per_page   = absint( get_option( BDWP70_Sitemap::OPTION_PER_PAGE, 2000 ) );
-				$sitemap_base       = $this->seo_base();
-				$sitemap_index_url  = home_url( '/' . $sitemap_base . '-sitemap.xml' );
-				$wp_sitemap_url     = home_url( '/wp-sitemap.xml' );
+				$sitemap_enabled   = (int) get_option( self::OPTION_SITEMAP_ENABLED, 1 );
+				$sitemap_incl_v    = (int) get_option( BDWP70_Sitemap::OPTION_INCL_VERSES, 1 );
+				$sitemap_per_page  = absint( get_option( BDWP70_Sitemap::OPTION_PER_PAGE, 2000 ) );
+				$sitemap_base      = $this->seo_base();
+				$sitemap_index_url = home_url( '/' . $sitemap_base . '-sitemap.xml' );
+				$wp_sitemap_url    = home_url( '/wp-sitemap.xml' );
 				?>
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Sitemap XML', 'biblia-digital' ); ?></th>
@@ -3329,8 +3375,8 @@ JS;
 
 							// Reutiliza a lógica de resolução: ativa com conteúdo ou fallback.
 							if ( $diag_active_id > 0 ) {
-								$has_books   = (int) BDWP70_Activator::count_books( $diag_active_id ) > 0;
-								$has_verses  = (int) BDWP70_Activator::count_verses( $diag_active_id ) > 0;
+								$has_books       = (int) BDWP70_Activator::count_books( $diag_active_id ) > 0;
+								$has_verses      = (int) BDWP70_Activator::count_verses( $diag_active_id ) > 0;
 								$diag_sitemap_id = ( $has_books && $has_verses ) ? $diag_active_id : 0;
 							}
 
@@ -3444,7 +3490,10 @@ JS;
 							<td>
 								<p><label><?php esc_html_e( 'Ícone', 'biblia-digital' ); ?><br><input type="text" class="small-text" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][icon]" value="<?php echo esc_attr( $card['icon'] ); ?>"></label></p>
 								<p><label><?php esc_html_e( 'Cor', 'biblia-digital' ); ?><br><select name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][style]">
-									<?php foreach ( $quick_card_styles as $style_key => $style_label ) : ?><option value="<?php echo esc_attr( $style_key ); ?>" <?php selected( $card['style'], $style_key ); ?>><?php echo esc_html( $style_label ); ?></option><?php endforeach; ?>
+									<?php
+									foreach ( $quick_card_styles as $style_key => $style_label ) :
+										?>
+										<option value="<?php echo esc_attr( $style_key ); ?>" <?php selected( $card['style'], $style_key ); ?>><?php echo esc_html( $style_label ); ?></option><?php endforeach; ?>
 								</select></label></p>
 							</td>
 						</tr>
@@ -3481,8 +3530,14 @@ JS;
 				<?php foreach ( $report as $label => $value ) : ?>
 					<tr><th><code><?php echo esc_html( $label ); ?></code></th><td><?php echo esc_html( (string) $value ); ?></td></tr>
 				<?php endforeach; ?>
-				<?php if ( $progress ) : ?><tr><th><code>progress</code></th><td><?php echo esc_html( $progress ); ?></td></tr><?php endif; ?>
-				<?php if ( $error ) : ?><tr><th><code>last_error</code></th><td><?php echo esc_html( $error ); ?></td></tr><?php endif; ?>
+				<?php
+				if ( $progress ) :
+					?>
+					<tr><th><code>progress</code></th><td><?php echo esc_html( $progress ); ?></td></tr><?php endif; ?>
+				<?php
+				if ( $error ) :
+					?>
+					<tr><th><code>last_error</code></th><td><?php echo esc_html( $error ); ?></td></tr><?php endif; ?>
 			</tbody>
 		</table>
 		<p><button type="button" class="button bdwp70-copy-shortcode" data-copy="<?php echo esc_attr( wp_json_encode( $report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) ); ?>"><?php esc_html_e( 'Copiar relatório técnico', 'biblia-digital' ); ?></button></p>
@@ -3817,7 +3872,15 @@ JS;
 		update_option( BDWP70_Activator::OPTION_STATUS, 'pending' );
 		update_option( BDWP70_Activator::OPTION_ERROR, 'A importação nativa por SQL foi removida do pacote público. Use um ZIP contendo books.csv e verses.csv.' );
 		update_option( BDWP70_Activator::OPTION_PROGRESS, 'O pacote público não distribui traduções bíblicas; a licença do pacote importado é responsabilidade do usuário final.' );
-		wp_safe_redirect( add_query_arg( array( 'bdwp70_reimported' => '0', 'tab' => 'import' ), admin_url( 'options-general.php?page=bdwp70-settings' ) ) );
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'bdwp70_reimported' => '0',
+					'tab'               => 'import',
+				),
+				admin_url( 'options-general.php?page=bdwp70-settings' )
+			)
+		);
 		exit;
 	}
 
@@ -3914,7 +3977,15 @@ JS;
 
 		$id = BDWP70_Activator::import_uploaded_bible_from_csv( $books_file, $verses_file, $name, $lang, $filename );
 		$this->remove_directory( $tmp_dir );
-		wp_safe_redirect( add_query_arg( array( 'bdwp70_reimported' => $id ? '1' : '0', 'tab' => 'import' ), admin_url( 'options-general.php?page=bdwp70-settings' ) ) );
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'bdwp70_reimported' => $id ? '1' : '0',
+					'tab'               => 'import',
+				),
+				admin_url( 'options-general.php?page=bdwp70-settings' )
+			)
+		);
 		exit;
 	}
 
@@ -4231,7 +4302,15 @@ JS;
 	 */
 	private function redirect_upload_error( $message ) {
 		update_option( BDWP70_Activator::OPTION_ERROR, sanitize_text_field( $message ) );
-		wp_safe_redirect( add_query_arg( array( 'bdwp70_reimported' => '0', 'tab' => 'import' ), admin_url( 'options-general.php?page=bdwp70-settings' ) ) );
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'bdwp70_reimported' => '0',
+					'tab'               => 'import',
+				),
+				admin_url( 'options-general.php?page=bdwp70-settings' )
+			)
+		);
 		exit;
 	}
 

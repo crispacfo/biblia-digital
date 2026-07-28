@@ -234,8 +234,8 @@ class BDWP70_Activator {
 	public static function count_books( $bible_id = null ) {
 		global $wpdb;
 
-		$table = self::books_table();
-		$key   = 'bdwp70_books_count_' . ( null === $bible_id ? 'all' : absint( $bible_id ) );
+		$table  = self::books_table();
+		$key    = 'bdwp70_books_count_' . ( null === $bible_id ? 'all' : absint( $bible_id ) );
 		$cached = get_transient( $key );
 		if ( false !== $cached ) {
 			return (int) $cached;
@@ -254,8 +254,8 @@ class BDWP70_Activator {
 	public static function count_verses( $bible_id = null ) {
 		global $wpdb;
 
-		$table = self::verses_table();
-		$key   = 'bdwp70_verses_count_' . ( null === $bible_id ? 'all' : absint( $bible_id ) );
+		$table  = self::verses_table();
+		$key    = 'bdwp70_verses_count_' . ( null === $bible_id ? 'all' : absint( $bible_id ) );
 		$cached = get_transient( $key );
 		if ( false !== $cached ) {
 			return (int) $cached;
@@ -492,7 +492,7 @@ class BDWP70_Activator {
 		}
 
 		self::create_tables_safe_for_version_lookup();
-		$exists = (bool) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM `' . esc_sql( self::versions_table() ) . '` WHERE id = %d LIMIT 1', $bible_id ) );
+		$exists                    = (bool) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM `' . esc_sql( self::versions_table() ) . '` WHERE id = %d LIMIT 1', $bible_id ) );
 		$exists_cache[ $bible_id ] = $exists;
 		set_transient( $key, $exists ? '1' : '0', 12 * HOUR_IN_SECONDS );
 		return $exists;

@@ -16,6 +16,9 @@
  * @package BibliaDigital
  */
 
+// phpcs:disable Squiz.Commenting.FunctionComment, Squiz.Commenting.InlineComment.InvalidEndChar, Generic.Commenting.DocComment.MissingShort -- Behavior is documented in the file-level docblock and inline block comments; per-method docblocks are intentionally omitted, matching the activator convention.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Sitemap reads plugin-owned Bible tables behind its own object-cache/transient layer (CACHE_GROUP/CACHE_TTL).
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -82,7 +85,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 					'loc'     => esc_url_raw( $this->bible_root_url( $bible_id ) ),
 					'lastmod' => $lastmod,
 				);
-				$remaining--;
+				--$remaining;
 			}
 			$offset = 0;
 		} else {
@@ -94,7 +97,10 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		foreach ( $books as $book ) {
 			$slug = $this->plugin->book_slug_from_seq( (int) $book->livro_seq, $books );
 			if ( $slug ) {
-				$book_slugs[] = array( 'seq' => (int) $book->livro_seq, 'slug' => $slug );
+				$book_slugs[] = array(
+					'seq'  => (int) $book->livro_seq,
+					'slug' => $slug,
+				);
 			}
 		}
 		$b_total = count( $book_slugs );
@@ -110,7 +116,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 						'loc'     => esc_url_raw( $book_url ),
 						'lastmod' => $lastmod,
 					);
-					$remaining--;
+					--$remaining;
 				}
 				$offset = 0;
 			} else {
@@ -131,15 +137,17 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 				$c_rows  = $this->get_chapters_paged( $bible_id, $c_limit, $offset );
 				foreach ( $c_rows as $row ) {
 					$entries[] = array(
-						'loc'     => esc_url_raw( $this->plugin->chapter_url(
-							(int) $row->livroseq,
-							(int) $row->capitulo,
-							$books,
-							$bible_id
-						) ),
+						'loc'     => esc_url_raw(
+							$this->plugin->chapter_url(
+								(int) $row->livroseq,
+								(int) $row->capitulo,
+								$books,
+								$bible_id
+							)
+						),
 						'lastmod' => $lastmod,
 					);
-					$remaining--;
+					--$remaining;
 				}
 				$offset = 0;
 			} else {
@@ -160,16 +168,18 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 				$d_rows  = $this->get_verses_paged( $bible_id, $d_limit, $offset );
 				foreach ( $d_rows as $row ) {
 					$entries[] = array(
-						'loc'     => esc_url_raw( $this->plugin->verse_url(
-							(int) $row->livroseq,
-							(int) $row->capitulo,
-							(int) $row->versiculo,
-							$books,
-							$bible_id
-						) ),
+						'loc'     => esc_url_raw(
+							$this->plugin->verse_url(
+								(int) $row->livroseq,
+								(int) $row->capitulo,
+								(int) $row->versiculo,
+								$books,
+								$bible_id
+							)
+						),
 						'lastmod' => $lastmod,
 					);
-					$remaining--;
+					--$remaining;
 				}
 			}
 		}
@@ -203,7 +213,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 		// Bloco B
 		foreach ( $books as $book ) {
 			if ( $this->plugin->book_slug_from_seq( (int) $book->livro_seq, $books ) ) {
-				$total++;
+				++$total;
 			}
 		}
 
@@ -300,7 +310,6 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 	}
 
 	// =========================================================================
-	// Contagens	// =========================================================================
 	// Contagens com cache versionado pelo lastmod
 	// =========================================================================
 
@@ -438,7 +447,6 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 	}
 
 	// =========================================================================
-	// Queries	// =========================================================================
 	// Queries paginadas com LIMIT/OFFSET reais
 	// =========================================================================
 
@@ -495,7 +503,6 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 	}
 
 	/**
-	 * Versículos de toda	/**
 	 * Versículos de toda a Bíblia, paginados.
 	 *
 	 * @return object[]  Cada objeto: livroseq, capitulo, versiculo.
@@ -549,7 +556,6 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 
 
 	/**
-	 * Retorna livros para o sitemap	/**
 	 * Retorna livros para o sitemap com fallback robusto.
 	 *
 	 * O sitemap não pode ficar vazio apenas porque a tabela de livros está
@@ -595,7 +601,7 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 			return $books;
 		}
 
-		$verses_table    = BDWP70_Activator::verses_table();
+		$verses_table   = BDWP70_Activator::verses_table();
 		$published_only = $this->should_filter_published( $verses_table, $bible_id );
 		if ( $published_only ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -629,7 +635,6 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 	}
 
 	/**
-	 * Normaliza objetos de livros	/**
 	 * Normaliza objetos de livros e preenche nomes ausentes com a ordem protestante.
 	 *
 	 * @param object[] $books Livros brutos.
@@ -735,7 +740,6 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 	}
 
 	/**
-	 * Verifica existência de coluna	/**
 	 * Verifica existência de coluna com cache local.
 	 *
 	 * @param string $table Tabela.
@@ -772,19 +776,72 @@ class BDWP70_Sitemap_Provider extends WP_Sitemaps_Provider {
 	 */
 	private function canonical_book_name( $seq ) {
 		$names = array(
-			1 => 'Gênesis', 2 => 'Êxodo', 3 => 'Levítico', 4 => 'Números', 5 => 'Deuteronômio',
-			6 => 'Josué', 7 => 'Juízes', 8 => 'Rute', 9 => '1 Samuel', 10 => '2 Samuel',
-			11 => '1 Reis', 12 => '2 Reis', 13 => '1 Crônicas', 14 => '2 Crônicas', 15 => 'Esdras',
-			16 => 'Neemias', 17 => 'Ester', 18 => 'Jó', 19 => 'Salmos', 20 => 'Provérbios',
-			21 => 'Eclesiastes', 22 => 'Cânticos', 23 => 'Isaías', 24 => 'Jeremias', 25 => 'Lamentações',
-			26 => 'Ezequiel', 27 => 'Daniel', 28 => 'Oséias', 29 => 'Joel', 30 => 'Amós',
-			31 => 'Obadias', 32 => 'Jonas', 33 => 'Miquéias', 34 => 'Naum', 35 => 'Habacuque',
-			36 => 'Sofonias', 37 => 'Ageu', 38 => 'Zacarias', 39 => 'Malaquias', 40 => 'Mateus',
-			41 => 'Marcos', 42 => 'Lucas', 43 => 'João', 44 => 'Atos', 45 => 'Romanos',
-			46 => '1 Coríntios', 47 => '2 Coríntios', 48 => 'Gálatas', 49 => 'Efésios', 50 => 'Filipenses',
-			51 => 'Colossenses', 52 => '1 Tessalonicenses', 53 => '2 Tessalonicenses', 54 => '1 Timóteo', 55 => '2 Timóteo',
-			56 => 'Tito', 57 => 'Filemom', 58 => 'Hebreus', 59 => 'Tiago', 60 => '1 Pedro',
-			61 => '2 Pedro', 62 => '1 João', 63 => '2 João', 64 => '3 João', 65 => 'Judas', 66 => 'Apocalipse',
+			1  => 'Gênesis',
+			2  => 'Êxodo',
+			3  => 'Levítico',
+			4  => 'Números',
+			5  => 'Deuteronômio',
+			6  => 'Josué',
+			7  => 'Juízes',
+			8  => 'Rute',
+			9  => '1 Samuel',
+			10 => '2 Samuel',
+			11 => '1 Reis',
+			12 => '2 Reis',
+			13 => '1 Crônicas',
+			14 => '2 Crônicas',
+			15 => 'Esdras',
+			16 => 'Neemias',
+			17 => 'Ester',
+			18 => 'Jó',
+			19 => 'Salmos',
+			20 => 'Provérbios',
+			21 => 'Eclesiastes',
+			22 => 'Cânticos',
+			23 => 'Isaías',
+			24 => 'Jeremias',
+			25 => 'Lamentações',
+			26 => 'Ezequiel',
+			27 => 'Daniel',
+			28 => 'Oséias',
+			29 => 'Joel',
+			30 => 'Amós',
+			31 => 'Obadias',
+			32 => 'Jonas',
+			33 => 'Miquéias',
+			34 => 'Naum',
+			35 => 'Habacuque',
+			36 => 'Sofonias',
+			37 => 'Ageu',
+			38 => 'Zacarias',
+			39 => 'Malaquias',
+			40 => 'Mateus',
+			41 => 'Marcos',
+			42 => 'Lucas',
+			43 => 'João',
+			44 => 'Atos',
+			45 => 'Romanos',
+			46 => '1 Coríntios',
+			47 => '2 Coríntios',
+			48 => 'Gálatas',
+			49 => 'Efésios',
+			50 => 'Filipenses',
+			51 => 'Colossenses',
+			52 => '1 Tessalonicenses',
+			53 => '2 Tessalonicenses',
+			54 => '1 Timóteo',
+			55 => '2 Timóteo',
+			56 => 'Tito',
+			57 => 'Filemom',
+			58 => 'Hebreus',
+			59 => 'Tiago',
+			60 => '1 Pedro',
+			61 => '2 Pedro',
+			62 => '1 João',
+			63 => '2 João',
+			64 => '3 João',
+			65 => 'Judas',
+			66 => 'Apocalipse',
 		);
 
 		$seq = absint( $seq );
