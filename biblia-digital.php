@@ -98,9 +98,12 @@ register_activation_hook( __FILE__, array( 'BDWP70_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'BDWP70_Activator', 'deactivate' ) );
 
 // Multisite: prepare tables/options automatically when a new site is created
-// while the plugin is network-active.
+// while the plugin is network-active. Only wp_initialize_site is registered:
+// the legacy wpmu_new_blog hook is deprecated since WP 5.1 and the plugin's
+// minimum is WP 6.6, so registering it would only emit a deprecation notice on
+// site creation. BDWP70_Activator::activate_new_blog() is kept as a callable
+// for third-party integrations that still hook the legacy action themselves.
 add_action( 'wp_initialize_site', array( 'BDWP70_Activator', 'activate_new_site' ), 10, 2 );
-add_action( 'wpmu_new_blog', array( 'BDWP70_Activator', 'activate_new_blog' ), 10, 6 );
 
 if ( ! function_exists( 'bdwp70_bootstrap' ) ) {
 	add_action( 'plugins_loaded', 'bdwp70_bootstrap' );

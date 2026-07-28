@@ -161,7 +161,12 @@ class BDWP70_Activator {
 	}
 
 	/**
-	 * Backward-compatible hook for older multisite site-creation action.
+	 * Backward-compatible callback for the legacy multisite site-creation action.
+	 *
+	 * No longer registered against wpmu_new_blog: that action is deprecated since
+	 * WP 5.1 and the plugin requires WP 6.6, so site creation is handled by
+	 * activate_new_site() on wp_initialize_site. Kept public so integrations that
+	 * still hook the legacy action themselves keep working.
 	 *
 	 * @param int $blog_id New blog ID.
 	 */
@@ -974,7 +979,10 @@ class BDWP70_Activator {
 			return false;
 		}
 		$delimiter = substr_count( $line, ';' ) > substr_count( $line, ',' ) ? ';' : ',';
-		return str_getcsv( $line, $delimiter );
+		// PHP 8.4 deprecates calling str_getcsv() without an explicit $escape.
+		// The historical default ('\\') is passed to preserve parsing behavior
+		// across PHP 7.4–8.5.
+		return str_getcsv( $line, $delimiter, '"', '\\' );
 	}
 
 	private static function normalize_csv_header( $data ) {
