@@ -57,7 +57,7 @@ class BDWP70_Activator {
 		add_option( self::OPTION_DELETE_DATA_ON_UNINSTALL, 0 );
 		update_option( 'bdwp70_flush_rewrite', 1 );
 		update_option( self::OPTION_STATUS, 'pending' );
-		update_option( self::OPTION_PROGRESS, __( 'Biblia Digital is active. To get started, import a Bible as a ZIP file containing books.csv and verses.csv.', 'biblia-digital' ) );
+		update_option( self::OPTION_PROGRESS, __( 'Biblia Digital is active. To get started, import a Bible as a ZIP file containing books.csv and verses.csv.', 'estudobiblico-biblia-digital' ) );
 
 		// Opções padrão do sitemap — add_option não sobrescreve se já existirem.
 		add_option( 'bdwp70_sitemap_enabled', 1 );
@@ -112,13 +112,84 @@ class BDWP70_Activator {
 		// A fresh install reached here without activation (legacy loader path).
 		if ( '' === $stored ) {
 			add_option( self::OPTION_STATUS, 'pending' );
-			add_option( self::OPTION_PROGRESS, __( 'Biblia Digital is active. To get started, import a Bible as a ZIP file containing books.csv and verses.csv.', 'biblia-digital' ) );
+			add_option( self::OPTION_PROGRESS, __( 'Biblia Digital is active. To get started, import a Bible as a ZIP file containing books.csv and verses.csv.', 'estudobiblico-biblia-digital' ) );
 		}
+
+		// 1.1.70: apaga o índice de sitemap que versões anteriores gravavam na raiz
+		// do WordPress. Sem isso o arquivo obsoleto continuaria sendo servido no
+		// lugar da rota dinâmica. Idempotente e restrita a arquivos do próprio plugin.
+		if ( class_exists( 'BDWP70_Sitemap' ) ) {
+			BDWP70_Sitemap::cleanup_legacy_static_index( get_option( 'bdwp70_seo_base', 'biblia-digital' ) );
+		}
+
+		// 1.1.70: migra traduções personalizadas de WP_LANG_DIR para uploads.
+		self::migrate_custom_translations();
 
 		update_option( 'bdwp70_flush_rewrite', 1 );
 		update_option( self::OPTION_VERSION, defined( 'BDWP70_VERSION' ) ? BDWP70_VERSION : '0' );
 
 		delete_transient( $lock );
+	}
+
+	/**
+	 * Copia traduções personalizadas de WP_LANG_DIR para a subpasta em uploads.
+	 *
+	 * Contrato desta migração:
+	 * - nunca apaga o arquivo de origem;
+	 * - nunca sobrescreve um arquivo já existente no destino;
+	 * - é idempotente: rodar de novo não produz efeito adicional;
+	 * - falha em silêncio quando o filesystem não permite escrita, caso em que
+	 *   BDWP70_Plugin::load_custom_translations() ainda lê o arquivo antigo.
+	 *
+	 * @return void
+	 */
+	private static function migrate_custom_translations() {
+		if ( ! class_exists( 'BDWP70_Plugin' ) || ! defined( 'WP_LANG_DIR' ) ) {
+			return;
+		}
+
+		$legacy_dir = trailingslashit( WP_LANG_DIR ) . 'plugins/';
+		if ( ! is_dir( $legacy_dir ) || ! is_readable( $legacy_dir ) ) {
+			return;
+		}
+
+		$legacy_domain = BDWP70_Plugin::LEGACY_TEXT_DOMAIN;
+		$sources       = glob( $legacy_dir . $legacy_domain . '-*.{po,mo}', GLOB_BRACE );
+		if ( empty( $sources ) || ! is_array( $sources ) ) {
+			return;
+		}
+
+		$dest_dir = BDWP70_Plugin::custom_translations_dir( true );
+		if ( '' === $dest_dir || ! wp_is_writable( $dest_dir ) ) {
+			return;
+		}
+
+		global $wp_filesystem;
+		if ( ! $wp_filesystem ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		if ( ! $wp_filesystem ) {
+			return;
+		}
+
+		foreach ( $sources as $source ) {
+			if ( ! is_file( $source ) || ! is_readable( $source ) ) {
+				continue;
+			}
+
+			$basename = basename( $source );
+			$suffix   = substr( $basename, strlen( $legacy_domain ) );
+			$target   = $dest_dir . BDWP70_Plugin::TEXT_DOMAIN . $suffix;
+
+			// Um arquivo já migrado (ou enviado depois) tem precedência absoluta.
+			if ( $wp_filesystem->exists( $target ) ) {
+				continue;
+			}
+
+			$wp_filesystem->copy( $source, $target, false, FS_CHMOD_FILE );
+		}
 	}
 
 	/**
@@ -437,7 +508,7 @@ class BDWP70_Activator {
 		self::create_tables();
 		update_option( self::OPTION_STATUS, 'pending' );
 		update_option( self::OPTION_ERROR, 'A base bíblica nativa não é distribuída neste pacote. Importe uma Bíblia em formato ZIP contendo books.csv e verses.csv.' );
-		update_option( self::OPTION_PROGRESS, __( 'Import is available only through an administrator-supplied ZIP/CSV.', 'biblia-digital' ) );
+		update_option( self::OPTION_PROGRESS, __( 'Import is available only through an administrator-supplied ZIP/CSV.', 'estudobiblico-biblia-digital' ) );
 		return false;
 	}
 
@@ -775,7 +846,7 @@ class BDWP70_Activator {
 		update_option( self::OPTION_IMPORTED, current_time( 'mysql' ) );
 		update_option( self::OPTION_STATUS, 'done' );
 		/* translators: %s: formatted number of imported verses. */
-		update_option( self::OPTION_PROGRESS, sprintf( __( 'Upload complete: %s verses imported.', 'biblia-digital' ), number_format_i18n( $count ) ) );
+		update_option( self::OPTION_PROGRESS, sprintf( __( 'Upload complete: %s verses imported.', 'estudobiblico-biblia-digital' ), number_format_i18n( $count ) ) );
 		// Atualiza lastmod do sitemap após importação bem-sucedida e invalida caches leves.
 		update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
 		self::clear_runtime_caches();
@@ -917,7 +988,7 @@ class BDWP70_Activator {
 				}
 				$count += count( $batch );
 				/* translators: %s: formatted number of imported verses. */
-				update_option( self::OPTION_PROGRESS, sprintf( __( 'Imported %s verses.', 'biblia-digital' ), number_format_i18n( $count ) ) );
+				update_option( self::OPTION_PROGRESS, sprintf( __( 'Imported %s verses.', 'estudobiblico-biblia-digital' ), number_format_i18n( $count ) ) );
 				$batch = array();
 			}
 		}

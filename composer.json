@@ -1,5 +1,5 @@
 {
-	"name": "claudio-crispim/biblia-digital",
+	"name": "crispacfo/estudobiblico-biblia-digital",
 	"description": "Display, search, and import Bible texts in WordPress using shortcodes, widgets, and a Gutenberg block.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",

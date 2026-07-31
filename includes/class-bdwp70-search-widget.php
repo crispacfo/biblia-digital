@@ -23,10 +23,10 @@ class BDWP70_Search_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 			'bdwp70_search',
-			__( 'Bíblia Digital - Busca', 'biblia-digital' ),
+			__( 'Bíblia Digital - Busca', 'estudobiblico-biblia-digital' ),
 			array(
 				'classname'   => 'bdwp70_search_widget',
-				'description' => __( 'Exibe um formulário de pesquisa separado para a Bíblia Digital.', 'biblia-digital' ),
+				'description' => __( 'Exibe um formulário de pesquisa separado para a Bíblia Digital.', 'estudobiblico-biblia-digital' ),
 			)
 		);
 	}
@@ -44,8 +44,8 @@ class BDWP70_Search_Widget extends WP_Widget {
 		}
 
 		wp_enqueue_style( 'bdwp70-frontend' );
-		$title       = isset( $instance['title'] ) ? (string) $instance['title'] : __( 'Pesquisar na Bíblia', 'biblia-digital' );
-		$placeholder = isset( $instance['placeholder'] ) ? (string) $instance['placeholder'] : __( 'Digite uma palavra ou frase', 'biblia-digital' );
+		$title       = isset( $instance['title'] ) ? (string) $instance['title'] : __( 'Pesquisar na Bíblia', 'estudobiblico-biblia-digital' );
+		$placeholder = isset( $instance['placeholder'] ) ? (string) $instance['placeholder'] : __( 'Digite uma palavra ou frase', 'estudobiblico-biblia-digital' );
 		$show_book   = isset( $instance['show_book'] ) ? (int) $instance['show_book'] : 1;
 
 		echo isset( $args['before_widget'] ) ? wp_kses_post( $args['before_widget'] ) : '';
@@ -69,25 +69,25 @@ class BDWP70_Search_Widget extends WP_Widget {
 	 * @return void
 	 */
 	public function form( $instance ) {
-		$title       = isset( $instance['title'] ) ? (string) $instance['title'] : __( 'Pesquisar na Bíblia', 'biblia-digital' );
-		$placeholder = isset( $instance['placeholder'] ) ? (string) $instance['placeholder'] : __( 'Digite uma palavra ou frase', 'biblia-digital' );
+		$title       = isset( $instance['title'] ) ? (string) $instance['title'] : __( 'Pesquisar na Bíblia', 'estudobiblico-biblia-digital' );
+		$placeholder = isset( $instance['placeholder'] ) ? (string) $instance['placeholder'] : __( 'Digite uma palavra ou frase', 'estudobiblico-biblia-digital' );
 		$show_book   = isset( $instance['show_book'] ) ? (int) $instance['show_book'] : 1;
 		?>
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Título:', 'biblia-digital' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Título:', 'estudobiblico-biblia-digital' ); ?></label>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
 		</p>
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'placeholder' ) ); ?>"><?php esc_html_e( 'Texto do campo:', 'biblia-digital' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'placeholder' ) ); ?>"><?php esc_html_e( 'Texto do campo:', 'estudobiblico-biblia-digital' ); ?></label>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'placeholder' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'placeholder' ) ); ?>" type="text" value="<?php echo esc_attr( $placeholder ); ?>">
 		</p>
 		<p>
 			<label>
 				<input type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'show_book' ) ); ?>" value="1" <?php checked( 1, $show_book ); ?>>
-				<?php esc_html_e( 'Permitir escolher o livro na busca', 'biblia-digital' ); ?>
+				<?php esc_html_e( 'Permitir escolher o livro na busca', 'estudobiblico-biblia-digital' ); ?>
 			</label>
 		</p>
-		<p><em><?php esc_html_e( 'A busca sempre usa a Bíblia ativa definida em Configurações > Bíblia Digital.', 'biblia-digital' ); ?></em></p>
+		<p><em><?php esc_html_e( 'A busca sempre usa a Bíblia ativa definida em Configurações > Bíblia Digital.', 'estudobiblico-biblia-digital' ); ?></em></p>
 		<?php
 	}
 
@@ -100,8 +100,8 @@ class BDWP70_Search_Widget extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 		return array(
-			'title'       => isset( $new_instance['title'] ) ? sanitize_text_field( $new_instance['title'] ) : __( 'Pesquisar na Bíblia', 'biblia-digital' ),
-			'placeholder' => isset( $new_instance['placeholder'] ) ? sanitize_text_field( $new_instance['placeholder'] ) : __( 'Digite uma palavra ou frase', 'biblia-digital' ),
+			'title'       => isset( $new_instance['title'] ) ? sanitize_text_field( $new_instance['title'] ) : __( 'Pesquisar na Bíblia', 'estudobiblico-biblia-digital' ),
+			'placeholder' => isset( $new_instance['placeholder'] ) ? sanitize_text_field( $new_instance['placeholder'] ) : __( 'Digite uma palavra ou frase', 'estudobiblico-biblia-digital' ),
 			'show_book'   => ! empty( $new_instance['show_book'] ) ? 1 : 0,
 		);
 	}

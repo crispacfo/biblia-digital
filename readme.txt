@@ -1,10 +1,10 @@
-=== Bíblia Digital ===
-Contributors: claudio-crispim
+=== EstudoBiblico Bíblia Digital ===
+Contributors: crispacfo
 Tags: bible, scripture, search, shortcode, gutenberg
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1.69
+Stable tag: 1.1.70
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Publish, search, and import Bible texts in WordPress with shortcodes, widgets, a
 
 == Description ==
 
-Biblia Digital lets site administrators publish locally stored Bible content in WordPress using plugin-owned database tables, friendly URLs, shortcodes, widgets, and a search block.
+EstudoBiblico Bíblia Digital lets site administrators publish locally stored Bible content in WordPress using plugin-owned database tables, friendly URLs, shortcodes, widgets, and a search block.
 
 This public package does not include copyrighted Bible texts, SQL dumps, or proprietary translations. The site administrator imports licensed Bible data with a ZIP file that contains `books.csv` and `verses.csv`.
 
@@ -259,7 +259,7 @@ After changing the Bible URL base in the plugin settings, go to Settings > Perma
 == Installation ==
 
 1. Upload the plugin folder to `/wp-content/plugins/`, or install the ZIP file from the WordPress admin panel.
-2. Activate Biblia Digital.
+2. Activate EstudoBiblico Bíblia Digital.
 3. Go to Settings > Biblia Digital.
 4. Open the Import Bible tab.
 5. Import a ZIP file containing `books.csv` and `verses.csv`.
@@ -316,6 +316,9 @@ This plugin is licensed under GPLv2 or later. Imported Bible data must be public
 
 == Upgrade Notice ==
 
+= 1.1.70 =
+New public name and slug. The Bible URLs, shortcodes and stored options are unchanged. Custom translation files uploaded by the administrator move to the uploads directory automatically; the previous copies are kept and still read.
+
 = 1.1.65 =
 Remove o card automático que estreitava os versículos e adiciona seletor compacto de capítulos no topo do leitor.
 
@@ -332,6 +335,17 @@ Adds an organized admin panel with enterprise-style tabs and documents all short
 Keeps the functional translation selector below the book lists and improves dropdown stacking.
 
 == Changelog ==
+
+= 1.1.70 =
+* Nova identidade pública: nome de exibição `EstudoBiblico Bíblia Digital`, slug e text domain `estudobiblico-biblia-digital`, e `Contributors: crispacfo`.
+* Adequações solicitadas na revisão do WordPress.org.
+* CSS e JavaScript de compatibilidade de tema deixam de ser impressos como `<style>`/`<script>` e passam a usar `wp_register_style()`, `wp_register_script()`, `wp_add_inline_style()` e `wp_add_inline_script()`, carregados apenas nas páginas da Bíblia.
+* Sitemap: removida a gravação do índice físico na raiz do WordPress. As URLs públicas continuam as mesmas, servidas dinamicamente pelas rotas já existentes. O arquivo remanescente de versões anteriores é apagado na atualização, e apenas quando comprovadamente gerado pelo plugin.
+* Traduções personalizadas enviadas pelo administrador passam a ser gravadas em uma subpasta própria dentro de `wp_upload_dir()`, por site, protegida contra acesso direto. `WP_LANG_DIR` e a pasta do plugin não são mais usados como destino de escrita; arquivos antigos são copiados sem serem apagados e continuam sendo lidos como fallback.
+* Revisão de nonces, capabilities e sanitização nas ações administrativas.
+* Auditoria dos avisos administrativos quanto à Diretriz 11.
+* Pacote distribuído deixa de incluir `.po` e `.mo`: as traduções passam a vir do translate.wordpress.org.
+* Preservados URLs públicas, shortcodes, opções, tabelas, hooks, handles e o prefixo BDWP70.
 
 = 1.1.69 =
 * Metadados: cabeçalho do plugin adequado aos requisitos oficiais do WordPress.org.

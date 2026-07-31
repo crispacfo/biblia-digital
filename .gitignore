@@ -25,3 +25,5 @@ dist/
 build/
 *.zip
 phpcs-report.xml
+.phpunit.result.cache
+.phpunit.cache/

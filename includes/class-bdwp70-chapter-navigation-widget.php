@@ -24,10 +24,10 @@ class BDWP70_Chapter_Navigation_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 			'bdwp70_chapter_navigation',
-			__( 'Bíblia Digital - Capítulos do livro atual', 'biblia-digital' ),
+			__( 'Bíblia Digital - Capítulos do livro atual', 'estudobiblico-biblia-digital' ),
 			array(
 				'classname'                   => 'bdwp70_chapter_navigation_widget',
-				'description'                 => __( 'Exibe um card com o título do livro, o capítulo atual, grade de capítulos e tradução ativa nas páginas da Bíblia.', 'biblia-digital' ),
+				'description'                 => __( 'Exibe um card com o título do livro, o capítulo atual, grade de capítulos e tradução ativa nas páginas da Bíblia.', 'estudobiblico-biblia-digital' ),
 				'show_instance_in_rest'       => true,
 				'customize_selective_refresh' => true,
 			)
@@ -83,10 +83,10 @@ class BDWP70_Chapter_Navigation_Widget extends WP_Widget {
 		$title = isset( $instance['title'] ) ? (string) $instance['title'] : '';
 		?>
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Título opcional:', 'biblia-digital' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Título opcional:', 'estudobiblico-biblia-digital' ); ?></label>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
 		</p>
-		<p class="description"><?php esc_html_e( 'O card aparece automaticamente apenas nas páginas de livro ou capítulo da Bíblia Digital.', 'biblia-digital' ); ?></p>
+		<p class="description"><?php esc_html_e( 'O card aparece automaticamente apenas nas páginas de livro ou capítulo da Bíblia Digital.', 'estudobiblico-biblia-digital' ); ?></p>
 		<?php
 	}
 

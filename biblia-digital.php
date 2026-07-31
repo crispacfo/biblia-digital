@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: Bíblia Digital
+ * Plugin Name: EstudoBiblico Bíblia Digital
  * Plugin URI: https://estudobiblico.org/biblia-sagrada-online/
  * Description: Disponibiliza leitura, pesquisa, navegação e recursos bíblicos no WordPress.
- * Version: 1.1.69
+ * Version: 1.1.70
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author: Claudio Crispim
  * Author URI: https://estudobiblico.org/
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: biblia-digital
+ * Text Domain: estudobiblico-biblia-digital
  * Domain Path: /languages
  *
  * @package BibliaDigital
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'BDWP70_VERSION' ) ) {
-	define( 'BDWP70_VERSION', '1.1.69' );
+	define( 'BDWP70_VERSION', '1.1.70' );
 }
 
 if ( ! defined( 'BDWP70_FILE' ) ) {
@@ -56,7 +56,7 @@ if ( $bdwp70_duplicate ) {
 		static function () {
 			?>
 			<div class="notice notice-error">
-				<p><?php esc_html_e( 'An older Biblia Digital version is active. Deactivate the older version before activating this version.', 'biblia-digital' ); ?></p>
+				<p><?php esc_html_e( 'An older Biblia Digital version is active. Deactivate the older version before activating this version.', 'estudobiblico-biblia-digital' ); ?></p>
 			</div>
 			<?php
 		}

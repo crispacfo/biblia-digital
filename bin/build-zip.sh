@@ -1,16 +1,29 @@
 #!/usr/bin/env bash
 #
 # Builds the distributable plugin ZIP from the working tree, honouring
-# .distignore. Output: dist/biblia-digital.zip containing a top-level
-# biblia-digital/ directory, and dist/biblia-digital/ as the staged tree.
+# .distignore. Output: dist/estudobiblico-biblia-digital-<version>.zip containing
+# a top-level estudobiblico-biblia-digital/ directory, and
+# dist/estudobiblico-biblia-digital/ as the staged tree.
+#
+# The directory name is the WordPress.org slug; the main plugin file keeps its
+# historical name (biblia-digital.php) because the slug is derived from the
+# directory, not from the file.
 #
 # Usage: bash bin/build-zip.sh
 set -euo pipefail
 
-SLUG="biblia-digital"
+SLUG="estudobiblico-biblia-digital"
+MAIN_FILE="biblia-digital.php"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 DIST="${ROOT}/dist"
 STAGE="${DIST}/${SLUG}"
+
+# Single source of truth for the packaged version: the plugin header.
+VERSION="$(sed -n 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*\([0-9][^[:space:]]*\).*/\1/p' "${ROOT}/${MAIN_FILE}" | head -n1)"
+if [ -z "${VERSION}" ]; then
+	echo "Could not read Version from ${MAIN_FILE}" >&2
+	exit 1
+fi
 
 rm -rf "${DIST}"
 mkdir -p "${STAGE}"
@@ -49,6 +62,13 @@ is_excluded() {
 	cp "${ROOT}/${rel}" "${STAGE}/${rel}"
 done
 
-( cd "${DIST}" && zip -rq "${SLUG}.zip" "${SLUG}" )
+ZIP_NAME="${SLUG}-${VERSION}.zip"
+( cd "${DIST}" && zip -rq "${ZIP_NAME}" "${SLUG}" )
 
-echo "Built ${DIST}/${SLUG}.zip"
+# Fail loudly instead of shipping catalogs that WordPress.org asked us to drop.
+if unzip -Z1 "${DIST}/${ZIP_NAME}" | grep -qE '\.(po|mo)$'; then
+	echo "Refusing to ship: the archive contains .po/.mo files" >&2
+	exit 1
+fi
+
+echo "Built ${DIST}/${ZIP_NAME}"
