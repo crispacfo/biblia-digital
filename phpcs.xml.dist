@@ -8,6 +8,13 @@
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/languages/*</exclude-pattern>
 	<exclude-pattern>*/tests/*</exclude-pattern>
+	<!--
+		Build output of bin/build-zip.sh. It is a copy of the sources, so
+		scanning it reports every class as a duplicate of itself. CI never sees
+		this because the phpcs job runs on a clean checkout, but a local run
+		after a build would.
+	-->
+	<exclude-pattern>*/dist/*</exclude-pattern>
 	<exclude-pattern>*/blocks/*/index.js</exclude-pattern>
 
 	<arg name="extensions" value="php"/>
@@ -37,7 +44,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="biblia-digital"/>
+				<element value="estudobiblico-biblia-digital"/>
 			</property>
 		</properties>
 	</rule>

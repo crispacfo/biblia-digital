@@ -38,6 +38,8 @@ class BDWP70_Sitemap {
 	const OPTION_INCL_VERSES = 'bdwp70_sitemap_include_verses';
 	const OPTION_PER_PAGE    = 'bdwp70_sitemap_per_page';
 	const OPTION_LASTMOD     = 'bdwp70_sitemap_lastmod';
+	// Legado 1.1.58-1.1.69: controlavam o índice físico em ABSPATH, removido na
+	// 1.1.70. Mantidas apenas para que cleanup_legacy_static_index() saiba o que apagar.
 	const OPTION_STATIC_SIG  = 'bdwp70_sitemap_static_index_signature';
 	const OPTION_STATIC_INFO = 'bdwp70_sitemap_static_index_info';
 
@@ -79,10 +81,11 @@ class BDWP70_Sitemap {
 		add_action( 'wp_loaded', array( $this, 'maybe_serve_direct_sitemap_request' ), 0 );
 		add_filter( 'redirect_canonical', array( $this, 'disable_canonical_for_sitemap' ), 10, 2 );
 
-		// Abordagem 1.1.58: criar também um arquivo físico de índice na raiz
-		// do WordPress. Isso contorna conflitos em ambientes onde plugin de SEO, cache
-		// ou regra do servidor captura /{base}-sitemap.xml antes do WordPress.
-		add_action( 'init', array( $this, 'maybe_refresh_static_index_file' ), 50 );
+		// Até a 1.1.69 o plugin também gravava um índice físico em ABSPATH para
+		// contornar plugins de SEO/cache que capturam /{base}-sitemap.xml. Isso foi
+		// removido na 1.1.70: escrever na raiz do WordPress não é permitido e é
+		// desnecessário, porque as rotas acima já respondem antes desses componentes.
+		// A limpeza do arquivo remanescente é feita por BDWP70_Activator::maybe_upgrade().
 
 		add_action( 'template_redirect', array( $this, 'maybe_serve_sitemap' ), 5 );
 	}
@@ -396,113 +399,39 @@ class BDWP70_Sitemap {
 	}
 
 	/**
-	 * Atualiza, quando possível, um arquivo físico do índice dedicado na raiz.
+	 * Remove os resíduos do índice físico gravado até a 1.1.69.
 	 *
-	 * A rota dinâmica continua existindo, mas o arquivo físico é servido pelo
-	 * servidor web antes de qualquer plugin de SEO/cache. Isso resolve o caso em
-	 * que /biblia-digital-sitemap.xml é capturado por outro componente e passa a
-	 * listar apenas a própria URL.
+	 * Enquanto o arquivo permanecer na raiz, o servidor web o entrega antes do
+	 * WordPress e o sitemap fica congelado na última gravação. Por isso a limpeza
+	 * é obrigatória, não opcional.
 	 *
+	 * Só remove o arquivo quando ele carrega o marcador gravado pelo próprio
+	 * plugin: um arquivo homônimo de terceiros nunca é tocado. É idempotente e
+	 * silenciosa em filesystem somente-leitura.
+	 *
+	 * @param string $base Base do sitemap do site atual.
 	 * @return void
 	 */
-	public function maybe_refresh_static_index_file() {
-		if ( ! self::is_enabled() ) {
+	public static function cleanup_legacy_static_index( $base ) {
+		delete_option( self::OPTION_STATIC_SIG );
+		delete_option( self::OPTION_STATIC_INFO );
+
+		$base = sanitize_title( (string) $base );
+		if ( '' === $base || ! defined( 'ABSPATH' ) ) {
 			return;
 		}
 
-		/*
-		 * Performance 1.1.66:
-		 * A assinatura do sitemap pode acionar consultas ao banco. Antes, ela era
-		 * calculada em toda requisição pública no init. Agora a verificação física
-		 * é limitada por transient curto; alterações relevantes invalidam o lastmod
-		 * e a rota dinâmica continua respondendo imediatamente.
-		 */
-		$throttle_key = 'bdwp70_sitemap_static_checked_' . md5( home_url( '/' ) . '|' . $this->sitemap_base() );
-		if ( ! is_admin() && ! wp_doing_cron() && false !== get_transient( $throttle_key ) ) {
-			return;
-		}
-		set_transient( $throttle_key, 1, HOUR_IN_SECONDS );
-
-		$signature = $this->static_index_signature();
-		$stored    = (string) get_option( self::OPTION_STATIC_SIG, '' );
-		$file      = $this->static_index_path();
-
-		if ( $stored === $signature && is_readable( $file ) && filesize( $file ) > 50 ) {
+		$file = trailingslashit( ABSPATH ) . $base . '-sitemap.xml';
+		if ( ! is_file( $file ) || ! is_readable( $file ) ) {
 			return;
 		}
 
-		$this->write_static_index_file( $signature );
-	}
-
-	/**
-	 * Assinatura simples para evitar regravar o arquivo físico a cada requisição.
-	 *
-	 * @return string
-	 */
-	private function static_index_signature() {
-		$parts = array(
-			BDWP70_VERSION,
-			$this->get_lastmod(),
-			$this->sitemap_base(),
-			$this->sitemap_bible_id(),
-			self::include_verses() ? '1' : '0',
-			self::per_page(),
-		);
-
-		return md5( implode( '|', array_map( 'strval', $parts ) ) );
-	}
-
-	/**
-	 * Caminho absoluto do arquivo físico do índice.
-	 *
-	 * @return string
-	 */
-	private function static_index_path() {
-		return trailingslashit( ABSPATH ) . $this->sitemap_base() . '-sitemap.xml';
-	}
-
-	/**
-	 * Grava o arquivo físico do índice, se o ambiente permitir.
-	 *
-	 * @param string $signature Assinatura calculada.
-	 * @return bool
-	 */
-	private function write_static_index_file( $signature ) {
-		$file = $this->static_index_path();
-		$xml  = $this->build_index_xml();
-
-		if ( '' === trim( $xml ) || false === strpos( $xml, '<sitemapindex' ) ) {
-			return false;
+		$head = file_get_contents( $file, false, null, 0, 512 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reads only the marker of a plugin-generated file, before deleting it.
+		if ( ! is_string( $head ) || false === strpos( $head, 'BDWP70_STATIC_SITEMAP_INDEX' ) ) {
+			return;
 		}
 
-		// Evita sobrescrever arquivo suspeito que não foi criado pelo plugin.
-		if ( file_exists( $file ) ) {
-			$current = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-			if ( is_string( $current ) && '' !== $current && false === strpos( $current, 'BDWP70_STATIC_SITEMAP_INDEX' ) ) {
-				update_option(
-					self::OPTION_STATIC_INFO,
-					'Arquivo físico não sobrescrito porque já existe e não foi identificado como índice da Bíblia Digital: ' . $file
-				);
-				return false;
-			}
-		}
-
-		$xml = str_replace(
-			'<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-			"<!-- BDWP70_STATIC_SITEMAP_INDEX -->\n" . '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-			$xml
-		);
-
-		$result = file_put_contents( $file, $xml, LOCK_EX ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-
-		if ( false === $result ) {
-			update_option( self::OPTION_STATIC_INFO, 'Não foi possível gravar o índice físico em: ' . $file );
-			return false;
-		}
-
-		update_option( self::OPTION_STATIC_SIG, $signature );
-		update_option( self::OPTION_STATIC_INFO, 'Índice físico atualizado em: ' . $file );
-		return true;
+		wp_delete_file( $file );
 	}
 
 	// -------------------------------------------------------------------------

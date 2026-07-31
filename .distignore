@@ -17,3 +17,22 @@ dist
 docs
 README.md
 *.zip
+
+# Local tooling state. CI builds from a fresh checkout and never sees these,
+# but a developer who runs the test suite before bin/build-zip.sh would
+# otherwise ship them.
+.phpunit.result.cache
+.phpunit.cache
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+.env
+*.log
+
+# Translation catalogs are development artifacts only. Plugins hosted on
+# WordPress.org receive their translations from translate.wordpress.org, so the
+# distributed package must not carry compiled or source catalogs. The .pot is
+# kept: it is the template translators start from, not a shipped translation.
+*.po
+*.mo

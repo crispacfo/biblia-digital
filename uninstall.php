@@ -72,11 +72,17 @@ if ( ! function_exists( 'bdwp70_uninstall_delete_current_site_options' ) ) {
 			'bdwp70_sitemap_include_verses',
 			'bdwp70_sitemap_per_page',
 			'bdwp70_sitemap_lastmod',
+			// Legado: controlavam o índice físico removido na 1.1.70. Continuam
+			// listados para limpar instalações que atualizaram de versões antigas.
+			'bdwp70_sitemap_static_index_signature',
+			'bdwp70_sitemap_static_index_info',
 		);
 
 		foreach ( $options as $option ) {
 			delete_option( $option );
 		}
+
+		delete_metadata( 'user', 0, 'bdwp70_dismissed_setup_notice', '', true );
 	}
 }
 
