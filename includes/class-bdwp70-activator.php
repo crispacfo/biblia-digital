@@ -196,12 +196,13 @@ class BDWP70_Activator {
 			return array();
 		}
 
-		$sql = 'SELECT id FROM `' . esc_sql( $versions ) . "` WHERE language_code LIKE 'pt%'";
+		$pt_like = $wpdb->esc_like( 'pt' ) . '%';
 		if ( $bible_id ) {
-			$sql .= $wpdb->prepare( ' AND id = %d', absint( $bible_id ) );
+			$ids = $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE language_code LIKE %s AND id = %d', $versions, $pt_like, absint( $bible_id ) ) );
+		} else {
+			$ids = $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE language_code LIKE %s', $versions, $pt_like ) );
 		}
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- nome de tabela do plugin; filtro de id preparado acima.
-		$ids = array_map( 'absint', (array) $wpdb->get_col( $sql ) );
+		$ids = array_map( 'absint', (array) $ids );
 
 		$books   = self::books_table();
 		$verses  = self::verses_table();
