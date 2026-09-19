@@ -51,7 +51,9 @@ if ( 'reader' === $state['mode'] && $bdwp70_selected_book && ! empty( $state['ch
 	}
 }
 ?>
-<div class="<?php echo esc_attr( $bdwp70_root_class ); ?>" data-bdwp70>
+<div class="<?php echo esc_attr( $bdwp70_root_class ); ?>" data-bdwp70
+	<?php if ( $bdwp70_previous_chapter_url ) : ?> data-bdwp70-prev="<?php echo esc_url( $bdwp70_previous_chapter_url ); ?>"<?php endif; ?>
+	<?php if ( $bdwp70_next_chapter_url ) : ?> data-bdwp70-next="<?php echo esc_url( $bdwp70_next_chapter_url ); ?>"<?php endif; ?>>
 	<?php echo $this->render_breadcrumbs( $state, $bdwp70_books ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 	<?php if ( 'books' !== $state['mode'] ) : ?>
@@ -220,6 +222,21 @@ if ( 'reader' === $state['mode'] && $bdwp70_selected_book && ! empty( $state['ch
 						</div>
 					</header>
 
+					<div class="bdwp70__sticky-bar" data-bdwp70-sticky-bar>
+						<span class="bdwp70__sticky-ref">
+							<strong><?php echo esc_html( $bdwp70_selected_book_name ); ?></strong>
+							<span><?php echo esc_html( (string) (int) $state['chapter'] ); ?></span>
+						</span>
+						<span class="bdwp70__sticky-nav">
+							<?php if ( $bdwp70_previous_chapter_url ) : ?>
+								<a href="<?php echo esc_url( $bdwp70_previous_chapter_url ); ?>" rel="prev" aria-label="<?php esc_attr_e( 'Capítulo anterior', 'estudobiblico-biblia-digital' ); ?>"><span aria-hidden="true">←</span></a>
+							<?php endif; ?>
+							<?php if ( $bdwp70_next_chapter_url ) : ?>
+								<a href="<?php echo esc_url( $bdwp70_next_chapter_url ); ?>" rel="next" aria-label="<?php esc_attr_e( 'Próximo capítulo', 'estudobiblico-biblia-digital' ); ?>"><span aria-hidden="true">→</span></a>
+							<?php endif; ?>
+						</span>
+					</div>
+
 					<div class="bdwp70__verses bdwp70__verses--chapter">
 						<?php foreach ( $results['items'] as $bdwp70_verse ) : ?>
 							<?php
@@ -227,7 +244,7 @@ if ( 'reader' === $state['mode'] && $bdwp70_selected_book && ! empty( $state['ch
 							$bdwp70_verse_link  = $this->verse_url( (int) $bdwp70_verse->livroseq, (int) $bdwp70_verse->capitulo, (int) $bdwp70_verse->versiculo, $bdwp70_books, (int) $state['bible_id'] );
 							$bdwp70_is_selected = ! empty( $state['verse'] ) && (int) $state['verse'] === (int) $bdwp70_verse->versiculo && (int) $state['chapter'] === (int) $bdwp70_verse->capitulo && (int) $state['book'] === (int) $bdwp70_verse->livroseq;
 							?>
-							<p class="bdwp70__verse-line <?php echo $bdwp70_is_selected ? 'is-selected' : ''; ?>" id="<?php echo esc_attr( sanitize_title( $bdwp70_book_name ) . '-' . (int) $bdwp70_verse->capitulo . '-' . (int) $bdwp70_verse->versiculo ); ?>">
+							<p class="bdwp70__verse-line <?php echo $bdwp70_is_selected ? 'is-selected' : ''; ?>" id="<?php echo esc_attr( sanitize_title( $bdwp70_book_name ) . '-' . (int) $bdwp70_verse->capitulo . '-' . (int) $bdwp70_verse->versiculo ); ?>" data-bdwp70-verse-url="<?php echo esc_url( $bdwp70_verse_link ); ?>">
 								<a class="bdwp70__verse-number" href="<?php echo esc_url( $bdwp70_verse_link ); ?>" aria-label="<?php echo esc_attr( $bdwp70_book_name . ' ' . (int) $bdwp70_verse->capitulo . ':' . (int) $bdwp70_verse->versiculo ); ?>"><?php echo esc_html( (int) $bdwp70_verse->versiculo ); ?></a>
 								<span><?php echo esc_html( trim( (string) $bdwp70_verse->palavra ) ); ?></span>
 							</p>

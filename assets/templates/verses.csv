@@ -1,0 +1,6 @@
+testamento,livroseq,livro,capitulo,versiculo,palavra
+AT,1,Gn,1,1,"Substitua pelo texto de Gênesis 1:1."
+AT,1,Gn,1,2,"Substitua pelo texto de Gênesis 1:2."
+AT,1,Gn,10,2,"Texto com vírgulas, ponto e vírgula; e dois-pontos: fica entre aspas."
+NT,43,Jo,3,16,"Aspas dentro do texto são escritas dobradas: ""assim""."
+NT,66,Ap,22,21,"Substitua pelo texto de Apocalipse 22:21."

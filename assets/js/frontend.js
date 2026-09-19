@@ -60,10 +60,25 @@
             savedFontFamily = 'default';
         }
 
-        root.style.setProperty('--bdwp70-reader-font-size', savedSize.toFixed(2) + 'rem');
-        root.querySelectorAll('.bdwp70__reader-main').forEach(function (reader) {
-            reader.style.setProperty('--bdwp70-reader-font-size', savedSize.toFixed(2) + 'rem');
-        });
+        /*
+         * Só grava o tamanho inline quando o leitor escolheu um. Gravar sempre
+         * anulava o passo menor que o CSS ja define para telas estreitas, e o
+         * texto ficava em 22px numa coluna de ~300px — cerca de 26 caracteres
+         * por linha.
+         */
+        var escolheuFonte = getStored('font_size', null) !== null;
+
+        if (escolheuFonte) {
+            root.style.setProperty('--bdwp70-reader-font-size', savedSize.toFixed(2) + 'rem');
+            root.querySelectorAll('.bdwp70__reader-main').forEach(function (reader) {
+                reader.style.setProperty('--bdwp70-reader-font-size', savedSize.toFixed(2) + 'rem');
+            });
+        } else {
+            root.style.removeProperty('--bdwp70-reader-font-size');
+            root.querySelectorAll('.bdwp70__reader-main').forEach(function (reader) {
+                reader.style.removeProperty('--bdwp70-reader-font-size');
+            });
+        }
 
         root.setAttribute('data-bdwp-bg', savedBg);
         root.setAttribute('data-bdwp-format', savedFormat);
@@ -185,6 +200,174 @@
             document.querySelectorAll('[data-bdwp70].is-reading-panel-open').forEach(function (root) {
                 closePanel(root);
             });
+        });
+    });
+}());
+
+/*
+ * 1.1.72 — Comportamentos de leitura.
+ *
+ * - Linha inteira do versiculo como alvo, preservando a selecao de texto.
+ * - Setas esquerda/direita mudam de capitulo.
+ * - Barra fixa some ao rolar para baixo e volta ao rolar para cima (mobile).
+ */
+(function () {
+    'use strict';
+
+    var SELETOR_RAIZ = '[data-bdwp70]';
+
+    function ehInterativo(alvo) {
+        return !!(alvo && alvo.closest && alvo.closest('a, button, input, select, textarea, summary, label, [contenteditable="true"]'));
+    }
+
+    function temSelecaoDeTexto() {
+        try {
+            var selecao = window.getSelection();
+            return !!(selecao && String(selecao).trim().length > 0);
+        } catch (erro) {
+            return false;
+        }
+    }
+
+    /* --------------------------------------------------- linha do versiculo */
+    function ligarLinhasDeVersiculo(raiz) {
+        raiz.addEventListener('click', function (evento) {
+            var linha = evento.target.closest ? evento.target.closest('.bdwp70__verse-line') : null;
+            if (!linha || !raiz.contains(linha)) {
+                return;
+            }
+
+            // Um clique em link ou botao segue o proprio destino.
+            if (ehInterativo(evento.target)) {
+                return;
+            }
+
+            // Selecionar e copiar o texto continua funcionando.
+            if (temSelecaoDeTexto()) {
+                return;
+            }
+
+            var destino = linha.getAttribute('data-bdwp70-verse-url');
+            if (!destino) {
+                return;
+            }
+
+            raiz.querySelectorAll('.bdwp70__verse-line.is-selected').forEach(function (outra) {
+                if (outra !== linha) {
+                    outra.classList.remove('is-selected');
+                }
+            });
+            linha.classList.add('is-selected');
+
+            window.location.href = destino;
+        });
+    }
+
+    /* ------------------------------------------------------------- teclado */
+    function ligarTeclado(raiz) {
+        var anterior = raiz.getAttribute('data-bdwp70-prev');
+        var proximo = raiz.getAttribute('data-bdwp70-next');
+
+        if (!anterior && !proximo) {
+            return;
+        }
+
+        document.addEventListener('keydown', function (evento) {
+            if (evento.defaultPrevented || evento.altKey || evento.ctrlKey || evento.metaKey || evento.shiftKey) {
+                return;
+            }
+
+            if (evento.key !== 'ArrowLeft' && evento.key !== 'ArrowRight') {
+                return;
+            }
+
+            // Nao sequestra as setas enquanto o leitor digita ou navega num campo.
+            var ativo = document.activeElement;
+            if (ehInterativo(ativo) || (ativo && ativo.isContentEditable)) {
+                return;
+            }
+
+            var destino = evento.key === 'ArrowLeft' ? anterior : proximo;
+            if (!destino) {
+                return;
+            }
+
+            evento.preventDefault();
+            window.location.href = destino;
+        });
+    }
+
+    /* ----------------------------------------------------------- barra fixa */
+    function ligarBarraFixa(raiz) {
+        var barra = raiz.querySelector('[data-bdwp70-sticky-bar]');
+        if (!barra) {
+            return;
+        }
+
+        var ultimo = window.pageYOffset || 0;
+        var agendado = false;
+
+        function avaliar() {
+            agendado = false;
+
+            var atual = window.pageYOffset || 0;
+            var delta = atual - ultimo;
+
+            // Margem morta evita tremor em rolagens minimas.
+            if (Math.abs(delta) < 8) {
+                return;
+            }
+
+            if (delta > 0 && atual > 160) {
+                raiz.classList.add('is-bar-hidden');
+            } else {
+                raiz.classList.remove('is-bar-hidden');
+            }
+
+            ultimo = atual;
+        }
+
+        window.addEventListener('scroll', function () {
+            if (agendado) {
+                return;
+            }
+            agendado = true;
+            window.requestAnimationFrame(avaliar);
+        }, { passive: true });
+    }
+
+    /* ------------------------------------------------- deep link /cap/versiculo/ */
+    /*
+     * A URL de versiculo entrega o capitulo inteiro com o versiculo destacado no
+     * servidor. Sem isto o leitor caia no topo do capitulo e precisava procurar o
+     * destaque. Uma ancora explicita na URL tem prioridade e nao e sobrescrita.
+     */
+    function posicionarVersiculo(raiz) {
+        if (window.location.hash) {
+            return;
+        }
+
+        var alvo = raiz.querySelector('.bdwp70__verse-line.is-selected');
+        if (!alvo || !alvo.scrollIntoView) {
+            return;
+        }
+
+        alvo.setAttribute('tabindex', '-1');
+
+        window.requestAnimationFrame(function () {
+            alvo.scrollIntoView({ block: 'center', behavior: 'auto' });
+            try {
+                alvo.focus({ preventScroll: true });
+            } catch (erro) {}
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll(SELETOR_RAIZ).forEach(function (raiz) {
+            ligarLinhasDeVersiculo(raiz);
+            ligarTeclado(raiz);
+            ligarBarraFixa(raiz);
+            posicionarVersiculo(raiz);
         });
     });
 }());
