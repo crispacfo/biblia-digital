@@ -28,14 +28,10 @@
         return Math.max(1.0, Math.min(2.2, parsed));
     }
 
-    function fontSizeLabel(size) {
-        if (size < 1.18) {
-            return 'Pequeno';
-        }
-        if (size > 1.58) {
-            return 'Grande';
-        }
-        return 'Médio';
+    // Rótulos traduzidos vêm do PHP em data-label-*; sem eles, fica o texto atual.
+    function fontSizeLabel(size, holder) {
+        var key = size < 1.18 ? 'small' : (size > 1.58 ? 'large' : 'medium');
+        return holder ? holder.getAttribute('data-label-' + key) : null;
     }
 
     function setActive(root, selector, attr, value) {
@@ -85,7 +81,10 @@
         root.setAttribute('data-bdwp-font-family', savedFontFamily);
 
         root.querySelectorAll('[data-bdwp70-font-label] small').forEach(function (label) {
-            label.textContent = fontSizeLabel(savedSize);
+            var texto = fontSizeLabel(savedSize, label.closest('[data-bdwp70-font-label]'));
+            if (texto) {
+                label.textContent = texto;
+            }
         });
 
         setActive(root, '[data-bdwp70-bg]', 'data-bdwp70-bg', savedBg);

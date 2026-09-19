@@ -125,6 +125,14 @@ class BDWP70_Activator {
 		// 1.1.70: migra traduções personalizadas de WP_LANG_DIR para uploads.
 		self::migrate_custom_translations();
 
+		// 1.2.0: o texto de origem passou de português para inglês. Traduções
+		// personalizadas enviadas antes disso usam as chaves antigas e são convertidas
+		// uma única vez, depois da migração de pasta acima.
+		if ( ! get_option( 'bdwp70_source_strings_en' ) ) {
+			BDWP70_Plugin::remap_custom_translations_to_english();
+			update_option( 'bdwp70_source_strings_en', 1, false );
+		}
+
 		// 1.1.78: corrige a grafia de nomes de livros em versões pt-* (idempotente).
 		$nomes_corrigidos = self::fix_book_names();
 		if ( $nomes_corrigidos ) {
@@ -643,7 +651,7 @@ class BDWP70_Activator {
 	public static function import_books( $bible_id = 1 ) {
 		unset( $bible_id );
 		self::create_tables();
-		update_option( self::OPTION_ERROR, 'A base bíblica nativa não é distribuída neste pacote. Importe uma Bíblia em formato ZIP contendo books.csv e verses.csv.' );
+		update_option( self::OPTION_ERROR, __( 'The built-in Bible database is not distributed in this package. Import a Bible as a ZIP file containing books.csv and verses.csv.', 'estudobiblico-biblia-digital' ) );
 		return false;
 	}
 
@@ -651,7 +659,7 @@ class BDWP70_Activator {
 		unset( $force, $bible_id );
 		self::create_tables();
 		update_option( self::OPTION_STATUS, 'pending' );
-		update_option( self::OPTION_ERROR, 'A base bíblica nativa não é distribuída neste pacote. Importe uma Bíblia em formato ZIP contendo books.csv e verses.csv.' );
+		update_option( self::OPTION_ERROR, __( 'The built-in Bible database is not distributed in this package. Import a Bible as a ZIP file containing books.csv and verses.csv.', 'estudobiblico-biblia-digital' ) );
 		update_option( self::OPTION_PROGRESS, __( 'Import is available only through an administrator-supplied ZIP/CSV.', 'estudobiblico-biblia-digital' ) );
 		return false;
 	}
@@ -713,13 +721,16 @@ class BDWP70_Activator {
 		return $exists;
 	}
 
-	public static function create_bible_version( $name, $language_code, $source = 'Upload do usuário', $is_builtin = 0 ) {
+	public static function create_bible_version( $name, $language_code, $source = '', $is_builtin = 0 ) {
 		global $wpdb;
 		self::create_tables();
 		$name          = sanitize_text_field( $name );
 		$language_code = sanitize_text_field( $language_code );
 		if ( '' === $name ) {
-			$name = 'Bíblia importada';
+			$name = __( 'Imported Bible', 'estudobiblico-biblia-digital' );
+		}
+		if ( '' === (string) $source ) {
+			$source = __( 'User upload', 'estudobiblico-biblia-digital' );
 		}
 		if ( '' === $language_code ) {
 			$language_code = 'und';
@@ -837,13 +848,15 @@ class BDWP70_Activator {
 		global $wpdb;
 
 		if ( ! is_readable( $file ) ) {
-			update_option( self::OPTION_ERROR, basename( $file ) . ': arquivo não legível.' );
+			/* translators: %s: file name. */
+			update_option( self::OPTION_ERROR, sprintf( __( '%s: file is not readable.', 'estudobiblico-biblia-digital' ), basename( $file ) ) );
 			return false;
 		}
 
 		$handle = fopen( $file, 'r' );
 		if ( ! $handle ) {
-			update_option( self::OPTION_ERROR, basename( $file ) . ': não foi possível abrir o arquivo.' );
+			/* translators: %s: file name. */
+			update_option( self::OPTION_ERROR, sprintf( __( '%s: the file could not be opened.', 'estudobiblico-biblia-digital' ), basename( $file ) ) );
 			return false;
 		}
 
@@ -863,7 +876,8 @@ class BDWP70_Activator {
 			if ( false === $row ) {
 				if ( false !== strpos( $line, '(' ) ) {
 					fclose( $handle );
-					update_option( self::OPTION_ERROR, basename( $file ) . ': linha ' . $line_no . ' não pôde ser interpretada.' );
+					/* translators: 1: file name, 2: line number. */
+					update_option( self::OPTION_ERROR, sprintf( __( '%1$s: line %2$d could not be parsed.', 'estudobiblico-biblia-digital' ), basename( $file ), $line_no ) );
 					return false;
 				}
 				continue;
@@ -966,7 +980,7 @@ class BDWP70_Activator {
 			update_option( self::OPTION_STATUS, 'error' );
 			// parse_books_csv() já grava o motivo específico; esta é só a reserva.
 			if ( '' === (string) get_option( self::OPTION_ERROR, '' ) ) {
-				update_option( self::OPTION_ERROR, 'O arquivo books.csv está vazio ou fora do padrão.' );
+				update_option( self::OPTION_ERROR, __( 'The books.csv file is empty or not in the expected format.', 'estudobiblico-biblia-digital' ) );
 			}
 			return false;
 		}
@@ -974,7 +988,7 @@ class BDWP70_Activator {
 		$bible_id = self::create_bible_version( $name, $language_code, $source, 0 );
 		if ( $bible_id < 1 ) {
 			update_option( self::OPTION_STATUS, 'error' );
-			update_option( self::OPTION_ERROR, 'Não foi possível criar o cadastro da Bíblia.' );
+			update_option( self::OPTION_ERROR, __( 'The Bible record could not be created.', 'estudobiblico-biblia-digital' ) );
 			return false;
 		}
 
@@ -991,7 +1005,7 @@ class BDWP70_Activator {
 			self::delete_bible_version( $bible_id );
 			update_option( self::OPTION_STATUS, 'error' );
 			if ( ! get_option( self::OPTION_ERROR ) ) {
-				update_option( self::OPTION_ERROR, 'O arquivo verses.csv está vazio ou fora do padrão.' );
+				update_option( self::OPTION_ERROR, __( 'The verses.csv file is empty or not in the expected format.', 'estudobiblico-biblia-digital' ) );
 			}
 			return false;
 		}
@@ -1027,7 +1041,8 @@ class BDWP70_Activator {
 		while ( false !== ( $data = self::csv_get_row( $handle, $delimiter ) ) ) {
 			++$line_no;
 			if ( ! self::csv_row_is_utf8( $data ) ) {
-				update_option( self::OPTION_ERROR, sprintf( 'books.csv: a linha %d não está em UTF-8. Salve o arquivo como "CSV UTF-8" (no Excel) ou com o conjunto de caracteres Unicode (UTF-8) (no LibreOffice).', $line_no ) );
+				/* translators: %d: line number. */
+				update_option( self::OPTION_ERROR, sprintf( __( 'books.csv: line %d is not UTF-8. Save the file as "CSV UTF-8" (in Excel) or with the Unicode (UTF-8) character set (in LibreOffice).', 'estudobiblico-biblia-digital' ), $line_no ) );
 				fclose( $handle );
 				return array();
 			}
@@ -1037,8 +1052,8 @@ class BDWP70_Activator {
 					update_option(
 						self::OPTION_ERROR,
 						self::csv_first_row_looks_like_data( $data )
-							? 'books.csv: falta a linha de cabeçalho. A primeira linha deve ser livro_seq,livro,livro_desc, e os livros começam na segunda linha.'
-							: 'books.csv: cabeçalho inválido. A primeira linha deve ser exatamente livro_seq,livro,livro_desc.'
+							? __( 'books.csv: the header line is missing. The first line must be livro_seq,livro,livro_desc, and the books start on the second line.', 'estudobiblico-biblia-digital' )
+							: __( 'books.csv: invalid header. The first line must be exactly livro_seq,livro,livro_desc.', 'estudobiblico-biblia-digital' )
 					);
 					fclose( $handle );
 					return array();
@@ -1078,19 +1093,21 @@ class BDWP70_Activator {
 		}
 		fclose( $handle );
 		if ( null === $header ) {
-			update_option( self::OPTION_ERROR, 'books.csv: o arquivo está vazio.' );
+			update_option( self::OPTION_ERROR, __( 'books.csv: the file is empty.', 'estudobiblico-biblia-digital' ) );
 			return array();
 		}
 		if ( 66 !== count( $seen ) ) {
 			$faltam   = array_values( array_diff( range( 1, 66 ), array_keys( $seen ) ) );
 			$lista    = implode( ', ', array_slice( $faltam, 0, 20 ) ) . ( count( $faltam ) > 20 ? ', …' : '' );
 			$mensagem = sprintf(
-				'books.csv: são necessários os 66 livros, numerados de 1 (Gênesis) a 66 (Apocalipse), e faltam %1$d: %2$s.',
+				/* translators: 1: number of missing books, 2: list of missing book numbers. */
+				__( 'books.csv: all 66 books are required, numbered from 1 (Genesis) to 66 (Revelation), and %1$d are missing: %2$s.', 'estudobiblico-biblia-digital' ),
 				count( $faltam ),
 				$lista
 			);
 			if ( $fora_limite > 0 ) {
-				$mensagem .= sprintf( ' %d linha(s) com número fora de 1 a 66 foram ignoradas: livros deuterocanônicos não são suportados.', $fora_limite );
+				/* translators: %d: number of ignored lines. */
+				$mensagem .= ' ' . sprintf( _n( '%d line with a number outside 1 to 66 was ignored: deuterocanonical books are not supported.', '%d lines with a number outside 1 to 66 were ignored: deuterocanonical books are not supported.', $fora_limite, 'estudobiblico-biblia-digital' ), $fora_limite );
 			}
 			update_option( self::OPTION_ERROR, $mensagem );
 			return array();
@@ -1103,12 +1120,12 @@ class BDWP70_Activator {
 		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fopen, WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Streaming uploaded CSV files keeps imports memory-safe.
 		global $wpdb;
 		if ( ! is_readable( $file ) ) {
-			update_option( self::OPTION_ERROR, 'Arquivo verses.csv não encontrado ou não legível.' );
+			update_option( self::OPTION_ERROR, __( 'The verses.csv file was not found or is not readable.', 'estudobiblico-biblia-digital' ) );
 			return false;
 		}
 		$handle = fopen( $file, 'r' );
 		if ( ! $handle ) {
-			update_option( self::OPTION_ERROR, 'Não foi possível abrir verses.csv.' );
+			update_option( self::OPTION_ERROR, __( 'The verses.csv file could not be opened.', 'estudobiblico-biblia-digital' ) );
 			return false;
 		}
 		$header    = null;
@@ -1119,7 +1136,8 @@ class BDWP70_Activator {
 		while ( false !== ( $data = self::csv_get_row( $handle, $delimiter ) ) ) {
 			++$line_no;
 			if ( ! self::csv_row_is_utf8( $data ) ) {
-				update_option( self::OPTION_ERROR, sprintf( 'verses.csv: o registro %d não está em UTF-8. Salve o arquivo como "CSV UTF-8" (no Excel) ou com o conjunto de caracteres Unicode (UTF-8) (no LibreOffice).', $line_no ) );
+				/* translators: %d: record number. */
+				update_option( self::OPTION_ERROR, sprintf( __( 'verses.csv: record %d is not UTF-8. Save the file as "CSV UTF-8" (in Excel) or with the Unicode (UTF-8) character set (in LibreOffice).', 'estudobiblico-biblia-digital' ), $line_no ) );
 				fclose( $handle );
 				return false;
 			}
@@ -1129,8 +1147,8 @@ class BDWP70_Activator {
 					update_option(
 						self::OPTION_ERROR,
 						self::csv_first_row_looks_like_data( $data )
-							? 'verses.csv: falta a linha de cabeçalho. A primeira linha deve ser testamento,livroseq,livro,capitulo,versiculo,palavra, e os versículos começam na segunda linha.'
-							: 'verses.csv: cabeçalho inválido. A primeira linha deve ser exatamente testamento,livroseq,livro,capitulo,versiculo,palavra.'
+							? __( 'verses.csv: the header line is missing. The first line must be testamento,livroseq,livro,capitulo,versiculo,palavra, and the verses start on the second line.', 'estudobiblico-biblia-digital' )
+							: __( 'verses.csv: invalid header. The first line must be exactly testamento,livroseq,livro,capitulo,versiculo,palavra.', 'estudobiblico-biblia-digital' )
 					);
 					fclose( $handle );
 					return false;
@@ -1146,7 +1164,8 @@ class BDWP70_Activator {
 			$verse    = self::csv_value( $row, array( 'versiculo', 'verse', 'ver' ) );
 			$text     = self::csv_value( $row, array( 'palavra', 'texto', 'text', 'verse_text' ) );
 			if ( '' === $livroseq || '' === $chapter || '' === $verse || '' === $text ) {
-				update_option( self::OPTION_ERROR, 'verses.csv: linha ' . $line_no . ' sem livroseq, capitulo, versiculo ou texto.' );
+				/* translators: %d: line number. */
+				update_option( self::OPTION_ERROR, sprintf( __( 'verses.csv: line %d is missing livroseq, capitulo, versiculo, or text.', 'estudobiblico-biblia-digital' ), $line_no ) );
 				fclose( $handle );
 				return false;
 			}
@@ -1155,7 +1174,8 @@ class BDWP70_Activator {
 			$verse    = absint( $verse );
 
 			if ( $livroseq < 1 || $livroseq > 66 || $chapter < 1 || $verse < 1 ) {
-				update_option( self::OPTION_ERROR, 'verses.csv: linha ' . $line_no . ' com referência bíblica inválida.' );
+				/* translators: %d: line number. */
+				update_option( self::OPTION_ERROR, sprintf( __( 'verses.csv: line %d has an invalid Bible reference.', 'estudobiblico-biblia-digital' ), $line_no ) );
 				fclose( $handle );
 				return false;
 			}

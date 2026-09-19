@@ -1,10 +1,10 @@
 {
   "apiVersion": 3,
   "name": "biblia-digital/search",
-  "title": "Bíblia Digital - Busca",
+  "title": "Bíblia Digital - Search",
   "category": "widgets",
   "icon": "search",
-  "description": "Exibe o formulário de pesquisa da Bíblia Digital usando a Bíblia ativa do site.",
+  "description": "Displays the Bíblia Digital search form using the site's active Bible.",
   "textdomain": "estudobiblico-biblia-digital",
   "editorScript": "file:./index.js",
   "attributes": {

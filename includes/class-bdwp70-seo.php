@@ -85,15 +85,17 @@ trait BDWP70_SEO {
 			if ( $book_name && ! empty( $state['book'] ) ) {
 				$bdwp70_seo_context_cache = array(
 					'title'       => $book_name . ' - ' . $this->display_title(),
-					'description' => 'Leia os capítulos de ' . $book_name . ' em ' . $this->display_title() . '.',
+					/* translators: 1: book name, 2: Bible title. */
+					'description' => sprintf( __( 'Read the chapters of %1$s on %2$s.', 'estudobiblico-biblia-digital' ), $book_name, $this->display_title() ),
 					'canonical'   => $this->maybe_add_bible_version_arg_to_url( home_url( user_trailingslashit( $this->seo_base() . '/' . $this->book_slug_from_seq( (int) $state['book'], $books ) ) ), (int) $state['bible_id'] ),
 				);
 				return $bdwp70_seo_context_cache;
 			}
 			if ( is_page( $this->seo_base() ) || get_query_var( 'bdwp_bible' ) ) {
 				$bdwp70_seo_context_cache = array(
-					'title'       => 'Livros da Bíblia - ' . $this->display_title(),
-					'description' => 'Lista dos livros da Bíblia, organizada em Antigo Testamento e Novo Testamento, com acesso aos capítulos e versículos.',
+					/* translators: %s: Bible title. */
+					'title'       => sprintf( __( 'Books of the Bible - %s', 'estudobiblico-biblia-digital' ), $this->display_title() ),
+					'description' => __( 'List of the books of the Bible, organized into the Old Testament and the New Testament, with access to the chapters and verses.', 'estudobiblico-biblia-digital' ),
 					'canonical'   => $this->maybe_add_bible_version_arg_to_url( home_url( user_trailingslashit( $this->seo_base() ) ), (int) $state['bible_id'] ),
 				);
 				return $bdwp70_seo_context_cache;
@@ -104,7 +106,8 @@ trait BDWP70_SEO {
 
 		$canonical   = $this->chapter_url( (int) $state['book'], (int) $state['chapter'], $books, (int) $state['bible_id'] );
 		$title_ref   = $book_name . ' ' . (int) $state['chapter'];
-		$description = 'Leia ' . $book_name . ' capítulo ' . (int) $state['chapter'] . ' completo em ' . $this->display_title() . '.';
+		/* translators: 1: book name, 2: chapter number, 3: Bible title. */
+		$description = sprintf( __( 'Read %1$s chapter %2$d in full on %3$s.', 'estudobiblico-biblia-digital' ), $book_name, (int) $state['chapter'], $this->display_title() );
 
 		if ( ! empty( $state['verse'] ) ) {
 			$verse     = $this->get_single_verse( (int) $state['book'], (int) $state['chapter'], (int) $state['verse'], (int) $state['bible_id'] );
@@ -129,12 +132,14 @@ trait BDWP70_SEO {
 			if ( $verse ) {
 				$description = $title_ref . ' - ' . trim( wp_strip_all_tags( (string) $verse->palavra ) );
 			} else {
-				$description = 'Leia ' . $title_ref . ' em ' . $this->display_title() . '.';
+				/* translators: 1: Bible reference, 2: Bible title. */
+				$description = sprintf( __( 'Read %1$s on %2$s.', 'estudobiblico-biblia-digital' ), $title_ref, $this->display_title() );
 			}
 		} else {
 			$first = $this->get_single_verse( (int) $state['book'], (int) $state['chapter'], 1, (int) $state['bible_id'] );
 			if ( $first ) {
-				$description = $book_name . ' capítulo ' . (int) $state['chapter'] . ' - ' . trim( wp_strip_all_tags( (string) $first->palavra ) );
+				/* translators: 1: book name, 2: chapter number, 3: text of the first verse. */
+				$description = sprintf( __( '%1$s chapter %2$d - %3$s', 'estudobiblico-biblia-digital' ), $book_name, (int) $state['chapter'], trim( wp_strip_all_tags( (string) $first->palavra ) ) );
 			}
 		}
 

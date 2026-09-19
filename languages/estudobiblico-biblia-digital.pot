@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: EstudoBiblico Bíblia Digital 1.1.80\n"
+"Project-Id-Version: EstudoBiblico Bíblia Digital 1.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/estudobiblico-biblia-digital\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-19T17:20:14+00:00\n"
+"POT-Creation-Date: 2026-09-19T17:47:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: estudobiblico-biblia-digital\n"
@@ -26,7 +26,7 @@ msgstr ""
 
 #. Description of the plugin
 #: biblia-digital.php
-msgid "Disponibiliza leitura, pesquisa, navegação e recursos bíblicos no WordPress."
+msgid "Provides Bible reading, search, navigation, and study resources in WordPress."
 msgstr ""
 
 #. Author of the plugin
@@ -48,42 +48,152 @@ msgstr ""
 msgid "Biblia Digital is active. To get started, import a Bible as a ZIP file containing books.csv and verses.csv."
 msgstr ""
 
-#: includes/class-bdwp70-activator.php:655
+#: includes/class-bdwp70-activator.php:654
+#: includes/class-bdwp70-activator.php:662
+msgid "The built-in Bible database is not distributed in this package. Import a Bible as a ZIP file containing books.csv and verses.csv."
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:663
 msgid "Import is available only through an administrator-supplied ZIP/CSV."
 msgstr ""
 
+#: includes/class-bdwp70-activator.php:730
+#: includes/class-bdwp70-plugin.php:4811
+msgid "Imported Bible"
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:733
+msgid "User upload"
+msgstr ""
+
+#. translators: %s: file name.
+#: includes/class-bdwp70-activator.php:852
+#, php-format
+msgid "%s: file is not readable."
+msgstr ""
+
+#. translators: %s: file name.
+#: includes/class-bdwp70-activator.php:859
+#, php-format
+msgid "%s: the file could not be opened."
+msgstr ""
+
+#. translators: 1: file name, 2: line number.
+#: includes/class-bdwp70-activator.php:880
+#, php-format
+msgid "%1$s: line %2$d could not be parsed."
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:983
+msgid "The books.csv file is empty or not in the expected format."
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:991
+msgid "The Bible record could not be created."
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:1008
+msgid "The verses.csv file is empty or not in the expected format."
+msgstr ""
+
 #. translators: %s: formatted number of imported verses.
-#: includes/class-bdwp70-activator.php:1003
+#: includes/class-bdwp70-activator.php:1017
 #, php-format
 msgid "Upload complete: %s verses imported."
 msgstr ""
 
+#. translators: %d: line number.
+#: includes/class-bdwp70-activator.php:1045
+#, php-format
+msgid "books.csv: line %d is not UTF-8. Save the file as \"CSV UTF-8\" (in Excel) or with the Unicode (UTF-8) character set (in LibreOffice)."
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:1055
+msgid "books.csv: the header line is missing. The first line must be livro_seq,livro,livro_desc, and the books start on the second line."
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:1056
+msgid "books.csv: invalid header. The first line must be exactly livro_seq,livro,livro_desc."
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:1096
+msgid "books.csv: the file is empty."
+msgstr ""
+
+#. translators: 1: number of missing books, 2: list of missing book numbers.
+#: includes/class-bdwp70-activator.php:1104
+#, php-format
+msgid "books.csv: all 66 books are required, numbered from 1 (Genesis) to 66 (Revelation), and %1$d are missing: %2$s."
+msgstr ""
+
+#. translators: %d: number of ignored lines.
+#: includes/class-bdwp70-activator.php:1110
+#, php-format
+msgid "%d line with a number outside 1 to 66 was ignored: deuterocanonical books are not supported."
+msgid_plural "%d lines with a number outside 1 to 66 were ignored: deuterocanonical books are not supported."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-bdwp70-activator.php:1123
+msgid "The verses.csv file was not found or is not readable."
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:1128
+msgid "The verses.csv file could not be opened."
+msgstr ""
+
+#. translators: %d: record number.
+#: includes/class-bdwp70-activator.php:1140
+#, php-format
+msgid "verses.csv: record %d is not UTF-8. Save the file as \"CSV UTF-8\" (in Excel) or with the Unicode (UTF-8) character set (in LibreOffice)."
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:1150
+msgid "verses.csv: the header line is missing. The first line must be testamento,livroseq,livro,capitulo,versiculo,palavra, and the verses start on the second line."
+msgstr ""
+
+#: includes/class-bdwp70-activator.php:1151
+msgid "verses.csv: invalid header. The first line must be exactly testamento,livroseq,livro,capitulo,versiculo,palavra."
+msgstr ""
+
+#. translators: %d: line number.
+#: includes/class-bdwp70-activator.php:1168
+#, php-format
+msgid "verses.csv: line %d is missing livroseq, capitulo, versiculo, or text."
+msgstr ""
+
+#. translators: %d: line number.
+#: includes/class-bdwp70-activator.php:1178
+#, php-format
+msgid "verses.csv: line %d has an invalid Bible reference."
+msgstr ""
+
 #. translators: %s: formatted number of imported verses.
-#: includes/class-bdwp70-activator.php:1189
+#: includes/class-bdwp70-activator.php:1209
 #, php-format
 msgid "Imported %s verses."
 msgstr ""
 
 #: includes/class-bdwp70-chapter-navigation-widget.php:27
-msgid "Bíblia Digital - Capítulos do livro atual"
+msgid "Bíblia Digital - Chapters of the current book"
 msgstr ""
 
 #: includes/class-bdwp70-chapter-navigation-widget.php:30
-msgid "Exibe um card com o título do livro, o capítulo atual, grade de capítulos e tradução ativa nas páginas da Bíblia."
+msgid "Displays a card with the book title, the current chapter, a chapter grid, and the active translation on Bible pages."
 msgstr ""
 
 #: includes/class-bdwp70-chapter-navigation-widget.php:86
-msgid "Título opcional:"
+msgid "Optional title:"
 msgstr ""
 
 #: includes/class-bdwp70-chapter-navigation-widget.php:89
-msgid "O card aparece automaticamente apenas nas páginas de livro ou capítulo da Bíblia Digital."
+msgid "The card appears automatically only on Bíblia Digital book or chapter pages."
 msgstr ""
 
 #. translators: %s: Plugin display title.
 #: includes/class-bdwp70-plugin.php:814
 #, php-format
-msgid "%s com livros, capítulos, versículos e pesquisa bíblica."
+msgid "%s with books, chapters, verses, and Bible search."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:934
@@ -94,7 +204,7 @@ msgstr ""
 #: includes/class-bdwp70-search-widget.php:72
 #: includes/class-bdwp70-search-widget.php:103
 #: blocks/search/index.js:14
-msgid "Pesquisar na Bíblia"
+msgid "Search the Bible"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:935
@@ -104,7 +214,7 @@ msgstr ""
 #: includes/class-bdwp70-search-widget.php:73
 #: includes/class-bdwp70-search-widget.php:104
 #: blocks/search/index.js:15
-msgid "Digite uma palavra ou frase"
+msgid "Enter a word or phrase"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:936
@@ -112,7 +222,7 @@ msgstr ""
 #: includes/class-bdwp70-plugin.php:1103
 #: includes/class-bdwp70-plugin.php:1181
 #: blocks/search/index.js:16
-msgid "Pesquisar"
+msgid "Search"
 msgstr ""
 
 #. translators: %d: Chapter number.
@@ -120,41 +230,41 @@ msgstr ""
 #: includes/class-bdwp70-plugin.php:3300
 #: includes/class-bdwp70-plugin.php:3381
 #, php-format
-msgid "Capítulo %d"
+msgid "Chapter %d"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1036
-msgid "Capítulos do livro"
+msgid "Chapters of the book"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1048
 #: includes/class-bdwp70-plugin.php:3394
-msgid "Tradução"
+msgid "Translation"
 msgstr ""
 
 #. translators: %s: Bible book name.
 #: includes/class-bdwp70-plugin.php:1051
 #, php-format
-msgid "Ver todos os capítulos de %s"
+msgid "View all chapters of %s"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1101
-msgid "Buscar na Bíblia"
+msgid "Search in the Bible"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1102
-msgid "Digite uma palavra, expressão ou referência"
+msgid "Enter a word, phrase, or reference"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1151
-msgid "Digite uma palavra ou frase para iniciar a pesquisa."
+msgid "Enter a word or phrase to start searching."
 msgstr ""
 
 #. translators: 1: number of results, 2: search term.
 #: includes/class-bdwp70-plugin.php:1153
 #, php-format
-msgid "%1$s resultado encontrado para \"%2$s\"."
-msgid_plural "%1$s resultados encontrados para \"%2$s\"."
+msgid "%1$s result found for \"%2$s\"."
+msgid_plural "%1$s results found for \"%2$s\"."
 msgstr[0] ""
 msgstr[1] ""
 
@@ -162,43 +272,47 @@ msgstr[1] ""
 #: includes/class-bdwp70-plugin.php:1155
 #: includes/class-bdwp70-plugin.php:1404
 #, php-format
-msgid "Nenhum termo ou palavra foi localizado na Bíblia para \"%s\"."
+msgid "No term or word was found in the Bible for \"%s\"."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1220
-msgid "Pesquisar em"
+msgid "Search in"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1222
 #: includes/class-bdwp70-random-verse-widget.php:155
-msgid "Todos os livros"
+msgid "All books"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1233
 #: includes/class-bdwp70-plugin.php:3427
-msgid "Palavra ou frase"
+msgid "Word or phrase"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1238
-msgid "Frase exata"
+msgid "Exact phrase"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1240
-msgid "Modo da busca"
+msgid "Search mode"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1242
-msgid "Qualquer palavra"
+msgid "Any word"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1243
-msgid "Todas as palavras"
+msgid "All words"
 msgstr ""
 
 #. translators: %s: Bible verse reference.
 #: includes/class-bdwp70-plugin.php:1473
 #, php-format
-msgid "Compartilhar %s"
+msgid "Share %s"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:1515
+msgid "Bible search pagination"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1567
@@ -210,104 +324,111 @@ msgstr ""
 #: includes/class-bdwp70-random-verse-widget.php:50
 #: includes/class-bdwp70-random-verse-widget.php:120
 #: includes/class-bdwp70-random-verse-widget.php:135
-msgid "Ler o capítulo"
+msgid "Read the chapter"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1593
-msgid "Nenhum capítulo disponível. Verifique se os dados bíblicos foram importados."
+msgid "No chapters available. Make sure the Bible data has been imported."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1602
-msgid "Nenhum versículo disponível para este capítulo."
+msgid "No verses available for this chapter."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1692
-msgid "Livro não encontrado para este shortcode."
+msgid "Book not found for this shortcode."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1710
-msgid "Nenhum versículo disponível para este shortcode."
+msgid "No verses available for this shortcode."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1909
 #: includes/class-bdwp70-random-verse-widget.php:46
 #: includes/class-bdwp70-random-verse-widget.php:130
-msgid "Versículo do momento"
+msgid "Verse of the moment"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:1933
 #: includes/class-bdwp70-random-verse-widget.php:73
-msgid "Nenhum versículo disponível. Verifique se os dados bíblicos foram importados."
+msgid "No verses available. Make sure the Bible data has been imported."
 msgstr ""
 
+#: includes/class-bdwp70-plugin.php:2080
 #: includes/class-bdwp70-plugin.php:2082
+#: includes/class-bdwp70-plugin.php:4618
 #: includes/view-shortcode.php:97
-msgid "Bíblia Digital Online"
+msgid "Online Bible"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2094
-msgid "Pesquisar capítulo"
+msgid "Search chapter"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2095
-msgid "Encontre capítulos, palavras ou temas específicos."
+msgid "Find chapters, words, or specific topics."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2102
-msgid "Leitura do dia"
+msgid "Daily reading"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2103
-msgid "Sugestão de leitura diária para edificar sua fé."
+msgid "A daily reading suggestion to build up your faith."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2110
-msgid "Versículo do dia"
+msgid "Verse of the day"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2111
-msgid "Inspiração diária baseada na Palavra de Deus."
+msgid "Daily inspiration from the Word of God."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2118
-msgid "Últimos estudos"
+msgid "Latest studies"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2119
-msgid "Acesse os estudos bíblicos mais recentes."
+msgid "Read the most recent Bible studies."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2437
-msgid "Versão instalada"
+msgid "Installed version"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2437
-msgid "Tradução ativa"
+msgid "Active translation"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2438
-msgid "Versão da Bíblia instalada"
+msgid "Installed Bible version"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:2447
-msgid "Tradução da Bíblia"
+msgid "Bible translation"
 msgstr ""
 
 #. translators: %d: Bible version ID.
 #: includes/class-bdwp70-plugin.php:2459
-#: includes/class-bdwp70-plugin.php:4335
+#: includes/class-bdwp70-plugin.php:4365
 #, php-format
-msgid "Bíblia #%d"
+msgid "Bible #%d"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:2535
+#: includes/class-bdwp70-plugin.php:4368
+msgid "No active Bible"
 msgstr ""
 
 #. translators: %d: verse number.
 #: includes/class-bdwp70-plugin.php:3307
 #, php-format
-msgid "Versículo %d"
+msgid "Verse %d"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3313
-msgid "Busca"
+msgid "Search results"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3327
@@ -317,1019 +438,1203 @@ msgstr ""
 #. translators: 1: Bible book name, 2: Chapter number.
 #: includes/class-bdwp70-plugin.php:3368
 #, php-format
-msgid "Selecionar capítulo de %1$s; capítulo atual %2$d"
+msgid "Select a chapter of %1$s; current chapter %2$d"
 msgstr ""
 
 #. translators: %s: Bible book name.
 #: includes/class-bdwp70-plugin.php:3368
 #, php-format
-msgid "Selecionar capítulo de %s"
+msgid "Select a chapter of %s"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3375
-msgid "Capítulos"
+msgid "Chapters"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3384
-msgid "Todos os capítulos do livro"
+msgid "All chapters of the book"
 msgstr ""
 
 #. translators: %s: Bible book name.
 #: includes/class-bdwp70-plugin.php:3397
 #, php-format
-msgid "Ver lista de capítulos de %s"
+msgid "View the chapter list of %s"
 msgstr ""
 
 #. translators: 1: Bible book name, 2: Chapter number.
 #: includes/class-bdwp70-plugin.php:3414
 #, php-format
-msgid "%1$s, capítulo %2$d"
+msgid "%1$s, chapter %2$d"
 msgstr ""
 
 #. translators: %s: Bible book name.
 #: includes/class-bdwp70-plugin.php:3414
 #: includes/view-shortcode.php:266
 #, php-format
-msgid "Capítulos de %s"
+msgid "Chapters of %s"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3428
-msgid "Buscar"
+msgid "Go"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3556
-#: includes/class-bdwp70-plugin.php:3583
+#: includes/class-bdwp70-plugin.php:3505
+msgid "Select Bible image"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3506
+msgid "Use this image"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3515
+#: includes/class-bdwp70-plugin.php:3516
+#: includes/class-bdwp70-plugin.php:3686
+msgid "Bíblia Digital"
+msgstr ""
+
+#. translators: 1: locale code, 2: link to translate.wordpress.org, 3: link to the Frontend Translation tab.
+#: includes/class-bdwp70-plugin.php:3563
+#, php-format
+msgid "Bíblia Digital is written in English, and translations come from translate.wordpress.org. There is no translation for %1$s yet, so the plugin is shown in English. You can %2$s or upload your own translation on the %3$s tab."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3565
+msgid "help translate it"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3566
+#: includes/class-bdwp70-plugin.php:3664
+#: includes/class-bdwp70-plugin.php:3830
+#: includes/class-bdwp70-plugin.php:4000
+msgid "Frontend Translation"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3586
+#: includes/class-bdwp70-plugin.php:3613
 msgid "Bíblia Digital:"
 msgstr ""
 
 #. translators: %s: list of corrected book names.
-#: includes/class-bdwp70-plugin.php:3558
-#, php-format
-msgid "grafia dos nomes de livros corrigida: %s. As URLs antigas de Colossenses e Tessalonicenses redirecionam para as novas."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3584
-msgid "foi ativado. Para começar, importe uma Bíblia em formato ZIP contendo books.csv e verses.csv. A responsabilidade pela licença da versão bíblica importada é do usuário final/administrador do site."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3586
-msgid "Importar agora"
-msgstr ""
-
 #: includes/class-bdwp70-plugin.php:3588
-msgid "Dispensar"
+#, php-format
+msgid "book name spelling corrected: %s. The old Colossians and Thessalonians URLs redirect to the new ones."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3631
-msgid "Visão Geral"
+#: includes/class-bdwp70-plugin.php:3614
+msgid "has been activated. To get started, import a Bible as a ZIP file containing books.csv and verses.csv. The end user/site administrator is responsible for the license of the imported Bible version."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3632
-#: includes/class-bdwp70-plugin.php:3782
-#: includes/class-bdwp70-plugin.php:3797
-#: includes/class-bdwp70-plugin.php:3839
-msgid "Importar Bíblia"
+#: includes/class-bdwp70-plugin.php:3616
+msgid "Import now"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3633
-#: includes/class-bdwp70-plugin.php:3901
-msgid "Versões da Bíblia"
+#: includes/class-bdwp70-plugin.php:3618
+msgid "Dismiss"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3634
-#: includes/class-bdwp70-plugin.php:3800
-#: includes/class-bdwp70-plugin.php:3970
-msgid "Tradução do Frontend"
+#: includes/class-bdwp70-plugin.php:3661
+msgid "Overview"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3635
-#: includes/class-bdwp70-plugin.php:3799
-#: includes/class-bdwp70-plugin.php:3982
+#: includes/class-bdwp70-plugin.php:3662
+#: includes/class-bdwp70-plugin.php:3812
+#: includes/class-bdwp70-plugin.php:3827
+#: includes/class-bdwp70-plugin.php:3869
+msgid "Import Bible"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3663
+#: includes/class-bdwp70-plugin.php:3931
+msgid "Bible Versions"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3665
+#: includes/class-bdwp70-plugin.php:3829
+#: includes/class-bdwp70-plugin.php:4012
 msgid "Shortcodes"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3636
-msgid "SEO e URLs"
+#: includes/class-bdwp70-plugin.php:3666
+msgid "SEO and URLs"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3637
-#: includes/class-bdwp70-plugin.php:4304
-msgid "Diagnóstico"
+#: includes/class-bdwp70-plugin.php:3667
+#: includes/class-bdwp70-plugin.php:4334
+msgid "Diagnostics"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3656
-msgid "Bíblia Digital"
+#: includes/class-bdwp70-plugin.php:3689
+msgid "Bíblia Digital plugin sections"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3659
-msgid "Seções do plugin Bíblia Digital"
+#: includes/class-bdwp70-plugin.php:3741
+msgid "Bible data imported successfully."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3711
-msgid "Dados bíblicos importados com sucesso."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3713
-msgid "Não foi possível concluir a importação."
+#: includes/class-bdwp70-plugin.php:3743
+msgid "The import could not be completed."
 msgstr ""
 
 #. translators: %s: Bible version name.
-#: includes/class-bdwp70-plugin.php:3721
+#: includes/class-bdwp70-plugin.php:3751
 #, php-format
-msgid "Versão \"%s\" excluída, com seus livros e versículos. As URLs dela passam a redirecionar para a Bíblia ativa."
+msgid "Version \"%s\" was deleted, along with its books and verses. Its URLs now redirect to the active Bible."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3722
-msgid "A Bíblia ativa do site não pode ser excluída. Ative outra versão acima e depois exclua esta."
+#: includes/class-bdwp70-plugin.php:3752
+msgid "The site's active Bible cannot be deleted. Activate another version above, then delete this one."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3723
-msgid "Marque a confirmação ao lado do botão para excluir a versão."
+#: includes/class-bdwp70-plugin.php:3753
+msgid "Check the confirmation box next to the button to delete the version."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3724
-msgid "Esta versão faz parte do plugin e não pode ser excluída."
+#: includes/class-bdwp70-plugin.php:3754
+msgid "This version is part of the plugin and cannot be deleted."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3725
-msgid "Versão não encontrada. Ela pode já ter sido excluída."
+#: includes/class-bdwp70-plugin.php:3755
+msgid "Version not found. It may have already been deleted."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3733
-msgid "Configurações salvas. Os links permanentes foram atualizados."
+#: includes/class-bdwp70-plugin.php:3763
+msgid "Settings saved. Permalinks have been refreshed."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3737
-msgid "Arquivo(s) de tradução enviados com sucesso."
+#: includes/class-bdwp70-plugin.php:3767
+msgid "Translation file(s) uploaded successfully."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3739
-msgid "Não foi possível enviar os arquivos de tradução."
+#: includes/class-bdwp70-plugin.php:3769
+msgid "The translation files could not be uploaded."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3779
-msgid "Painel enterprise da Bíblia Digital"
+#: includes/class-bdwp70-plugin.php:3809
+msgid "Bíblia Digital enterprise dashboard"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3780
-msgid "Gerencie importação, versões bíblicas, tradução do frontend e shortcodes em seções separadas. O plugin cuida das funcionalidades persistentes; o tema deve cuidar apenas da apresentação visual."
+#: includes/class-bdwp70-plugin.php:3810
+msgid "Manage import, Bible versions, frontend translation, and shortcodes in separate sections. The plugin handles persistent features; the theme should handle only the visual presentation."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3786
+#: includes/class-bdwp70-plugin.php:3816
 #: includes/class-bdwp70-random-verse-widget.php:138
-msgid "Bíblia ativa"
+msgid "Active Bible"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3786
-msgid "Usada como padrão do site."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3787
-msgid "Versões importadas"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3787
-msgid "Traduções disponíveis no banco."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3788
-msgid "Livros da Bíblia ativa"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3788
-msgid "Esperado: 66 na ordem protestante tradicional."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3789
-msgid "Versículos da Bíblia ativa"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3789
-msgid "Texto bíblico armazenado localmente."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3794
-msgid "Links rápidos"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3795
-msgid "Acesse diretamente as áreas mais usadas do plugin."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3798
-msgid "Versões"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3804
-msgid "Resumo técnico"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3807
-#: includes/class-bdwp70-plugin.php:3931
-msgid "Status"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3808
-msgid "Base/slug"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3809
-msgid "Última importação"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3809
-msgid "não registrada"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3813
-msgid "Progresso"
+#: includes/class-bdwp70-plugin.php:3816
+msgid "Used as the site default."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3817
-msgid "Último erro"
+msgid "Imported versions"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3841
-msgid "Primeiro importe a base bíblica."
+#: includes/class-bdwp70-plugin.php:3817
+msgid "Translations available in the database."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3841
-msgid "Envie um arquivo ZIP contendo books.csv e verses.csv em UTF-8. O plugin cria uma nova Bíblia e a deixa ativa após a importação."
+#: includes/class-bdwp70-plugin.php:3818
+msgid "Books in the active Bible"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3842
-msgid "O pacote público não distribui textos bíblicos protegidos. A licença da tradução importada é responsabilidade do administrador do site."
+#: includes/class-bdwp70-plugin.php:3818
+msgid "Expected: 66, in the traditional Protestant order."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3849
-msgid "Nome da Bíblia"
+#: includes/class-bdwp70-plugin.php:3819
+msgid "Verses in the active Bible"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3849
-msgid "Ex.: Almeida Corrigida Fiel"
+#: includes/class-bdwp70-plugin.php:3819
+msgid "Bible text stored locally."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3850
-#: includes/class-bdwp70-plugin.php:3931
-msgid "Idioma"
+#: includes/class-bdwp70-plugin.php:3824
+msgid "Quick links"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3850
-msgid "Ex.: pt-BR, en-US, es-ES"
+#: includes/class-bdwp70-plugin.php:3825
+msgid "Go straight to the most used areas of the plugin."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3851
-msgid "Arquivo ZIP"
+#: includes/class-bdwp70-plugin.php:3828
+msgid "Versions"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3853
-msgid "Enviar e importar Bíblia"
+#: includes/class-bdwp70-plugin.php:3834
+msgid "Technical summary"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3857
-msgid "Como preparar os arquivos"
+#: includes/class-bdwp70-plugin.php:3837
+#: includes/class-bdwp70-plugin.php:3961
+msgid "Status"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3860
-msgid "Modelos prontos:"
+#: includes/class-bdwp70-plugin.php:3838
+msgid "Base/slug"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3861
-msgid "Baixar books.csv"
+#: includes/class-bdwp70-plugin.php:3839
+msgid "Last import"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3862
-msgid "Baixar verses.csv"
+#: includes/class-bdwp70-plugin.php:3839
+msgid "not recorded"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3864
-msgid "O books.csv de modelo já traz os 66 livros com nome e abreviação em português; troque pelos nomes da sua tradução, se for de outro idioma. O verses.csv de modelo traz só linhas de exemplo: substitua pelo texto completo."
+#: includes/class-bdwp70-plugin.php:3843
+msgid "Progress"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3868
-msgid "a primeira linha é o cabeçalho, e depois vem um livro por linha, os 66 livros, numerados de 1 (Gênesis) a 66 (Apocalipse) na ordem protestante tradicional:"
+#: includes/class-bdwp70-plugin.php:3847
+msgid "Last error"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3876
-msgid "a primeira linha é o cabeçalho, e depois vem um versículo por linha. Coloque o texto do versículo entre aspas; aspas dentro do texto são escritas dobradas."
+#: includes/class-bdwp70-plugin.php:3871
+msgid "Import the Bible data first."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3871
+msgid "Upload a ZIP file containing books.csv and verses.csv in UTF-8. The plugin creates a new Bible and makes it active after the import."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3872
+msgid "The public package does not distribute copyrighted Bible texts. The site administrator is responsible for the license of the imported translation."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3879
+msgid "Bible name"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3879
+msgid "E.g.: King James Version"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3880
+#: includes/class-bdwp70-plugin.php:3961
+msgid "Language"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3880
+msgid "E.g.: pt-BR, en-US, es-ES"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3881
-msgid "Salve os dois arquivos em UTF-8, com vírgula como separador. No Excel, use \"CSV UTF-8 (delimitado por vírgulas)\". No LibreOffice, marque o conjunto de caracteres Unicode (UTF-8), o separador vírgula e as aspas como delimitador de texto."
+msgid "ZIP file"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3882
-msgid "Compacte os dois arquivos num ZIP. Eles podem ficar na raiz do ZIP ou dentro de uma única pasta."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3885
-msgid "Antes de importar, confira"
+#: includes/class-bdwp70-plugin.php:3883
+msgid "Upload and import Bible"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3887
-msgid "O nome em livro_desc é exibido no site e também forma a URL do livro: \"Colossenses\" gera /colossenses/. Revise a grafia antes de importar, porque corrigir depois muda a URL."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3888
-msgid "Cada importação cria uma nova versão e a deixa ativa. Para substituir uma tradução, importe a nova e exclua a antiga na aba Versões."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3889
-msgid "O texto é importado sem formatação (HTML é removido), com até 5.000 caracteres por versículo."
+msgid "How to prepare the files"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3890
-msgid "A coluna testamento pode ficar com AT/NT, OT/NT ou vazia: o testamento é deduzido pelo número do livro."
+msgid "Ready-made templates:"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3891
-msgid "Informe o idioma no formato pt-BR, en-US ou es-ES."
+msgid "Download books.csv"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3892
-msgid "Livros deuterocanônicos (Tobias, Judite, Macabeus e outros) não são suportados."
+msgid "Download verses.csv"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3893
-msgid "Limites: ZIP de até 50 MB e até 25 MB descompactado. O servidor precisa da extensão PHP zip."
+#: includes/class-bdwp70-plugin.php:3894
+msgid "The books.csv template already lists the 66 books with their Portuguese names and abbreviations; replace them with the names from your translation if it is in another language. The verses.csv template has only sample rows: replace them with the full text."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3902
-msgid "Gerencie a Bíblia ativa do site e acompanhe as versões importadas. A seleção pública de uma versão no frontend não altera esta Bíblia ativa global."
+#: includes/class-bdwp70-plugin.php:3898
+msgid "the first line is the header, followed by one book per line, all 66 books, numbered from 1 (Genesis) to 66 (Revelation) in the traditional Protestant order:"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3910
-msgid "Bíblia ativa do site"
+#: includes/class-bdwp70-plugin.php:3906
+msgid "the first line is the header, followed by one verse per line. Put the verse text in quotes; quotes inside the text are written doubled."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3911
+msgid "Save both files in UTF-8, with a comma as the separator. In Excel, use \"CSV UTF-8 (Comma delimited)\". In LibreOffice, choose the Unicode (UTF-8) character set, the comma separator, and quotes as the text delimiter."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3912
+msgid "Compress both files into a ZIP. They can be at the root of the ZIP or inside a single folder."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3915
+msgid "Before importing, check"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3917
+msgid "The name in livro_desc is shown on the site and also becomes the book URL: \"Colossians\" produces /colossians/. Review the spelling before importing, because correcting it later changes the URL."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3918
-msgid "Usada como padrão em shortcodes, widgets, busca e URLs quando o visitante não seleciona outra versão."
+msgid "Each import creates a new version and makes it active. To replace a translation, import the new one and delete the old one on the Versions tab."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3919
+msgid "The text is imported without formatting (HTML is removed), with up to 5,000 characters per verse."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3920
-msgid "Nenhuma Bíblia importada."
+msgid "The testamento column can hold AT/NT, OT/NT, or be empty: the testament is derived from the book number."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3920
-msgid "Use a aba Importar Bíblia para enviar um ZIP contendo books.csv e verses.csv."
+#: includes/class-bdwp70-plugin.php:3921
+msgid "Enter the language in the pt-BR, en-US, or es-ES format."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3925
-msgid "Salvar Bíblia ativa"
+#: includes/class-bdwp70-plugin.php:3922
+msgid "Deuterocanonical books (Tobit, Judith, Maccabees, and others) are not supported."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3928
-msgid "Excluir uma versão"
+#: includes/class-bdwp70-plugin.php:3923
+msgid "Limits: ZIP up to 50 MB and up to 25 MB uncompressed. The server needs the PHP zip extension."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3928
-msgid "apaga o cadastro, os livros e os versículos dela, e não pode ser desfeito. As URLs da versão excluída passam a redirecionar para o mesmo trecho na Bíblia ativa. Para substituir uma tradução, importe a nova, ative-a e então exclua a antiga."
+#: includes/class-bdwp70-plugin.php:3932
+msgid "Manage the site's active Bible and review the imported versions. A visitor selecting a version on the frontend does not change this global active Bible."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3931
+#: includes/class-bdwp70-plugin.php:3940
+msgid "Site's active Bible"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3948
+msgid "Used as the default in shortcodes, widgets, search, and URLs when the visitor does not select another version."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3950
+msgid "No Bible imported."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3950
+msgid "Use the Import Bible tab to upload a ZIP containing books.csv and verses.csv."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3955
+msgid "Save active Bible"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3958
+msgid "Deleting a version"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3958
+msgid "removes its record, books, and verses, and cannot be undone. URLs of the deleted version redirect to the same passage in the active Bible. To replace a translation, import the new one, activate it, and then delete the old one."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3961
 msgid "ID"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3931
-msgid "Nome"
+#: includes/class-bdwp70-plugin.php:3961
+msgid "Name"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3931
-msgid "Livros"
+#: includes/class-bdwp70-plugin.php:3961
+msgid "Books"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3931
-msgid "Versículos"
+#: includes/class-bdwp70-plugin.php:3961
+msgid "Verses"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3931
-msgid "Excluir"
+#: includes/class-bdwp70-plugin.php:3961
+msgid "Delete"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3941
-msgid "Ativa"
+#: includes/class-bdwp70-plugin.php:3971
+msgid "Active"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3941
-msgid "Importada"
+#: includes/class-bdwp70-plugin.php:3971
+msgid "Imported"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3946
-msgid "Ative outra versão para poder excluir esta."
+#: includes/class-bdwp70-plugin.php:3976
+msgid "Activate another version to be able to delete this one."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3952
-msgid "Confirmo"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3953
-msgid "Excluir versão"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3960
-msgid "Nenhuma versão importada ainda."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3964
-msgid "A base para rótulo público, visibilidade pública e múltiplas versões no mesmo idioma permanece no plugin. Esta etapa não altera reescrita/permalinks."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3972
-msgid "Esta etapa vem depois da importação da Bíblia."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3972
-msgid "Arquivos .pot, .po e .mo traduzem as strings do plugin no frontend. Eles não substituem o texto bíblico importado."
+#: includes/class-bdwp70-plugin.php:3982
+msgid "I confirm"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:3983
-msgid "Use esta seção como referência rápida para páginas, widgets e blocos HTML. Os aliases antigos foram preservados para compatibilidade."
+msgid "Delete version"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3993
+#: includes/class-bdwp70-plugin.php:3990
+msgid "No version imported yet."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:3994
+msgid "The groundwork for public labels, public visibility, and multiple versions in the same language stays in the plugin. This step does not change rewrites/permalinks."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4002
+msgid "This step comes after importing the Bible."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4002
+msgid ".pot, .po, and .mo files translate the plugin strings on the frontend. They do not replace the imported Bible text."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4013
+msgid "Use this section as a quick reference for pages, widgets, and HTML blocks. The old aliases have been kept for compatibility."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4023
 msgid "Aliases:"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:3996
-msgid "Exemplo básico:"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3998
-msgid "Copiar shortcode"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:3999
-msgid "Exemplo avançado:"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4001
-msgid "Copiar exemplo avançado"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4004
-msgid "Atributo"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4004
-#: includes/class-bdwp70-plugin.php:4265
-msgid "Descrição"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4015
-msgid "Valores aceitos para aleatório"
+#: includes/class-bdwp70-plugin.php:4026
+msgid "Basic example:"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4028
-msgid "Azul / pesquisa"
+msgid "Copy shortcode"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4029
-msgid "Amarelo / leitura"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4030
-msgid "Verde / versículo"
+msgid "Advanced example:"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4031
-msgid "Roxo / estudos"
+msgid "Copy advanced example"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4034
-msgid "SEO, URLs e elementos da landing"
+msgid "Attribute"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4035
-msgid "As regras de URL amigável foram revisadas para preservar URLs antigas e aceitar URLs com versão no caminho. Após alterar o slug/base, salve os Links permanentes uma vez."
+#: includes/class-bdwp70-plugin.php:4034
+#: includes/class-bdwp70-plugin.php:4295
+msgid "Description"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4042
-msgid "Título da Bíblia"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4042
-msgid "Define o título exibido no frontend e usado nos metadados de SEO da Bíblia."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4044
-msgid "Imagem acima do título"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4053
-msgid "Selecionar imagem"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4054
-msgid "Remover imagem"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4055
-msgid "Imagem exibida acima do título da Bíblia no frontend. Não confundir com logo visual do tema."
+#: includes/class-bdwp70-plugin.php:4045
+msgid "Accepted values for random"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4058
-msgid "Slug/base da Bíblia"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4058
-msgid "Crie uma página com este slug e insira [biblia-digital]. Depois de alterar este campo, acesse Configurações > Links permanentes e clique em Salvar alterações uma vez."
+msgid "Blue / search"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4059
-msgid "URL da Bíblia Studio"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4059
-msgid "Modelo legado de URL externa preservado por compatibilidade. Pode usar {book}, {book_slug}, {chapter}, {verse} e {reference}."
+msgid "Yellow / reading"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4060
-msgid "Crédito público"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4060
-msgid "Exibir crédito com link para Estudo Bíblico no frontend."
+msgid "Green / verse"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4061
-msgid "Dados ao desinstalar"
+msgid "Purple / studies"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4061
-msgid "Apagar tabelas, opções e Bíblias importadas quando o plugin for excluído."
+#: includes/class-bdwp70-plugin.php:4064
+msgid "SEO, URLs, and landing elements"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4061
-#: includes/class-bdwp70-plugin.php:4245
-msgid "Atenção:"
+#: includes/class-bdwp70-plugin.php:4065
+msgid "The friendly URL rules were revised to keep old URLs working and to accept URLs with the version in the path. After changing the slug/base, save the Permalinks once."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4061
-msgid "desativar o plugin nunca remove dados. Ao excluir, os dados também são preservados por padrão."
+#: includes/class-bdwp70-plugin.php:4072
+msgid "Bible title"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4071
+#: includes/class-bdwp70-plugin.php:4072
+msgid "Sets the title shown on the frontend and used in the Bible's SEO metadata."
+msgstr ""
+
 #: includes/class-bdwp70-plugin.php:4074
-msgid "Sitemap XML"
+msgid "Image above the title"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4086
-msgid "Ativar sitemap XML automático da Bíblia"
+#: includes/class-bdwp70-plugin.php:4083
+msgid "Select image"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4084
+msgid "Remove image"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4085
+msgid "Image shown above the Bible title on the frontend. Not to be confused with the theme logo."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4088
+msgid "Bible slug/base"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4088
+msgid "Create a page with this slug and add [biblia-digital] to it. After changing this field, go to Settings > Permalinks and click Save Changes once."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4089
+msgid "Bíblia Studio URL"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4089
+msgid "Legacy external URL template kept for compatibility. It can use {book}, {book_slug}, {chapter}, {verse}, and {reference}."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4090
-msgid "Gera um sitemap dedicado com as URLs da Bíblia e também integra ao sitemap nativo do WordPress (/wp-sitemap.xml). Não inclui outras páginas do site."
+msgid "Public credit"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4093
-#: includes/class-bdwp70-plugin.php:4231
-msgid "Sitemap dedicado:"
+#: includes/class-bdwp70-plugin.php:4090
+msgid "Show a credit linking to Estudo Bíblico on the frontend."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4098
-#: includes/class-bdwp70-plugin.php:4237
-msgid "Sitemap nativo WordPress:"
+#: includes/class-bdwp70-plugin.php:4091
+msgid "Data on uninstall"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4102
-msgid "Após ativar pela primeira vez, acesse Configurações → Links permanentes e clique em Salvar."
+#: includes/class-bdwp70-plugin.php:4091
+msgid "Delete tables, options, and imported Bibles when the plugin is deleted."
 msgstr ""
 
+#: includes/class-bdwp70-plugin.php:4091
+#: includes/class-bdwp70-plugin.php:4275
+msgid "Note:"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4091
+msgid "deactivating the plugin never removes data. When the plugin is deleted, data is also kept by default."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4101
 #: includes/class-bdwp70-plugin.php:4104
-msgid "Quando ativado, o sitemap estará em:"
+msgid "XML sitemap"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4122
-msgid "Incluir versículos individuais no sitemap"
+#: includes/class-bdwp70-plugin.php:4116
+msgid "Enable the automatic Bible XML sitemap"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4125
-msgid "Sem efeito: as URLs de versículo declaram o capítulo como canônico e, por isso, não entram no sitemap. Elas continuam funcionando como link direto para o versículo."
+#: includes/class-bdwp70-plugin.php:4120
+msgid "Generates a dedicated sitemap with the Bible URLs and also integrates with the native WordPress sitemap (/wp-sitemap.xml). It does not include other pages of the site."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4131
-msgid "Máximo de URLs por arquivo de sitemap:"
+#: includes/class-bdwp70-plugin.php:4123
+#: includes/class-bdwp70-plugin.php:4261
+msgid "Dedicated sitemap:"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4143
-msgid "Mínimo: 100. Máximo: 50.000. Padrão: 2.000."
+#: includes/class-bdwp70-plugin.php:4128
+#: includes/class-bdwp70-plugin.php:4267
+msgid "Native WordPress sitemap:"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4198
-msgid "Diagnóstico do Sitemap XML"
+#: includes/class-bdwp70-plugin.php:4132
+msgid "After enabling it for the first time, go to Settings → Permalinks and click Save."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4134
+msgid "When enabled, the sitemap will be at:"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4152
+msgid "Include individual verses in the sitemap"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4155
+msgid "No effect: verse URLs declare the chapter as canonical and are therefore left out of the sitemap. They keep working as direct links to the verse."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4161
+msgid "Maximum URLs per sitemap file:"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4173
+msgid "Minimum: 100. Maximum: 50,000. Default: 2,000."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4228
+msgid "XML Sitemap diagnostics"
 msgstr ""
 
 #. translators: %d: configured active Bible ID.
-#: includes/class-bdwp70-plugin.php:4203
+#: includes/class-bdwp70-plugin.php:4233
 #, php-format
-msgid "Bíblia ativa configurada: #%d"
+msgid "Configured active Bible: #%d"
 msgstr ""
 
 #. translators: %d: Bible ID used by the sitemap.
-#: includes/class-bdwp70-plugin.php:4209
+#: includes/class-bdwp70-plugin.php:4239
 #, php-format
-msgid "Bíblia usada no sitemap: #%d"
+msgid "Bible used in the sitemap: #%d"
 msgstr ""
 
 #. translators: %s: number of published books.
-#: includes/class-bdwp70-plugin.php:4215
+#: includes/class-bdwp70-plugin.php:4245
 #, php-format
-msgid "Livros publicados: %s"
+msgid "Published books: %s"
 msgstr ""
 
 #. translators: %s: number of published chapters.
-#: includes/class-bdwp70-plugin.php:4221
+#: includes/class-bdwp70-plugin.php:4251
 #, php-format
-msgid "Capítulos publicados: %s"
+msgid "Published chapters: %s"
 msgstr ""
 
 #. translators: %s: number of published verses.
-#: includes/class-bdwp70-plugin.php:4227
+#: includes/class-bdwp70-plugin.php:4257
 #, php-format
-msgid "Versículos publicados: %s"
+msgid "Published verses: %s"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4246
-msgid "O sitemap não gerará URLs porque a Bíblia ativa não possui livros ou versículos publicados. Reimporte a Bíblia ou selecione uma Bíblia ativa com conteúdo."
+#: includes/class-bdwp70-plugin.php:4276
+msgid "The sitemap will not generate URLs because the active Bible has no published books or verses. Re-import the Bible or select an active Bible with content."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4255
-msgid "Cards de acesso rápido"
+#: includes/class-bdwp70-plugin.php:4285
+msgid "Quick access cards"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4256
-msgid "Altere os cards exibidos abaixo do título da página inicial da Bíblia."
+#: includes/class-bdwp70-plugin.php:4286
+msgid "Change the cards shown below the title on the Bible home page."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4258
-msgid "Exibir"
+#: includes/class-bdwp70-plugin.php:4288
+msgid "Show"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4258
+#: includes/class-bdwp70-plugin.php:4288
 msgid "Card"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4258
-msgid "Ícone / cor"
+#: includes/class-bdwp70-plugin.php:4288
+msgid "Icon / color"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4262
-msgid "Sim"
+#: includes/class-bdwp70-plugin.php:4292
+msgid "Yes"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4264
+#: includes/class-bdwp70-plugin.php:4294
 #: blocks/search/index.js:30
-msgid "Título"
+msgid "Title"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4266
+#: includes/class-bdwp70-plugin.php:4296
 msgid "Link"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4269
-msgid "Ícone"
+#: includes/class-bdwp70-plugin.php:4299
+msgid "Icon"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4270
-msgid "Cor"
+#: includes/class-bdwp70-plugin.php:4300
+msgid "Color"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4281
-msgid "Salvar configurações"
+#: includes/class-bdwp70-plugin.php:4311
+msgid "Save settings"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4305
-msgid "Resumo técnico sem dados sensíveis para conferência do ambiente e suporte."
+#: includes/class-bdwp70-plugin.php:4335
+msgid "Technical summary without sensitive data, for environment checks and support."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4321
-msgid "Copiar relatório técnico"
+#: includes/class-bdwp70-plugin.php:4351
+msgid "Copy technical report"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4338
-msgid "Nenhuma Bíblia ativa"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4358
-msgid "Leitor principal da Bíblia"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4361
-msgid "Exibe a Bíblia completa, incluindo landing, livros, capítulos, versículos, busca e navegação."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4365
-msgid "Número de itens por página em resultados/listagens quando aplicável. Padrão: 30."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4366
-msgid "Título exibido pelo shortcode, quando aplicável."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4367
-msgid "ID da versão/Bíblia a ser usada. Exemplo: version=\"1\"."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4371
-msgid "Busca bíblica simples"
-msgstr ""
-
+#. translators: 1: Bible version name, 2: language code, 3: number of books, 4: number of verses.
 #: includes/class-bdwp70-plugin.php:4374
-msgid "Exibe somente o formulário de busca bíblica."
+#, php-format
+msgid "%1$s - %2$s - %3$s books / %4$s verses"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4378
-msgid "Título do formulário."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4379
-msgid "Texto de orientação do campo de pesquisa."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4380
-#: includes/class-bdwp70-plugin.php:4412
-#: includes/class-bdwp70-plugin.php:4434
-#: includes/class-bdwp70-plugin.php:4456
-msgid "Texto do botão."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4381
-#: includes/class-bdwp70-plugin.php:4395
-msgid "ID da versão/Bíblia, se aplicável."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4385
-msgid "Página completa de busca"
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4388
-msgid "Exibe formulário de busca, resultados e paginação. Recomendado para uma página pública de pesquisa."
+#: includes/class-bdwp70-plugin.php:4389
+msgid "Main Bible reader"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4392
-msgid "Título da página/bloco de busca."
+msgid "Displays the full Bible, including the landing page, books, chapters, verses, search, and navigation."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4393
-msgid "Quantidade de resultados por página. Padrão sugerido: 30."
+#: includes/class-bdwp70-plugin.php:4396
+msgid "Number of items per page in results/listings where applicable. Default: 30."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4394
-msgid "Exibir seletor de livro. Aceita 1 ou 0."
+#: includes/class-bdwp70-plugin.php:4397
+msgid "Title shown by the shortcode, where applicable."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4399
-msgid "Versículo aleatório"
+#: includes/class-bdwp70-plugin.php:4398
+msgid "ID of the version/Bible to use. Example: version=\"1\"."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4402
-msgid "Exibe um versículo aleatório."
+msgid "Simple Bible search"
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4406
-msgid "Título do bloco."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4407
-msgid "ID ou identificação do livro. Exemplo: book=\"19\" para Salmos."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4408
-#: includes/class-bdwp70-plugin.php:4430
-#: includes/class-bdwp70-plugin.php:4453
-msgid "ID da versão/Bíblia."
+#: includes/class-bdwp70-plugin.php:4405
+msgid "Displays only the Bible search form."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4409
-msgid "Exibir referência bíblica. Aceita 1 ou 0."
+msgid "Form title."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4410
-#: includes/class-bdwp70-plugin.php:4432
-msgid "Transformar referência em link. Aceita 1 ou 0."
+msgid "Hint text for the search field."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4411
-msgid "Exibir botão para leitura do capítulo. Aceita 1 ou 0."
+#: includes/class-bdwp70-plugin.php:4443
+#: includes/class-bdwp70-plugin.php:4465
+#: includes/class-bdwp70-plugin.php:4487
+msgid "Button text."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4412
+#: includes/class-bdwp70-plugin.php:4426
+msgid "Version/Bible ID, if applicable."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4416
-msgid "Versículo específico ou aleatório"
+msgid "Full search page"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4419
-msgid "Exibe um versículo específico ou aleatório."
+msgid "Displays the search form, results, and pagination. Recommended for a public search page."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4423
-#: includes/class-bdwp70-plugin.php:4445
-msgid "Título opcional."
+msgid "Title of the search page/block."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4424
-#: includes/class-bdwp70-plugin.php:4446
-msgid "Nome, abreviação ou ID do livro."
+msgid "Number of results per page. Suggested default: 30."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4425
-#: includes/class-bdwp70-plugin.php:4447
-msgid "Alias em inglês para livro."
+msgid "Show the book selector. Accepts 1 or 0."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4426
-msgid "Número do capítulo ou random."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4427
-#: includes/class-bdwp70-plugin.php:4449
-msgid "Alias em inglês para capítulo."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4428
-msgid "Número do versículo ou random."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4429
-msgid "Alias em inglês para versículo."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4431
-msgid "Exibir referência. Aceita 1 ou 0."
+#: includes/class-bdwp70-plugin.php:4430
+msgid "Random verse"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4433
-msgid "Exibir botão. Aceita 1 ou 0."
+msgid "Displays a random verse."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4437
+msgid "Block title."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4438
-msgid "Capítulo específico ou aleatório"
+msgid "Book ID or identifier. Example: book=\"19\" for Psalms."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4439
+#: includes/class-bdwp70-plugin.php:4461
+#: includes/class-bdwp70-plugin.php:4484
+msgid "Version/Bible ID."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4440
+msgid "Show the Bible reference. Accepts 1 or 0."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4441
-msgid "Exibe um capítulo específico ou um capítulo aleatório."
+#: includes/class-bdwp70-plugin.php:4463
+msgid "Turn the reference into a link. Accepts 1 or 0."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4448
-msgid "Número do capítulo."
+#: includes/class-bdwp70-plugin.php:4442
+msgid "Show a button to read the chapter. Accepts 1 or 0."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4447
+msgid "Specific or random verse"
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4450
-msgid "Ativar capítulo aleatório. Aceita 1 ou 0."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4451
-msgid "Limitar quantidade de versículos exibidos."
-msgstr ""
-
-#: includes/class-bdwp70-plugin.php:4452
-msgid "Alias em inglês para limite."
+msgid "Displays a specific or random verse."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4454
-msgid "Exibir título do capítulo. Aceita 1 ou 0."
+#: includes/class-bdwp70-plugin.php:4476
+msgid "Optional title."
 msgstr ""
 
 #: includes/class-bdwp70-plugin.php:4455
-msgid "Exibir botão para abrir capítulo completo. Aceita 1 ou 0."
+#: includes/class-bdwp70-plugin.php:4477
+msgid "Book name, abbreviation, or ID."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4550
-#: includes/class-bdwp70-plugin.php:4659
-#: includes/class-bdwp70-plugin.php:4726
-#: includes/class-bdwp70-plugin.php:4747
-#: includes/class-bdwp70-plugin.php:4981
-msgid "Acesso negado."
+#: includes/class-bdwp70-plugin.php:4456
+#: includes/class-bdwp70-plugin.php:4478
+msgid "English alias for livro."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:4832
-#: includes/class-bdwp70-plugin.php:5415
-#: includes/class-bdwp70-plugin.php:5498
+#: includes/class-bdwp70-plugin.php:4457
+msgid "Chapter number or random."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4458
+#: includes/class-bdwp70-plugin.php:4480
+msgid "English alias for capitulo."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4459
+msgid "Verse number or random."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4460
+msgid "English alias for versiculo."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4462
+msgid "Show the reference. Accepts 1 or 0."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4464
+msgid "Show the button. Accepts 1 or 0."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4469
+msgid "Specific or random chapter"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4472
+msgid "Displays a specific chapter or a random chapter."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4479
+msgid "Chapter number."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4481
+msgid "Enable a random chapter. Accepts 1 or 0."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4482
+msgid "Limit the number of verses displayed."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4483
+msgid "English alias for limite."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4485
+msgid "Show the chapter title. Accepts 1 or 0."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4486
+msgid "Show a button to open the full chapter. Accepts 1 or 0."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4513
+#: includes/class-bdwp70-plugin.php:4547
+msgid "Upload translation files"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4520
+msgid "Locale"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4522
+msgid "E.g.: en_US, es_ES, pt_BR"
+msgstr ""
+
+#. translators: 1: example .po file name, 2: example .mo file name, 3: the .pot extension.
+#: includes/class-bdwp70-plugin.php:4528
+#, php-format
+msgid "Optional when the file is already named %1$s or %2$s. This field is ignored for %3$s files."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4540
+msgid ".pot, .po, or .mo files"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4543
+msgid "For the translation to appear on the frontend, upload the matching <code>.mo</code> file. The <code>.po</code> file stays available for human editing, and the <code>.pot</code> file serves as the translation template."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4578
+msgid "No custom translation file found yet."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4594
+#: includes/class-bdwp70-plugin.php:4703
+#: includes/class-bdwp70-plugin.php:4770
+#: includes/class-bdwp70-plugin.php:4791
+#: includes/class-bdwp70-plugin.php:5149
+msgid "Access denied."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4774
+msgid "The built-in SQL import was removed from the public package. Use a ZIP containing books.csv and verses.csv."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4775
+msgid "The public package does not distribute Bible translations; the end user is responsible for the license of the imported package."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4796
+msgid "No file was uploaded."
+msgstr ""
+
+#. translators: %d: PHP upload error code.
+#: includes/class-bdwp70-plugin.php:4803
+#, php-format
+msgid "Upload failed. Error code: %d."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4808
+msgid "The ZIP file exceeds the maximum allowed size."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4817
+msgid "Upload a ZIP file containing books.csv and verses.csv."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4848
+msgid "The uploaded file was not recognized as a valid ZIP."
+msgstr ""
+
+#. translators: %s: error message.
+#: includes/class-bdwp70-plugin.php:4865
+#, php-format
+msgid "The ZIP could not be extracted: %s"
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:4878
+#: includes/class-bdwp70-plugin.php:5588
+#: includes/class-bdwp70-plugin.php:5671
 msgid "The ZIP must contain books.csv and verses.csv."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:5338
+#: includes/class-bdwp70-plugin.php:5154
+msgid "No translation file was uploaded."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5159
+msgid "No valid translation file was uploaded."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5171
+msgid "The translations folder in uploads could not be created or is not writable."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5188
+msgid "No translation file was saved."
+msgstr ""
+
+#. translators: %d: PHP upload error code.
+#: includes/class-bdwp70-plugin.php:5237
+#, php-format
+msgid "Translation upload failed. Error code: %d."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5242
+msgid "A translation file exceeds the maximum allowed size."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5248
+msgid "Upload only .pot, .po, or .mo files."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5252
+msgid "The text translation file looks invalid or contains disallowed content."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5256
+msgid "The translation file did not pass the file type check."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5260
+msgid "The .mo file did not pass the basic check."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5280
+msgid "The translation upload could not be processed."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5294
+msgid "The existing translation could not be backed up."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5302
+msgid "The translation file could not be saved to its destination."
+msgstr ""
+
+#. translators: %s: example file name.
+#: includes/class-bdwp70-plugin.php:5339
+#, php-format
+msgid "Enter the locale, such as en_US, es_ES, or pt_BR, or upload the file named as %s."
+msgstr ""
+
+#: includes/class-bdwp70-plugin.php:5511
 msgid "The PHP zip extension is required to validate the uploaded file. Ask your host to enable ext-zip."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:5344
+#: includes/class-bdwp70-plugin.php:5517
 msgid "The uploaded file could not be opened as a valid ZIP."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:5360
+#: includes/class-bdwp70-plugin.php:5533
 msgid "The ZIP contains an invalid entry."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:5370
-#: includes/class-bdwp70-plugin.php:5460
+#: includes/class-bdwp70-plugin.php:5543
+#: includes/class-bdwp70-plugin.php:5633
 msgid "The ZIP contains a potentially unsafe path."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:5380
-#: includes/class-bdwp70-plugin.php:5469
-msgid "Os arquivos books.csv e verses.csv devem estar na raiz do ZIP ou dentro de uma única pasta."
+#: includes/class-bdwp70-plugin.php:5553
+#: includes/class-bdwp70-plugin.php:5642
+msgid "The books.csv and verses.csv files must be at the root of the ZIP or inside a single folder."
 msgstr ""
 
 #. translators: %s: unexpected file name inside the ZIP.
-#: includes/class-bdwp70-plugin.php:5387
-#: includes/class-bdwp70-plugin.php:5475
+#: includes/class-bdwp70-plugin.php:5560
+#: includes/class-bdwp70-plugin.php:5648
 #, php-format
-msgid "O ZIP deve conter apenas books.csv e verses.csv. Arquivo inesperado: %s"
+msgid "The ZIP must contain only books.csv and verses.csv. Unexpected file: %s"
 msgstr ""
 
 #. translators: %s: CSV file name.
-#: includes/class-bdwp70-plugin.php:5393
-#: includes/class-bdwp70-plugin.php:5480
+#: includes/class-bdwp70-plugin.php:5566
+#: includes/class-bdwp70-plugin.php:5653
 #, php-format
-msgid "O ZIP contém mais de um %s."
+msgid "The ZIP contains more than one %s."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:5402
-#: includes/class-bdwp70-plugin.php:5488
+#: includes/class-bdwp70-plugin.php:5575
+#: includes/class-bdwp70-plugin.php:5661
 msgid "The ZIP contains too many files."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:5407
-#: includes/class-bdwp70-plugin.php:5492
+#: includes/class-bdwp70-plugin.php:5580
+#: includes/class-bdwp70-plugin.php:5665
 msgid "The extracted ZIP content exceeds the allowed size."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:5431
+#: includes/class-bdwp70-plugin.php:5604
 msgid "The ZIP content could not be validated."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:5447
+#: includes/class-bdwp70-plugin.php:5620
 msgid "The ZIP contains an invalid path."
 msgstr ""
 
-#: includes/class-bdwp70-plugin.php:5451
+#: includes/class-bdwp70-plugin.php:5624
 msgid "The ZIP must not contain symbolic links."
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:30
-msgid "Bíblia Digital - Versículo aleatório"
+msgid "Bíblia Digital - Random verse"
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:33
-msgid "Exibe aleatoriamente um versículo bíblico em uma área de widgets."
+msgid "Displays a random Bible verse in a widget area."
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:142
 #: includes/class-bdwp70-search-widget.php:77
-msgid "Título:"
+msgid "Title:"
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:147
-msgid "Bíblia / idioma:"
+msgid "Bible / language:"
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:150
-msgid "Este widget sempre usa a Bíblia ativa definida em <strong>Configurações &gt; Bíblia Digital</strong> deste site da rede. Assim, o versículo aleatório não mistura idiomas diferentes no frontend."
+msgid "This widget always uses the active Bible set in <strong>Settings &gt; Bíblia Digital</strong> for this network site, so the random verse never mixes languages on the frontend."
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:153
-msgid "Livro:"
+msgid "Book:"
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:166
-msgid "Exibir referência bíblica"
+msgid "Show the Bible reference"
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:171
-msgid "Linkar referência para a página do versículo"
+msgid "Link the reference to the verse page"
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:176
-msgid "Exibir link após o versículo"
+msgid "Show a link after the verse"
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:180
-msgid "Texto do link:"
+msgid "Link text:"
 msgstr ""
 
 #: includes/class-bdwp70-random-verse-widget.php:182
-msgid "Ex.: Ler o capítulo, Read chapter, Leer capítulo."
+msgid "E.g.: Read the chapter, Ler o capítulo, Leer el capítulo."
 msgstr ""
 
 #: includes/class-bdwp70-search-widget.php:26
-msgid "Bíblia Digital - Busca"
+msgid "Bíblia Digital - Search"
 msgstr ""
 
 #: includes/class-bdwp70-search-widget.php:29
-msgid "Exibe um formulário de pesquisa separado para a Bíblia Digital."
+msgid "Displays a separate search form for Bíblia Digital."
 msgstr ""
 
 #: includes/class-bdwp70-search-widget.php:81
-msgid "Texto do campo:"
+msgid "Field text:"
 msgstr ""
 
 #: includes/class-bdwp70-search-widget.php:87
 #: blocks/search/index.js:45
-msgid "Permitir escolher o livro na busca"
+msgid "Allow choosing the book in the search"
 msgstr ""
 
 #: includes/class-bdwp70-search-widget.php:90
 #: blocks/search/index.js:55
-msgid "A busca sempre usa a Bíblia ativa definida em Configurações > Bíblia Digital."
+msgid "Search always uses the active Bible set in Settings > Bíblia Digital."
+msgstr ""
+
+#. translators: 1: book name, 2: Bible title.
+#: includes/class-bdwp70-seo.php:89
+#, php-format
+msgid "Read the chapters of %1$s on %2$s."
+msgstr ""
+
+#. translators: %s: Bible title.
+#: includes/class-bdwp70-seo.php:97
+#, php-format
+msgid "Books of the Bible - %s"
+msgstr ""
+
+#: includes/class-bdwp70-seo.php:98
+msgid "List of the books of the Bible, organized into the Old Testament and the New Testament, with access to the chapters and verses."
+msgstr ""
+
+#. translators: 1: book name, 2: chapter number, 3: Bible title.
+#: includes/class-bdwp70-seo.php:110
+#, php-format
+msgid "Read %1$s chapter %2$d in full on %3$s."
+msgstr ""
+
+#. translators: 1: Bible reference, 2: Bible title.
+#: includes/class-bdwp70-seo.php:136
+#, php-format
+msgid "Read %1$s on %2$s."
+msgstr ""
+
+#. translators: 1: book name, 2: chapter number, 3: text of the first verse.
+#: includes/class-bdwp70-seo.php:142
+#, php-format
+msgid "%1$s chapter %2$d - %3$s"
 msgstr ""
 
 #: includes/view-shortcode.php:82
@@ -1337,118 +1642,126 @@ msgid "Estudo Bíblico"
 msgstr ""
 
 #: includes/view-shortcode.php:84
-msgid "✥ A Palavra que transforma ✥"
+msgid "✥ The Word that transforms ✥"
 msgstr ""
 
 #: includes/view-shortcode.php:86
-msgid "Leia, estude e medite na Palavra de Deus onde estiver. Acesso gratuito e completo à Bíblia Sagrada."
+msgid "Read, study, and meditate on the Word of God wherever you are. Free and complete access to the Holy Bible."
 msgstr ""
 
 #: includes/view-shortcode.php:88
-msgid "📖 Ler agora"
+msgid "📖 Read now"
 msgstr ""
 
 #: includes/view-shortcode.php:98
-msgid "Acesse todos os livros da Bíblia Sagrada de forma rápida e organizada."
+msgid "Browse all the books of the Holy Bible quickly and in order."
 msgstr ""
 
 #: includes/view-shortcode.php:103
-msgid "Acessos rápidos da Bíblia Digital"
+msgid "Bíblia Digital quick links"
 msgstr ""
 
 #: includes/view-shortcode.php:118
-msgid "Antigo Testamento"
+msgid "Old Testament"
 msgstr ""
 
 #: includes/view-shortcode.php:119
 #: includes/view-shortcode.php:133
-msgid "Ver todos"
+msgid "View all"
 msgstr ""
 
 #: includes/view-shortcode.php:132
-msgid "Novo Testamento"
+msgid "New Testament"
 msgstr ""
 
 #: includes/view-shortcode.php:144
-msgid "Escolha da tradução da Bíblia"
+msgid "Bible translation choice"
 msgstr ""
 
 #: includes/view-shortcode.php:145
-msgid "Escolha a tradução da Bíblia para continuar a leitura nesta versão:"
+msgid "Choose the Bible translation to continue reading in this version:"
 msgstr ""
 
 #: includes/view-shortcode.php:151
-msgid "Selecione o capítulo que deseja ler."
+msgid "Select the chapter you want to read."
 msgstr ""
 
 #: includes/view-shortcode.php:161
-msgid "Voltar aos livros"
+msgid "Back to books"
 msgstr ""
 
 #: includes/view-shortcode.php:171
-msgid "Navegação entre capítulos"
+msgid "Chapter navigation"
 msgstr ""
 
 #: includes/view-shortcode.php:175
 #: includes/view-shortcode.php:265
-msgid "← Capítulo anterior"
+msgid "← Previous chapter"
 msgstr ""
 
 #: includes/view-shortcode.php:180
 #: includes/view-shortcode.php:270
-msgid "Próximo capítulo →"
+msgid "Next chapter →"
 msgstr ""
 
 #: includes/view-shortcode.php:183
-msgid "Ajustes de leitura"
+msgid "Reading settings"
 msgstr ""
 
 #: includes/view-shortcode.php:191
-msgid "Opções de leitura"
+msgid "Reading options"
 msgstr ""
 
 #: includes/view-shortcode.php:195
-msgid "Tamanho da fonte"
+msgid "Font size"
 msgstr ""
 
 #: includes/view-shortcode.php:197
-msgid "Diminuir tamanho da fonte"
+msgid "Decrease font size"
 msgstr ""
 
 #: includes/view-shortcode.php:198
-msgid "Médio"
+msgid "Small"
+msgstr ""
+
+#: includes/view-shortcode.php:198
+msgid "Medium"
+msgstr ""
+
+#: includes/view-shortcode.php:198
+msgid "Large"
 msgstr ""
 
 #: includes/view-shortcode.php:199
-msgid "Aumentar tamanho da fonte"
+msgid "Increase font size"
 msgstr ""
 
 #: includes/view-shortcode.php:204
-msgid "Formato do texto"
+msgid "Text layout"
 msgstr ""
 
 #: includes/view-shortcode.php:205
-msgid "Formato do texto bíblico"
+msgid "Bible text layout"
 msgstr ""
 
 #: includes/view-shortcode.php:206
-msgid "Versículo"
+msgid "Verse by verse"
 msgstr ""
 
 #: includes/view-shortcode.php:207
-msgid "Corrido"
+msgid "Continuous"
 msgstr ""
 
 #: includes/view-shortcode.php:212
-msgid "Fonte para leitura"
+msgid "Reading font"
 msgstr ""
 
 #: includes/view-shortcode.php:213
-msgid "Fonte para leitura bíblica"
+msgid "Font for Bible reading"
 msgstr ""
 
 #: includes/view-shortcode.php:214
-msgid "Padrão"
+msgid "Default"
 msgstr ""
 
 #: includes/view-shortcode.php:215
@@ -1456,71 +1769,71 @@ msgid "Lexend"
 msgstr ""
 
 #: includes/view-shortcode.php:220
-msgid "Fundo de leitura"
+msgid "Reading background"
 msgstr ""
 
 #: includes/view-shortcode.php:221
-msgid "Cor de fundo da leitura"
+msgid "Reading background color"
 msgstr ""
 
 #: includes/view-shortcode.php:222
-msgid "Claro"
+msgid "Light"
 msgstr ""
 
 #: includes/view-shortcode.php:223
-msgid "Sépia"
+msgid "Sepia"
 msgstr ""
 
 #: includes/view-shortcode.php:224
-msgid "Suave"
+msgid "Soft"
 msgstr ""
 
 #: includes/view-shortcode.php:225
-msgid "Escuro"
+msgid "Dark"
 msgstr ""
 
 #: includes/view-shortcode.php:239
-msgid "Capítulo anterior"
+msgid "Previous chapter"
 msgstr ""
 
 #: includes/view-shortcode.php:242
-msgid "Próximo capítulo"
+msgid "Next chapter"
 msgstr ""
 
 #: includes/view-shortcode.php:261
-msgid "Navegação entre capítulos no rodapé"
+msgid "Chapter navigation in the footer"
 msgstr ""
 
 #: includes/view-shortcode.php:283
-msgid "Paginação da Bíblia Digital"
+msgid "Bíblia Digital pagination"
 msgstr ""
 
 #: includes/view-shortcode.php:318
-msgid "Bíblia Digital Online por <a href=\"https://estudobiblico.org/\" target=\"_blank\" rel=\"noopener noreferrer\">Estudo Bíblico</a>."
+msgid "Bíblia Digital Online by <a href=\"https://estudobiblico.org/\" target=\"_blank\" rel=\"noopener noreferrer\">Estudo Bíblico</a>."
 msgstr ""
 
 #: blocks/search/block.json
 msgctxt "block title"
-msgid "Bíblia Digital - Busca"
+msgid "Bíblia Digital - Search"
 msgstr ""
 
 #: blocks/search/block.json
 msgctxt "block description"
-msgid "Exibe o formulário de pesquisa da Bíblia Digital usando a Bíblia ativa do site."
+msgid "Displays the Bíblia Digital search form using the site's active Bible."
 msgstr ""
 
 #: blocks/search/index.js:28
-msgid "Configurações da busca"
+msgid "Search settings"
 msgstr ""
 
 #: blocks/search/index.js:35
-msgid "Texto do campo"
+msgid "Field text"
 msgstr ""
 
 #: blocks/search/index.js:40
-msgid "Texto do botão"
+msgid "Button text"
 msgstr ""
 
 #: blocks/search/index.js:52
-msgid "Campo: pesquisar em todos os livros ou em um livro específico"
+msgid "Field: search all books or one specific book"
 msgstr ""

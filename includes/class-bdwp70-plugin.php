@@ -811,7 +811,7 @@ BDWP70_JS;
 				'name'             => $this->display_title(),
 				'short_name'       => wp_trim_words( $this->display_title(), 3, '' ),
 				/* translators: %s: Plugin display title. */
-				'description'      => sprintf( __( '%s com livros, capítulos, versículos e pesquisa bíblica.', 'estudobiblico-biblia-digital' ), $this->display_title() ),
+				'description'      => sprintf( __( '%s with books, chapters, verses, and Bible search.', 'estudobiblico-biblia-digital' ), $this->display_title() ),
 				'start_url'        => esc_url_raw( home_url( '/' . $this->seo_base() . '/' ) ),
 				'scope'            => esc_url_raw( home_url( '/' ) ),
 				'display'          => 'standalone',
@@ -931,9 +931,9 @@ BDWP70_JS;
 
 		return $this->render_search_form(
 			array(
-				'title'       => isset( $attributes['title'] ) ? sanitize_text_field( $attributes['title'] ) : __( 'Pesquisar na Bíblia', 'estudobiblico-biblia-digital' ),
-				'placeholder' => isset( $attributes['placeholder'] ) ? sanitize_text_field( $attributes['placeholder'] ) : __( 'Digite uma palavra ou frase', 'estudobiblico-biblia-digital' ),
-				'button'      => isset( $attributes['button'] ) ? sanitize_text_field( $attributes['button'] ) : __( 'Pesquisar', 'estudobiblico-biblia-digital' ),
+				'title'       => isset( $attributes['title'] ) ? sanitize_text_field( $attributes['title'] ) : __( 'Search the Bible', 'estudobiblico-biblia-digital' ),
+				'placeholder' => isset( $attributes['placeholder'] ) ? sanitize_text_field( $attributes['placeholder'] ) : __( 'Enter a word or phrase', 'estudobiblico-biblia-digital' ),
+				'button'      => isset( $attributes['button'] ) ? sanitize_text_field( $attributes['button'] ) : __( 'Search', 'estudobiblico-biblia-digital' ),
 				'show_book'   => array_key_exists( 'showBook', $attributes ) ? ( ! empty( $attributes['showBook'] ) ? 1 : 0 ) : 1,
 			)
 		);
@@ -1029,11 +1029,11 @@ BDWP70_JS;
 			<header class="bdwp70__chapter-widget-header">
 				<h2><a href="<?php echo esc_url( $book_url ); ?>"><?php echo esc_html( $book_name ); ?></a></h2>
 				<?php if ( $chapter ) : ?>
-					<span><?php /* translators: %d: Chapter number. */ echo esc_html( sprintf( __( 'Capítulo %d', 'estudobiblico-biblia-digital' ), $chapter ) ); ?></span>
+					<span><?php /* translators: %d: Chapter number. */ echo esc_html( sprintf( __( 'Chapter %d', 'estudobiblico-biblia-digital' ), $chapter ) ); ?></span>
 				<?php endif; ?>
 			</header>
 			<?php if ( $chapters > 0 ) : ?>
-				<nav class="bdwp70__side-chapters" aria-label="<?php esc_attr_e( 'Capítulos do livro', 'estudobiblico-biblia-digital' ); ?>">
+				<nav class="bdwp70__side-chapters" aria-label="<?php esc_attr_e( 'Chapters of the book', 'estudobiblico-biblia-digital' ); ?>">
 					<?php for ( $i = 1; $i <= $chapters; $i++ ) : ?>
 						<a class="<?php echo $chapter === $i ? 'is-current' : ''; ?>" href="<?php echo esc_url( $this->chapter_url( $book, $i, $books, $active_bible ) ); ?>"
 						<?php
@@ -1045,10 +1045,10 @@ BDWP70_JS;
 			<?php endif; ?>
 			<div class="bdwp70__chapter-widget-meta">
 				<span aria-hidden="true">📖</span>
-				<strong><?php esc_html_e( 'Tradução', 'estudobiblico-biblia-digital' ); ?></strong>
+				<strong><?php esc_html_e( 'Translation', 'estudobiblico-biblia-digital' ); ?></strong>
 				<em><?php echo esc_html( $version_label ); ?></em>
 			</div>
-			<a class="bdwp70__chapter-widget-all" href="<?php echo esc_url( $book_url ); ?>"><?php /* translators: %s: Bible book name. */ echo esc_html( sprintf( __( 'Ver todos os capítulos de %s', 'estudobiblico-biblia-digital' ), $book_name ) ); ?></a>
+			<a class="bdwp70__chapter-widget-all" href="<?php echo esc_url( $book_url ); ?>"><?php /* translators: %s: Bible book name. */ echo esc_html( sprintf( __( 'View all chapters of %s', 'estudobiblico-biblia-digital' ), $book_name ) ); ?></a>
 		</section>
 		<?php
 		return (string) ob_get_clean();
@@ -1072,9 +1072,9 @@ BDWP70_JS;
 
 		$atts = shortcode_atts(
 			array(
-				'title'       => __( 'Pesquisar na Bíblia', 'estudobiblico-biblia-digital' ),
-				'placeholder' => __( 'Digite uma palavra ou frase', 'estudobiblico-biblia-digital' ),
-				'button'      => __( 'Pesquisar', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Search the Bible', 'estudobiblico-biblia-digital' ),
+				'placeholder' => __( 'Enter a word or phrase', 'estudobiblico-biblia-digital' ),
+				'button'      => __( 'Search', 'estudobiblico-biblia-digital' ),
 			),
 			$atts,
 			'biblia-busca'
@@ -1098,9 +1098,9 @@ BDWP70_JS;
 
 		$atts = shortcode_atts(
 			array(
-				'title'       => __( 'Buscar na Bíblia', 'estudobiblico-biblia-digital' ),
-				'placeholder' => __( 'Digite uma palavra, expressão ou referência', 'estudobiblico-biblia-digital' ),
-				'button'      => __( 'Pesquisar', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Search in the Bible', 'estudobiblico-biblia-digital' ),
+				'placeholder' => __( 'Enter a word, phrase, or reference', 'estudobiblico-biblia-digital' ),
+				'button'      => __( 'Search', 'estudobiblico-biblia-digital' ),
 				'per_page'    => 30,
 				'show_book'   => 1,
 			),
@@ -1148,11 +1148,11 @@ BDWP70_JS;
 			<?php if ( $is_search_request ) : ?>
 				<div class="bdwp70-search-page__summary" aria-live="polite">
 					<?php if ( '' === trim( (string) $state['search'] ) ) : ?>
-						<p><?php esc_html_e( 'Digite uma palavra ou frase para iniciar a pesquisa.', 'estudobiblico-biblia-digital' ); ?></p>
+						<p><?php esc_html_e( 'Enter a word or phrase to start searching.', 'estudobiblico-biblia-digital' ); ?></p>
 					<?php elseif ( ! empty( $results['items'] ) ) : ?>
-						<p><?php /* translators: 1: number of results, 2: search term. */ echo esc_html( sprintf( _n( '%1$s resultado encontrado para "%2$s".', '%1$s resultados encontrados para "%2$s".', (int) $results['total'], 'estudobiblico-biblia-digital' ), number_format_i18n( (int) $results['total'] ), $state['search'] ) ); ?></p>
+						<p><?php /* translators: 1: number of results, 2: search term. */ echo esc_html( sprintf( _n( '%1$s result found for "%2$s".', '%1$s results found for "%2$s".', (int) $results['total'], 'estudobiblico-biblia-digital' ), number_format_i18n( (int) $results['total'] ), $state['search'] ) ); ?></p>
 					<?php else : ?>
-						<p><?php /* translators: %s: search term. */ echo esc_html( sprintf( __( 'Nenhum termo ou palavra foi localizado na Bíblia para "%s".', 'estudobiblico-biblia-digital' ), $state['search'] ) ); ?></p>
+						<p><?php /* translators: %s: search term. */ echo esc_html( sprintf( __( 'No term or word was found in the Bible for "%s".', 'estudobiblico-biblia-digital' ), $state['search'] ) ); ?></p>
 					<?php endif; ?>
 				</div>
 
@@ -1176,9 +1176,9 @@ BDWP70_JS;
 		$args = wp_parse_args(
 			$args,
 			array(
-				'title'           => __( 'Pesquisar na Bíblia', 'estudobiblico-biblia-digital' ),
-				'placeholder'     => __( 'Digite uma palavra ou frase', 'estudobiblico-biblia-digital' ),
-				'button'          => __( 'Pesquisar', 'estudobiblico-biblia-digital' ),
+				'title'           => __( 'Search the Bible', 'estudobiblico-biblia-digital' ),
+				'placeholder'     => __( 'Enter a word or phrase', 'estudobiblico-biblia-digital' ),
+				'button'          => __( 'Search', 'estudobiblico-biblia-digital' ),
 				'show_book'       => 1,
 				'preserve_values' => 0,
 				'form_action'     => '',
@@ -1217,9 +1217,9 @@ BDWP70_JS;
 
 			<?php if ( ! empty( $args['show_book'] ) ) : ?>
 				<label class="bdwp70-search-widget__field">
-					<span><?php esc_html_e( 'Pesquisar em', 'estudobiblico-biblia-digital' ); ?></span>
+					<span><?php esc_html_e( 'Search in', 'estudobiblico-biblia-digital' ); ?></span>
 					<select name="bdwp_livro">
-						<option value="99" <?php selected( $selected_book, 99 ); ?>><?php esc_html_e( 'Todos os livros', 'estudobiblico-biblia-digital' ); ?></option>
+						<option value="99" <?php selected( $selected_book, 99 ); ?>><?php esc_html_e( 'All books', 'estudobiblico-biblia-digital' ); ?></option>
 						<?php foreach ( $books as $book ) : ?>
 							<option value="<?php echo esc_attr( (int) $book->livro_seq ); ?>" <?php selected( $selected_book, (int) $book->livro_seq ); ?>><?php echo esc_html( $book->livro_desc ); ?></option>
 						<?php endforeach; ?>
@@ -1230,17 +1230,17 @@ BDWP70_JS;
 			<?php endif; ?>
 
 			<label class="bdwp70-search-widget__field">
-				<span><?php esc_html_e( 'Palavra ou frase', 'estudobiblico-biblia-digital' ); ?></span>
+				<span><?php esc_html_e( 'Word or phrase', 'estudobiblico-biblia-digital' ); ?></span>
 				<input type="search" name="bdwp_pesquisa" value="<?php echo esc_attr( $search_value ); ?>" placeholder="<?php echo esc_attr( (string) $args['placeholder'] ); ?>" required>
 			</label>
 
 			<div class="bdwp70-search-widget__options">
-				<label><input type="checkbox" name="bdwp_exata" value="1" <?php checked( $exact_value ); ?>> <?php esc_html_e( 'Frase exata', 'estudobiblico-biblia-digital' ); ?></label>
+				<label><input type="checkbox" name="bdwp_exata" value="1" <?php checked( $exact_value ); ?>> <?php esc_html_e( 'Exact phrase', 'estudobiblico-biblia-digital' ); ?></label>
 				<label>
-					<span class="screen-reader-text"><?php esc_html_e( 'Modo da busca', 'estudobiblico-biblia-digital' ); ?></span>
+					<span class="screen-reader-text"><?php esc_html_e( 'Search mode', 'estudobiblico-biblia-digital' ); ?></span>
 					<select name="bdwp_match">
-						<option value="any" <?php selected( $match_value, 'any' ); ?>><?php esc_html_e( 'Qualquer palavra', 'estudobiblico-biblia-digital' ); ?></option>
-						<option value="all" <?php selected( $match_value, 'all' ); ?>><?php esc_html_e( 'Todas as palavras', 'estudobiblico-biblia-digital' ); ?></option>
+						<option value="any" <?php selected( $match_value, 'any' ); ?>><?php esc_html_e( 'Any word', 'estudobiblico-biblia-digital' ); ?></option>
+						<option value="all" <?php selected( $match_value, 'all' ); ?>><?php esc_html_e( 'All words', 'estudobiblico-biblia-digital' ); ?></option>
 					</select>
 				</label>
 			</div>
@@ -1401,7 +1401,7 @@ BDWP70_JS;
 				<p class="bdwp70__search-empty-message">
 					<?php
 					/* translators: %s: search term. */
-					echo esc_html( sprintf( __( 'Nenhum termo ou palavra foi localizado na Bíblia para "%s".', 'estudobiblico-biblia-digital' ), $search_term ) );
+					echo esc_html( sprintf( __( 'No term or word was found in the Bible for "%s".', 'estudobiblico-biblia-digital' ), $search_term ) );
 					?>
 				</p>
 			</div>
@@ -1470,7 +1470,7 @@ BDWP70_JS;
 			'<a class="bdwp70__verse-action bdwp70__verse-action--share bdwp70__search-verse-action bvs-verse-share-button" href="%1$s" title="%2$s" aria-label="%2$s" data-bible-reference="%3$s" data-book="%4$s" data-chapter="%5$d" data-verse="%6$d" data-bvs-ref="%3$s" data-bvs-verse="%7$s" data-bvs-url="%1$s"><span class="bdwp70__share-icon" aria-hidden="true"></span><span class="screen-reader-text">%2$s</span></a>',
 			esc_url( $href ),
 			/* translators: %s: Bible verse reference. */
-			esc_attr( sprintf( __( 'Compartilhar %s', 'estudobiblico-biblia-digital' ), $reference ) ),
+			esc_attr( sprintf( __( 'Share %s', 'estudobiblico-biblia-digital' ), $reference ) ),
 			esc_attr( $reference ),
 			esc_attr( $book_name ),
 			(int) $chapter,
@@ -1512,7 +1512,7 @@ BDWP70_JS;
 
 		ob_start();
 		?>
-		<nav class="bdwp70__pagination" aria-label="Paginação da busca bíblica">
+		<nav class="bdwp70__pagination" aria-label="<?php esc_attr_e( 'Bible search pagination', 'estudobiblico-biblia-digital' ); ?>">
 			<?php for ( $i = 1; $i <= (int) $results['total_pages']; $i++ ) : ?>
 				<?php
 				if ( $i > 2 && $i < $current_page - 2 ) {
@@ -1564,7 +1564,7 @@ BDWP70_JS;
 				'version'     => 0,
 				'show_title'  => 1,
 				'show_button' => 1,
-				'button_text' => __( 'Ler o capítulo', 'estudobiblico-biblia-digital' ),
+				'button_text' => __( 'Read the chapter', 'estudobiblico-biblia-digital' ),
 			),
 			is_array( $atts ) ? $atts : array(),
 			'biblia-capitulo'
@@ -1590,7 +1590,7 @@ BDWP70_JS;
 		}
 
 		if ( $book_seq < 1 || $chapter < 1 ) {
-			return '<div class="bdwp70-chapter-shortcode"><p class="bdwp70-random-widget__empty">' . esc_html__( 'Nenhum capítulo disponível. Verifique se os dados bíblicos foram importados.', 'estudobiblico-biblia-digital' ) . '</p></div>';
+			return '<div class="bdwp70-chapter-shortcode"><p class="bdwp70-random-widget__empty">' . esc_html__( 'No chapters available. Make sure the Bible data has been imported.', 'estudobiblico-biblia-digital' ) . '</p></div>';
 		}
 
 		$books       = $this->get_books( $bible_id );
@@ -1599,7 +1599,7 @@ BDWP70_JS;
 		$chapter_url = $this->chapter_url( $book_seq, $chapter, $books );
 
 		if ( empty( $verses ) ) {
-			return '<div class="bdwp70-chapter-shortcode"><p class="bdwp70-random-widget__empty">' . esc_html__( 'Nenhum versículo disponível para este capítulo.', 'estudobiblico-biblia-digital' ) . '</p></div>';
+			return '<div class="bdwp70-chapter-shortcode"><p class="bdwp70-random-widget__empty">' . esc_html__( 'No verses available for this chapter.', 'estudobiblico-biblia-digital' ) . '</p></div>';
 		}
 
 		$title = trim( (string) $atts['title'] );
@@ -1609,7 +1609,7 @@ BDWP70_JS;
 
 		$button_text = trim( wp_strip_all_tags( (string) $atts['button_text'] ) );
 		if ( '' === $button_text ) {
-			$button_text = __( 'Ler o capítulo', 'estudobiblico-biblia-digital' );
+			$button_text = __( 'Read the chapter', 'estudobiblico-biblia-digital' );
 		}
 
 		ob_start();
@@ -1665,7 +1665,7 @@ BDWP70_JS;
 				'show_reference' => 1,
 				'link_reference' => 1,
 				'show_button'    => 0,
-				'button_text'    => __( 'Ler o capítulo', 'estudobiblico-biblia-digital' ),
+				'button_text'    => __( 'Read the chapter', 'estudobiblico-biblia-digital' ),
 			),
 			is_array( $atts ) ? $atts : array(),
 			'biblia-versiculo'
@@ -1689,7 +1689,7 @@ BDWP70_JS;
 		$verse_no = $verse_random ? 0 : absint( $verse_value );
 
 		if ( ! $book_random && $book_seq < 1 ) {
-			return '<div class="bdwp70-random-widget bdwp70-random-widget--shortcode"><p class="bdwp70-random-widget__empty">' . esc_html__( 'Livro não encontrado para este shortcode.', 'estudobiblico-biblia-digital' ) . '</p></div>';
+			return '<div class="bdwp70-random-widget bdwp70-random-widget--shortcode"><p class="bdwp70-random-widget__empty">' . esc_html__( 'Book not found for this shortcode.', 'estudobiblico-biblia-digital' ) . '</p></div>';
 		}
 
 		$verse = null;
@@ -1707,7 +1707,7 @@ BDWP70_JS;
 		}
 
 		if ( ! $verse ) {
-			echo '<p class="bdwp70-random-widget__empty">' . esc_html__( 'Nenhum versículo disponível para este shortcode.', 'estudobiblico-biblia-digital' ) . '</p>';
+			echo '<p class="bdwp70-random-widget__empty">' . esc_html__( 'No verses available for this shortcode.', 'estudobiblico-biblia-digital' ) . '</p>';
 			echo '</div>';
 			return (string) ob_get_clean();
 		}
@@ -1735,7 +1735,7 @@ BDWP70_JS;
 		if ( ! empty( $atts['show_button'] ) ) {
 			$button_text = trim( wp_strip_all_tags( (string) $atts['button_text'] ) );
 			if ( '' === $button_text ) {
-				$button_text = __( 'Ler o capítulo', 'estudobiblico-biblia-digital' );
+				$button_text = __( 'Read the chapter', 'estudobiblico-biblia-digital' );
 			}
 			echo '<p class="bdwp70-random-widget__more"><a href="' . esc_url( $chapter_url ) . '">' . esc_html( $button_text ) . '</a></p>';
 		}
@@ -1906,13 +1906,13 @@ BDWP70_JS;
 
 		$atts = shortcode_atts(
 			array(
-				'title'          => __( 'Versículo do momento', 'estudobiblico-biblia-digital' ),
+				'title'          => __( 'Verse of the moment', 'estudobiblico-biblia-digital' ),
 				'book'           => 0,
 				'version'        => 0,
 				'show_reference' => 1,
 				'link_reference' => 1,
 				'show_button'    => 0,
-				'button_text'    => __( 'Ler o capítulo', 'estudobiblico-biblia-digital' ),
+				'button_text'    => __( 'Read the chapter', 'estudobiblico-biblia-digital' ),
 			),
 			$atts,
 			'biblia-versiculo-aleatorio'
@@ -1930,7 +1930,7 @@ BDWP70_JS;
 		}
 
 		if ( ! $verse ) {
-			echo '<p class="bdwp70-random-widget__empty">' . esc_html__( 'Nenhum versículo disponível. Verifique se os dados bíblicos foram importados.', 'estudobiblico-biblia-digital' ) . '</p>';
+			echo '<p class="bdwp70-random-widget__empty">' . esc_html__( 'No verses available. Make sure the Bible data has been imported.', 'estudobiblico-biblia-digital' ) . '</p>';
 			echo '</div>';
 			return (string) ob_get_clean();
 		}
@@ -1956,7 +1956,7 @@ BDWP70_JS;
 		if ( ! empty( $atts['show_button'] ) ) {
 			$button_text = trim( wp_strip_all_tags( (string) $atts['button_text'] ) );
 			if ( '' === $button_text ) {
-				$button_text = __( 'Ler o capítulo', 'estudobiblico-biblia-digital' );
+				$button_text = __( 'Read the chapter', 'estudobiblico-biblia-digital' );
 			}
 			echo '<p class="bdwp70-random-widget__more"><a href="' . esc_url( $url ) . '">' . esc_html( $button_text ) . '</a></p>';
 		}
@@ -2077,9 +2077,9 @@ BDWP70_JS;
 	}
 
 	public function display_title() {
-		$title = get_option( self::OPTION_TITLE, 'Bíblia Digital Online' );
+		$title = get_option( self::OPTION_TITLE, __( 'Online Bible', 'estudobiblico-biblia-digital' ) );
 		$title = is_string( $title ) ? trim( wp_strip_all_tags( $title ) ) : '';
-		return $title ? $title : __( 'Bíblia Digital Online', 'estudobiblico-biblia-digital' );
+		return $title ? $title : __( 'Online Bible', 'estudobiblico-biblia-digital' );
 	}
 
 	/**
@@ -2091,32 +2091,32 @@ BDWP70_JS;
 		return array(
 			array(
 				'enabled'     => 1,
-				'title'       => __( 'Pesquisar capítulo', 'estudobiblico-biblia-digital' ),
-				'description' => __( 'Encontre capítulos, palavras ou temas específicos.', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Search chapter', 'estudobiblico-biblia-digital' ),
+				'description' => __( 'Find chapters, words, or specific topics.', 'estudobiblico-biblia-digital' ),
 				'url'         => '#bdwp70-livros',
 				'icon'        => '⌕',
 				'style'       => 'search',
 			),
 			array(
 				'enabled'     => 1,
-				'title'       => __( 'Leitura do dia', 'estudobiblico-biblia-digital' ),
-				'description' => __( 'Sugestão de leitura diária para edificar sua fé.', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Daily reading', 'estudobiblico-biblia-digital' ),
+				'description' => __( 'A daily reading suggestion to build up your faith.', 'estudobiblico-biblia-digital' ),
 				'url'         => '#bdwp70-livros',
 				'icon'        => '☀',
 				'style'       => 'reading',
 			),
 			array(
 				'enabled'     => 1,
-				'title'       => __( 'Versículo do dia', 'estudobiblico-biblia-digital' ),
-				'description' => __( 'Inspiração diária baseada na Palavra de Deus.', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Verse of the day', 'estudobiblico-biblia-digital' ),
+				'description' => __( 'Daily inspiration from the Word of God.', 'estudobiblico-biblia-digital' ),
 				'url'         => '#bdwp70-livros',
 				'icon'        => '❝',
 				'style'       => 'verse',
 			),
 			array(
 				'enabled'     => 1,
-				'title'       => __( 'Últimos estudos', 'estudobiblico-biblia-digital' ),
-				'description' => __( 'Acesse os estudos bíblicos mais recentes.', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Latest studies', 'estudobiblico-biblia-digital' ),
+				'description' => __( 'Read the most recent Bible studies.', 'estudobiblico-biblia-digital' ),
 				'url'         => home_url( '/' ),
 				'icon'        => '✎',
 				'style'       => 'studies',
@@ -2434,8 +2434,8 @@ BDWP70_JS;
 		$context      = sanitize_html_class( $context ? $context : 'inline' );
 
 		if ( count( $versions ) < 2 || 'hero' === $context ) {
-			$badge_label = 'hero' === $context ? __( 'Versão instalada', 'estudobiblico-biblia-digital' ) : __( 'Tradução ativa', 'estudobiblico-biblia-digital' );
-			return '<div class="bdwp70__version-badge bdwp70__version-badge--' . esc_attr( $context ) . '" aria-label="' . esc_attr__( 'Versão da Bíblia instalada', 'estudobiblico-biblia-digital' ) . '"><span>' . esc_html( $badge_label ) . '</span><strong>' . esc_html( $active_label ) . '</strong></div>';
+			$badge_label = 'hero' === $context ? __( 'Installed version', 'estudobiblico-biblia-digital' ) : __( 'Active translation', 'estudobiblico-biblia-digital' );
+			return '<div class="bdwp70__version-badge bdwp70__version-badge--' . esc_attr( $context ) . '" aria-label="' . esc_attr__( 'Installed Bible version', 'estudobiblico-biblia-digital' ) . '"><span>' . esc_html( $badge_label ) . '</span><strong>' . esc_html( $active_label ) . '</strong></div>';
 		}
 
 		$base_url = $base_url ? (string) $base_url : $this->current_public_request_url();
@@ -2444,7 +2444,7 @@ BDWP70_JS;
 		?>
 		<details class="bdwp70__version-switcher bdwp70__version-switcher--<?php echo esc_attr( $context ); ?>">
 			<summary>
-				<span class="bdwp70__version-switcher-label"><?php esc_html_e( 'Tradução da Bíblia', 'estudobiblico-biblia-digital' ); ?></span>
+				<span class="bdwp70__version-switcher-label"><?php esc_html_e( 'Bible translation', 'estudobiblico-biblia-digital' ); ?></span>
 				<strong class="bdwp70__version-switcher-current"><?php echo esc_html( $active_label ); ?></strong>
 				<span class="bdwp70__version-switcher-caret" aria-hidden="true">▾</span>
 			</summary>
@@ -2456,7 +2456,7 @@ BDWP70_JS;
 					$language_code = isset( $version->language_code ) ? trim( (string) $version->language_code ) : '';
 					$item_label    = trim( $version_name . ( $language_code ? ' (' . $language_code . ')' : '' ) );
 					/* translators: %d: Bible version ID. */
-					$item_label = $item_label ? $item_label : sprintf( __( 'Bíblia #%d', 'estudobiblico-biblia-digital' ), $version_id );
+					$item_label = $item_label ? $item_label : sprintf( __( 'Bible #%d', 'estudobiblico-biblia-digital' ), $version_id );
 					$item_url   = $this->bible_version_switch_url( $version_id, $base_url );
 					$is_current = $version_id === $active_id;
 					?>
@@ -2532,7 +2532,7 @@ BDWP70_JS;
 				return trim( (string) $version->name . ' (' . (string) $version->language_code . ')' );
 			}
 		}
-		return 'Nenhuma Bíblia ativa';
+		return __( 'No active Bible', 'estudobiblico-biblia-digital' );
 	}
 
 	public function book_seq_from_slug( $slug ) {
@@ -3297,20 +3297,20 @@ BDWP70_JS;
 		if ( ! empty( $state['chapter'] ) && $book_name ) {
 			$items[] = array(
 				/* translators: %d: Chapter number. */
-				'label' => sprintf( __( 'Capítulo %d', 'estudobiblico-biblia-digital' ), (int) $state['chapter'] ),
+				'label' => sprintf( __( 'Chapter %d', 'estudobiblico-biblia-digital' ), (int) $state['chapter'] ),
 				'url'   => $this->chapter_url( (int) $state['book'], (int) $state['chapter'], $books, ! empty( $state['bible_id'] ) ? absint( $state['bible_id'] ) : null ),
 			);
 		}
 		if ( ! empty( $state['verse'] ) && $book_name ) {
 			$items[] = array(
 				/* translators: %d: verse number. */
-				'label' => sprintf( __( 'Versículo %d', 'estudobiblico-biblia-digital' ), (int) $state['verse'] ),
+				'label' => sprintf( __( 'Verse %d', 'estudobiblico-biblia-digital' ), (int) $state['verse'] ),
 				'url'   => $this->verse_url( (int) $state['book'], (int) $state['chapter'], (int) $state['verse'], $books, ! empty( $state['bible_id'] ) ? absint( $state['bible_id'] ) : null ),
 			);
 		}
 		if ( 'search' === $state['mode'] ) {
 			$items[] = array(
-				'label' => __( 'Busca', 'estudobiblico-biblia-digital' ),
+				'label' => __( 'Search results', 'estudobiblico-biblia-digital' ),
 				'url'   => '',
 			);
 		}
@@ -3365,23 +3365,23 @@ BDWP70_JS;
 		$active_bible  = ! empty( $state['bible_id'] ) ? absint( $state['bible_id'] ) : $this->active_bible_id();
 		$book_url      = $this->maybe_add_bible_version_arg_to_url( home_url( user_trailingslashit( $this->seo_base() . '/' . $this->book_slug_from_seq( $book, $books ) ) ), $active_bible );
 		$version_label = $this->get_bible_version_label( $active_bible );
-		$label         = $chapter ? sprintf( /* translators: 1: Bible book name, 2: Chapter number. */ __( 'Selecionar capítulo de %1$s; capítulo atual %2$d', 'estudobiblico-biblia-digital' ), $book_name, $chapter ) : sprintf( /* translators: %s: Bible book name. */ __( 'Selecionar capítulo de %s', 'estudobiblico-biblia-digital' ), $book_name );
+		$label         = $chapter ? sprintf( /* translators: 1: Bible book name, 2: Chapter number. */ __( 'Select a chapter of %1$s; current chapter %2$d', 'estudobiblico-biblia-digital' ), $book_name, $chapter ) : sprintf( /* translators: %s: Bible book name. */ __( 'Select a chapter of %s', 'estudobiblico-biblia-digital' ), $book_name );
 
 		ob_start();
 		?>
 		<details class="bdwp70__chapter-picker">
 			<summary class="bdwp70__chapter-picker-toggle" aria-label="<?php echo esc_attr( $label ); ?>">
 				<span class="bdwp70__chapter-picker-icon" aria-hidden="true">▦</span>
-				<span><?php esc_html_e( 'Capítulos', 'estudobiblico-biblia-digital' ); ?></span>
+				<span><?php esc_html_e( 'Chapters', 'estudobiblico-biblia-digital' ); ?></span>
 			</summary>
 			<div class="bdwp70__chapter-picker-panel">
 				<header class="bdwp70__chapter-picker-head">
 					<strong><?php echo esc_html( $book_name ); ?></strong>
 					<?php if ( $chapter ) : ?>
-						<span><?php /* translators: %d: Chapter number. */ echo esc_html( sprintf( __( 'Capítulo %d', 'estudobiblico-biblia-digital' ), $chapter ) ); ?></span>
+						<span><?php /* translators: %d: Chapter number. */ echo esc_html( sprintf( __( 'Chapter %d', 'estudobiblico-biblia-digital' ), $chapter ) ); ?></span>
 					<?php endif; ?>
 				</header>
-				<nav class="bdwp70__chapter-picker-grid" aria-label="<?php esc_attr_e( 'Todos os capítulos do livro', 'estudobiblico-biblia-digital' ); ?>">
+				<nav class="bdwp70__chapter-picker-grid" aria-label="<?php esc_attr_e( 'All chapters of the book', 'estudobiblico-biblia-digital' ); ?>">
 					<?php for ( $i = 1; $i <= $chapters; $i++ ) : ?>
 						<a class="<?php echo $chapter === $i ? 'is-current' : ''; ?>" href="<?php echo esc_url( $this->chapter_url( $book, $i, $books, $active_bible ) ); ?>"
 						<?php
@@ -3391,10 +3391,10 @@ BDWP70_JS;
 					<?php endfor; ?>
 				</nav>
 				<div class="bdwp70__chapter-picker-meta">
-					<span><?php esc_html_e( 'Tradução', 'estudobiblico-biblia-digital' ); ?></span>
+					<span><?php esc_html_e( 'Translation', 'estudobiblico-biblia-digital' ); ?></span>
 					<em><?php echo esc_html( $version_label ); ?></em>
 				</div>
-				<a class="bdwp70__chapter-picker-all" href="<?php echo esc_url( $book_url ); ?>"><?php /* translators: %s: Bible book name. */ echo esc_html( sprintf( __( 'Ver lista de capítulos de %s', 'estudobiblico-biblia-digital' ), $book_name ) ); ?></a>
+				<a class="bdwp70__chapter-picker-all" href="<?php echo esc_url( $book_url ); ?>"><?php /* translators: %s: Bible book name. */ echo esc_html( sprintf( __( 'View the chapter list of %s', 'estudobiblico-biblia-digital' ), $book_name ) ); ?></a>
 			</div>
 		</details>
 		<?php
@@ -3411,7 +3411,7 @@ BDWP70_JS;
 
 		$chapter        = ! empty( $state['chapter'] ) ? absint( $state['chapter'] ) : 0;
 		$active_bible   = ! empty( $state['bible_id'] ) ? absint( $state['bible_id'] ) : $this->active_bible_id();
-		$chapters_label = $chapter ? sprintf( /* translators: 1: Bible book name, 2: Chapter number. */ __( '%1$s, capítulo %2$d', 'estudobiblico-biblia-digital' ), $book_name, $chapter ) : sprintf( /* translators: %s: Bible book name. */ __( 'Capítulos de %s', 'estudobiblico-biblia-digital' ), $book_name );
+		$chapters_label = $chapter ? sprintf( /* translators: 1: Bible book name, 2: Chapter number. */ __( '%1$s, chapter %2$d', 'estudobiblico-biblia-digital' ), $book_name, $chapter ) : sprintf( /* translators: %s: Bible book name. */ __( 'Chapters of %s', 'estudobiblico-biblia-digital' ), $book_name );
 		$chapter_card   = $this->render_chapter_navigation_card( $state, $books, $chapter_counts );
 
 		ob_start();
@@ -3423,9 +3423,9 @@ BDWP70_JS;
 				echo wp_kses(
 					$this->render_search_form(
 						array(
-							'title'       => __( 'Pesquisar na Bíblia', 'estudobiblico-biblia-digital' ),
-							'placeholder' => __( 'Palavra ou frase', 'estudobiblico-biblia-digital' ),
-							'button'      => __( 'Buscar', 'estudobiblico-biblia-digital' ),
+							'title'       => __( 'Search the Bible', 'estudobiblico-biblia-digital' ),
+							'placeholder' => __( 'Word or phrase', 'estudobiblico-biblia-digital' ),
+							'button'      => __( 'Go', 'estudobiblico-biblia-digital' ),
 							'show_book'   => 1,
 							'bible_id'    => $active_bible,
 						)
@@ -3460,7 +3460,7 @@ jQuery(function($){
   $('#bdwp70_select_title_image').on('click', function(e){
     e.preventDefault();
     if(frame){ frame.open(); return; }
-    frame = wp.media({ title: 'Selecionar imagem da Bíblia', button: { text: 'Usar esta imagem' }, multiple: false });
+    frame = wp.media({ title: bdwp70AdminL10n.selectImage, button: { text: bdwp70AdminL10n.useImage }, multiple: false });
     frame.on('select', function(){
       var attachment = frame.state().get('selection').first().toJSON();
       $('#bdwp70_title_image_id').val(parseInt(attachment.id, 10) || 0);
@@ -3498,13 +3498,22 @@ jQuery(function($){
   });
 });
 JS;
+		wp_add_inline_script(
+			'jquery',
+			'var bdwp70AdminL10n = ' . wp_json_encode(
+				array(
+					'selectImage' => __( 'Select Bible image', 'estudobiblico-biblia-digital' ),
+					'useImage'    => __( 'Use this image', 'estudobiblico-biblia-digital' ),
+				)
+			) . ';'
+		);
 		wp_add_inline_script( 'jquery', $script );
 	}
 
 	public function admin_menu() {
 		add_options_page(
-			'Bíblia Digital',
-			'Bíblia Digital',
+			__( 'Bíblia Digital', 'estudobiblico-biblia-digital' ),
+			__( 'Bíblia Digital', 'estudobiblico-biblia-digital' ),
 			'manage_options',
 			'bdwp70-settings',
 			array( $this, 'settings_page' )
@@ -3543,6 +3552,27 @@ JS;
 			return;
 		}
 
+		// 1.2.0: a língua de origem passou a ser inglês. Sem pacote de idioma nem
+		// tradução personalizada, o site passa a exibir o plugin em inglês.
+		$locale = determine_locale();
+		if ( get_option( 'bdwp70_source_strings_en' ) && ! self::has_translation_for_locale( $locale ) && $this->screen_allows_setup_notice() ) {
+			echo '<div class="notice notice-info"><p>';
+			echo wp_kses(
+				sprintf(
+					/* translators: 1: locale code, 2: link to translate.wordpress.org, 3: link to the Frontend Translation tab. */
+					__( 'Bíblia Digital is written in English, and translations come from translate.wordpress.org. There is no translation for %1$s yet, so the plugin is shown in English. You can %2$s or upload your own translation on the %3$s tab.', 'estudobiblico-biblia-digital' ),
+					'<code>' . esc_html( $locale ) . '</code>',
+					'<a href="' . esc_url( 'https://translate.wordpress.org/projects/wp-plugins/' . self::TEXT_DOMAIN . '/' ) . '">' . esc_html__( 'help translate it', 'estudobiblico-biblia-digital' ) . '</a>',
+					'<a href="' . esc_url( add_query_arg( 'tab', 'translation', admin_url( 'options-general.php?page=bdwp70-settings' ) ) ) . '">' . esc_html__( 'Frontend Translation', 'estudobiblico-biblia-digital' ) . '</a>'
+				),
+				array(
+					'a'    => array( 'href' => array() ),
+					'code' => array(),
+				)
+			);
+			echo '</p></div>';
+		}
+
 		// Aviso único da correção de nomes de livros feita na atualização.
 		$nomes_corrigidos = get_option( 'bdwp70_book_names_fixed_notice' );
 		if ( is_array( $nomes_corrigidos ) && $nomes_corrigidos ) {
@@ -3555,7 +3585,7 @@ JS;
 			}
 			echo '<div class="notice notice-success is-dismissible"><p><strong>' . esc_html__( 'Bíblia Digital:', 'estudobiblico-biblia-digital' ) . '</strong> ';
 			/* translators: %s: list of corrected book names. */
-			echo esc_html( sprintf( __( 'grafia dos nomes de livros corrigida: %s. As URLs antigas de Colossenses e Tessalonicenses redirecionam para as novas.', 'estudobiblico-biblia-digital' ), implode( ', ', array_keys( $pares ) ) ) );
+			echo esc_html( sprintf( __( 'book name spelling corrected: %s. The old Colossians and Thessalonians URLs redirect to the new ones.', 'estudobiblico-biblia-digital' ), implode( ', ', array_keys( $pares ) ) ) );
 			echo '</p></div>';
 		}
 
@@ -3581,11 +3611,11 @@ JS;
 		printf(
 			'<div class="notice notice-warning is-dismissible"><p><strong>%1$s</strong> %2$s <a href="%3$s">%4$s</a> &middot; <a href="%5$s">%6$s</a></p></div>',
 			esc_html__( 'Bíblia Digital:', 'estudobiblico-biblia-digital' ),
-			esc_html__( 'foi ativado. Para começar, importe uma Bíblia em formato ZIP contendo books.csv e verses.csv. A responsabilidade pela licença da versão bíblica importada é do usuário final/administrador do site.', 'estudobiblico-biblia-digital' ),
+			esc_html__( 'has been activated. To get started, import a Bible as a ZIP file containing books.csv and verses.csv. The end user/site administrator is responsible for the license of the imported Bible version.', 'estudobiblico-biblia-digital' ),
 			esc_url( $url ),
-			esc_html__( 'Importar agora', 'estudobiblico-biblia-digital' ),
+			esc_html__( 'Import now', 'estudobiblico-biblia-digital' ),
 			esc_url( $dismiss_url ),
-			esc_html__( 'Dispensar', 'estudobiblico-biblia-digital' )
+			esc_html__( 'Dismiss', 'estudobiblico-biblia-digital' )
 		);
 	}
 
@@ -3628,13 +3658,13 @@ JS;
 		}
 
 		$tabs = array(
-			'overview'    => __( 'Visão Geral', 'estudobiblico-biblia-digital' ),
-			'import'      => __( 'Importar Bíblia', 'estudobiblico-biblia-digital' ),
-			'versions'    => __( 'Versões da Bíblia', 'estudobiblico-biblia-digital' ),
-			'translation' => __( 'Tradução do Frontend', 'estudobiblico-biblia-digital' ),
+			'overview'    => __( 'Overview', 'estudobiblico-biblia-digital' ),
+			'import'      => __( 'Import Bible', 'estudobiblico-biblia-digital' ),
+			'versions'    => __( 'Bible Versions', 'estudobiblico-biblia-digital' ),
+			'translation' => __( 'Frontend Translation', 'estudobiblico-biblia-digital' ),
 			'shortcodes'  => __( 'Shortcodes', 'estudobiblico-biblia-digital' ),
-			'seo'         => __( 'SEO e URLs', 'estudobiblico-biblia-digital' ),
-			'diagnostic'  => __( 'Diagnóstico', 'estudobiblico-biblia-digital' ),
+			'seo'         => __( 'SEO and URLs', 'estudobiblico-biblia-digital' ),
+			'diagnostic'  => __( 'Diagnostics', 'estudobiblico-biblia-digital' ),
 		);
 
 		$current_tab_raw = filter_input( INPUT_GET, 'tab', FILTER_UNSAFE_RAW );
@@ -3656,7 +3686,7 @@ JS;
 			<h1><?php esc_html_e( 'Bíblia Digital', 'estudobiblico-biblia-digital' ); ?></h1>
 			<?php $this->render_admin_page_notices( $error ); ?>
 
-			<h2 class="nav-tab-wrapper bdwp70-admin-tabs" aria-label="<?php esc_attr_e( 'Seções do plugin Bíblia Digital', 'estudobiblico-biblia-digital' ); ?>">
+			<h2 class="nav-tab-wrapper bdwp70-admin-tabs" aria-label="<?php esc_attr_e( 'Bíblia Digital plugin sections', 'estudobiblico-biblia-digital' ); ?>">
 				<?php foreach ( $tabs as $tab_key => $tab_label ) : ?>
 					<?php
 					$tab_url = add_query_arg(
@@ -3708,9 +3738,9 @@ JS;
 	private function render_admin_page_notices( $error = '' ) {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Admin status query args only display notices after nonce-protected redirects.
 		if ( isset( $_GET['bdwp70_reimported'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['bdwp70_reimported'] ) ) ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Dados bíblicos importados com sucesso.', 'estudobiblico-biblia-digital' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Bible data imported successfully.', 'estudobiblico-biblia-digital' ) . '</p></div>';
 		} elseif ( isset( $_GET['bdwp70_reimported'] ) && '0' === sanitize_text_field( wp_unslash( $_GET['bdwp70_reimported'] ) ) ) {
-			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Não foi possível concluir a importação.', 'estudobiblico-biblia-digital' ) . ' ' . esc_html( $error ) . '</p></div>';
+			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'The import could not be completed.', 'estudobiblico-biblia-digital' ) . ' ' . esc_html( $error ) . '</p></div>';
 		}
 
 		if ( isset( $_GET['bdwp70_version_deleted'] ) ) {
@@ -3718,11 +3748,11 @@ JS;
 			$nome      = isset( $_GET['bdwp70_version_name'] ) ? sanitize_text_field( wp_unslash( $_GET['bdwp70_version_name'] ) ) : '';
 			$avisos    = array(
 				/* translators: %s: Bible version name. */
-				'ok'       => array( 'success', sprintf( __( 'Versão "%s" excluída, com seus livros e versículos. As URLs dela passam a redirecionar para a Bíblia ativa.', 'estudobiblico-biblia-digital' ), $nome ) ),
-				'active'   => array( 'error', __( 'A Bíblia ativa do site não pode ser excluída. Ative outra versão acima e depois exclua esta.', 'estudobiblico-biblia-digital' ) ),
-				'confirm'  => array( 'error', __( 'Marque a confirmação ao lado do botão para excluir a versão.', 'estudobiblico-biblia-digital' ) ),
-				'builtin'  => array( 'error', __( 'Esta versão faz parte do plugin e não pode ser excluída.', 'estudobiblico-biblia-digital' ) ),
-				'notfound' => array( 'error', __( 'Versão não encontrada. Ela pode já ter sido excluída.', 'estudobiblico-biblia-digital' ) ),
+				'ok'       => array( 'success', sprintf( __( 'Version "%s" was deleted, along with its books and verses. Its URLs now redirect to the active Bible.', 'estudobiblico-biblia-digital' ), $nome ) ),
+				'active'   => array( 'error', __( 'The site\'s active Bible cannot be deleted. Activate another version above, then delete this one.', 'estudobiblico-biblia-digital' ) ),
+				'confirm'  => array( 'error', __( 'Check the confirmation box next to the button to delete the version.', 'estudobiblico-biblia-digital' ) ),
+				'builtin'  => array( 'error', __( 'This version is part of the plugin and cannot be deleted.', 'estudobiblico-biblia-digital' ) ),
+				'notfound' => array( 'error', __( 'Version not found. It may have already been deleted.', 'estudobiblico-biblia-digital' ) ),
 			);
 			if ( isset( $avisos[ $resultado ] ) ) {
 				echo '<div class="notice notice-' . esc_attr( $avisos[ $resultado ][0] ) . ' is-dismissible"><p>' . esc_html( $avisos[ $resultado ][1] ) . '</p></div>';
@@ -3730,13 +3760,13 @@ JS;
 		}
 
 		if ( isset( $_GET['bdwp70_saved'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['bdwp70_saved'] ) ) ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Configurações salvas. Os links permanentes foram atualizados.', 'estudobiblico-biblia-digital' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Settings saved. Permalinks have been refreshed.', 'estudobiblico-biblia-digital' ) . '</p></div>';
 		}
 
 		if ( isset( $_GET['bdwp70_translation_uploaded'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['bdwp70_translation_uploaded'] ) ) ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Arquivo(s) de tradução enviados com sucesso.', 'estudobiblico-biblia-digital' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Translation file(s) uploaded successfully.', 'estudobiblico-biblia-digital' ) . '</p></div>';
 		} elseif ( isset( $_GET['bdwp70_translation_uploaded'] ) && '0' === sanitize_text_field( wp_unslash( $_GET['bdwp70_translation_uploaded'] ) ) ) {
-			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Não foi possível enviar os arquivos de tradução.', 'estudobiblico-biblia-digital' ) . ' ' . esc_html( $error ) . '</p></div>';
+			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'The translation files could not be uploaded.', 'estudobiblico-biblia-digital' ) . ' ' . esc_html( $error ) . '</p></div>';
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
@@ -3776,45 +3806,45 @@ JS;
 		?>
 		<div class="bdwp70-admin-hero">
 			<div>
-				<h2><?php esc_html_e( 'Painel enterprise da Bíblia Digital', 'estudobiblico-biblia-digital' ); ?></h2>
-				<p><?php esc_html_e( 'Gerencie importação, versões bíblicas, tradução do frontend e shortcodes em seções separadas. O plugin cuida das funcionalidades persistentes; o tema deve cuidar apenas da apresentação visual.', 'estudobiblico-biblia-digital' ); ?></p>
+				<h2><?php esc_html_e( 'Bíblia Digital enterprise dashboard', 'estudobiblico-biblia-digital' ); ?></h2>
+				<p><?php esc_html_e( 'Manage import, Bible versions, frontend translation, and shortcodes in separate sections. The plugin handles persistent features; the theme should handle only the visual presentation.', 'estudobiblico-biblia-digital' ); ?></p>
 			</div>
-			<a class="button button-primary" href="<?php echo esc_url( $tab_urls['import'] ); ?>"><?php esc_html_e( 'Importar Bíblia', 'estudobiblico-biblia-digital' ); ?></a>
+			<a class="button button-primary" href="<?php echo esc_url( $tab_urls['import'] ); ?>"><?php esc_html_e( 'Import Bible', 'estudobiblico-biblia-digital' ); ?></a>
 		</div>
 
 		<div class="bdwp70-admin-cards bdwp70-admin-cards--summary">
-			<?php $this->render_admin_metric_card( __( 'Bíblia ativa', 'estudobiblico-biblia-digital' ), $active_label, __( 'Usada como padrão do site.', 'estudobiblico-biblia-digital' ) ); ?>
-			<?php $this->render_admin_metric_card( __( 'Versões importadas', 'estudobiblico-biblia-digital' ), number_format_i18n( is_array( $versions ) ? count( $versions ) : 0 ), __( 'Traduções disponíveis no banco.', 'estudobiblico-biblia-digital' ) ); ?>
-			<?php $this->render_admin_metric_card( __( 'Livros da Bíblia ativa', 'estudobiblico-biblia-digital' ), number_format_i18n( $books ), __( 'Esperado: 66 na ordem protestante tradicional.', 'estudobiblico-biblia-digital' ) ); ?>
-			<?php $this->render_admin_metric_card( __( 'Versículos da Bíblia ativa', 'estudobiblico-biblia-digital' ), number_format_i18n( $verses ), __( 'Texto bíblico armazenado localmente.', 'estudobiblico-biblia-digital' ) ); ?>
+			<?php $this->render_admin_metric_card( __( 'Active Bible', 'estudobiblico-biblia-digital' ), $active_label, __( 'Used as the site default.', 'estudobiblico-biblia-digital' ) ); ?>
+			<?php $this->render_admin_metric_card( __( 'Imported versions', 'estudobiblico-biblia-digital' ), number_format_i18n( is_array( $versions ) ? count( $versions ) : 0 ), __( 'Translations available in the database.', 'estudobiblico-biblia-digital' ) ); ?>
+			<?php $this->render_admin_metric_card( __( 'Books in the active Bible', 'estudobiblico-biblia-digital' ), number_format_i18n( $books ), __( 'Expected: 66, in the traditional Protestant order.', 'estudobiblico-biblia-digital' ) ); ?>
+			<?php $this->render_admin_metric_card( __( 'Verses in the active Bible', 'estudobiblico-biblia-digital' ), number_format_i18n( $verses ), __( 'Bible text stored locally.', 'estudobiblico-biblia-digital' ) ); ?>
 		</div>
 
 		<div class="bdwp70-admin-grid">
 			<div class="bdwp70-admin-box">
-				<h3><?php esc_html_e( 'Links rápidos', 'estudobiblico-biblia-digital' ); ?></h3>
-				<p><?php esc_html_e( 'Acesse diretamente as áreas mais usadas do plugin.', 'estudobiblico-biblia-digital' ); ?></p>
+				<h3><?php esc_html_e( 'Quick links', 'estudobiblico-biblia-digital' ); ?></h3>
+				<p><?php esc_html_e( 'Go straight to the most used areas of the plugin.', 'estudobiblico-biblia-digital' ); ?></p>
 				<p class="bdwp70-admin-actions">
-					<a class="button" href="<?php echo esc_url( $tab_urls['import'] ); ?>"><?php esc_html_e( 'Importar Bíblia', 'estudobiblico-biblia-digital' ); ?></a>
-					<a class="button" href="<?php echo esc_url( $tab_urls['versions'] ); ?>"><?php esc_html_e( 'Versões', 'estudobiblico-biblia-digital' ); ?></a>
+					<a class="button" href="<?php echo esc_url( $tab_urls['import'] ); ?>"><?php esc_html_e( 'Import Bible', 'estudobiblico-biblia-digital' ); ?></a>
+					<a class="button" href="<?php echo esc_url( $tab_urls['versions'] ); ?>"><?php esc_html_e( 'Versions', 'estudobiblico-biblia-digital' ); ?></a>
 					<a class="button" href="<?php echo esc_url( $tab_urls['shortcodes'] ); ?>"><?php esc_html_e( 'Shortcodes', 'estudobiblico-biblia-digital' ); ?></a>
-					<a class="button" href="<?php echo esc_url( $tab_urls['translation'] ); ?>"><?php esc_html_e( 'Tradução do Frontend', 'estudobiblico-biblia-digital' ); ?></a>
+					<a class="button" href="<?php echo esc_url( $tab_urls['translation'] ); ?>"><?php esc_html_e( 'Frontend Translation', 'estudobiblico-biblia-digital' ); ?></a>
 				</p>
 			</div>
 			<div class="bdwp70-admin-box">
-				<h3><?php esc_html_e( 'Resumo técnico', 'estudobiblico-biblia-digital' ); ?></h3>
+				<h3><?php esc_html_e( 'Technical summary', 'estudobiblico-biblia-digital' ); ?></h3>
 				<table class="widefat striped">
 					<tbody>
 						<tr><th><?php esc_html_e( 'Status', 'estudobiblico-biblia-digital' ); ?></th><td><?php echo esc_html( $status ); ?></td></tr>
 						<tr><th><?php esc_html_e( 'Base/slug', 'estudobiblico-biblia-digital' ); ?></th><td><code><?php echo esc_html( $base ); ?></code></td></tr>
-						<tr><th><?php esc_html_e( 'Última importação', 'estudobiblico-biblia-digital' ); ?></th><td><?php echo esc_html( get_option( BDWP70_Activator::OPTION_IMPORTED, __( 'não registrada', 'estudobiblico-biblia-digital' ) ) ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Last import', 'estudobiblico-biblia-digital' ); ?></th><td><?php echo esc_html( get_option( BDWP70_Activator::OPTION_IMPORTED, __( 'not recorded', 'estudobiblico-biblia-digital' ) ) ); ?></td></tr>
 						<?php
 						if ( $progress ) :
 							?>
-							<tr><th><?php esc_html_e( 'Progresso', 'estudobiblico-biblia-digital' ); ?></th><td><?php echo esc_html( $progress ); ?></td></tr><?php endif; ?>
+							<tr><th><?php esc_html_e( 'Progress', 'estudobiblico-biblia-digital' ); ?></th><td><?php echo esc_html( $progress ); ?></td></tr><?php endif; ?>
 						<?php
 						if ( $error ) :
 							?>
-							<tr><th><?php esc_html_e( 'Último erro', 'estudobiblico-biblia-digital' ); ?></th><td><?php echo esc_html( $error ); ?></td></tr><?php endif; ?>
+							<tr><th><?php esc_html_e( 'Last error', 'estudobiblico-biblia-digital' ); ?></th><td><?php echo esc_html( $error ); ?></td></tr><?php endif; ?>
 					</tbody>
 				</table>
 			</div>
@@ -3836,61 +3866,61 @@ JS;
 
 	private function render_admin_tab_import() {
 		?>
-		<h2><?php esc_html_e( 'Importar Bíblia', 'estudobiblico-biblia-digital' ); ?></h2>
+		<h2><?php esc_html_e( 'Import Bible', 'estudobiblico-biblia-digital' ); ?></h2>
 		<div class="notice notice-info inline bdwp70-admin-notice">
-			<p><strong><?php esc_html_e( 'Primeiro importe a base bíblica.', 'estudobiblico-biblia-digital' ); ?></strong> <?php esc_html_e( 'Envie um arquivo ZIP contendo books.csv e verses.csv em UTF-8. O plugin cria uma nova Bíblia e a deixa ativa após a importação.', 'estudobiblico-biblia-digital' ); ?></p>
-			<p><?php esc_html_e( 'O pacote público não distribui textos bíblicos protegidos. A licença da tradução importada é responsabilidade do administrador do site.', 'estudobiblico-biblia-digital' ); ?></p>
+			<p><strong><?php esc_html_e( 'Import the Bible data first.', 'estudobiblico-biblia-digital' ); ?></strong> <?php esc_html_e( 'Upload a ZIP file containing books.csv and verses.csv in UTF-8. The plugin creates a new Bible and makes it active after the import.', 'estudobiblico-biblia-digital' ); ?></p>
+			<p><?php esc_html_e( 'The public package does not distribute copyrighted Bible texts. The site administrator is responsible for the license of the imported translation.', 'estudobiblico-biblia-digital' ); ?></p>
 		</div>
 
 		<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="bdwp70-admin-form">
 			<?php wp_nonce_field( 'bdwp70_upload_bible' ); ?>
 			<input type="hidden" name="action" value="bdwp70_upload_bible">
 			<table class="form-table" role="presentation">
-				<tr><th scope="row"><label for="bdwp70_bible_name"><?php esc_html_e( 'Nome da Bíblia', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="text" class="regular-text" id="bdwp70_bible_name" name="bdwp70_bible_name" placeholder="<?php echo esc_attr__( 'Ex.: Almeida Corrigida Fiel', 'estudobiblico-biblia-digital' ); ?>" required></td></tr>
-				<tr><th scope="row"><label for="bdwp70_bible_lang"><?php esc_html_e( 'Idioma', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="text" class="regular-text" id="bdwp70_bible_lang" name="bdwp70_bible_lang" placeholder="<?php echo esc_attr__( 'Ex.: pt-BR, en-US, es-ES', 'estudobiblico-biblia-digital' ); ?>" required></td></tr>
-				<tr><th scope="row"><label for="bdwp70_bible_file"><?php esc_html_e( 'Arquivo ZIP', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="file" id="bdwp70_bible_file" name="bdwp70_bible_file" accept=".zip,application/zip" required></td></tr>
+				<tr><th scope="row"><label for="bdwp70_bible_name"><?php esc_html_e( 'Bible name', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="text" class="regular-text" id="bdwp70_bible_name" name="bdwp70_bible_name" placeholder="<?php echo esc_attr__( 'E.g.: King James Version', 'estudobiblico-biblia-digital' ); ?>" required></td></tr>
+				<tr><th scope="row"><label for="bdwp70_bible_lang"><?php esc_html_e( 'Language', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="text" class="regular-text" id="bdwp70_bible_lang" name="bdwp70_bible_lang" placeholder="<?php echo esc_attr__( 'E.g.: pt-BR, en-US, es-ES', 'estudobiblico-biblia-digital' ); ?>" required></td></tr>
+				<tr><th scope="row"><label for="bdwp70_bible_file"><?php esc_html_e( 'ZIP file', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="file" id="bdwp70_bible_file" name="bdwp70_bible_file" accept=".zip,application/zip" required></td></tr>
 			</table>
-			<?php submit_button( __( 'Enviar e importar Bíblia', 'estudobiblico-biblia-digital' ), 'primary', 'submit', false ); ?>
+			<?php submit_button( __( 'Upload and import Bible', 'estudobiblico-biblia-digital' ), 'primary', 'submit', false ); ?>
 		</form>
 
 		<div class="bdwp70-admin-box bdwp70-admin-box--spec">
-			<h3><?php esc_html_e( 'Como preparar os arquivos', 'estudobiblico-biblia-digital' ); ?></h3>
+			<h3><?php esc_html_e( 'How to prepare the files', 'estudobiblico-biblia-digital' ); ?></h3>
 
 			<p>
-				<strong><?php esc_html_e( 'Modelos prontos:', 'estudobiblico-biblia-digital' ); ?></strong>
-				<a class="button button-secondary" href="<?php echo esc_url( BDWP70_URL . 'assets/templates/books.csv' ); ?>" download="books.csv"><?php esc_html_e( 'Baixar books.csv', 'estudobiblico-biblia-digital' ); ?></a>
-				<a class="button button-secondary" href="<?php echo esc_url( BDWP70_URL . 'assets/templates/verses.csv' ); ?>" download="verses.csv"><?php esc_html_e( 'Baixar verses.csv', 'estudobiblico-biblia-digital' ); ?></a>
+				<strong><?php esc_html_e( 'Ready-made templates:', 'estudobiblico-biblia-digital' ); ?></strong>
+				<a class="button button-secondary" href="<?php echo esc_url( BDWP70_URL . 'assets/templates/books.csv' ); ?>" download="books.csv"><?php esc_html_e( 'Download books.csv', 'estudobiblico-biblia-digital' ); ?></a>
+				<a class="button button-secondary" href="<?php echo esc_url( BDWP70_URL . 'assets/templates/verses.csv' ); ?>" download="verses.csv"><?php esc_html_e( 'Download verses.csv', 'estudobiblico-biblia-digital' ); ?></a>
 			</p>
-			<p class="description"><?php esc_html_e( 'O books.csv de modelo já traz os 66 livros com nome e abreviação em português; troque pelos nomes da sua tradução, se for de outro idioma. O verses.csv de modelo traz só linhas de exemplo: substitua pelo texto completo.', 'estudobiblico-biblia-digital' ); ?></p>
+			<p class="description"><?php esc_html_e( 'The books.csv template already lists the 66 books with their Portuguese names and abbreviations; replace them with the names from your translation if it is in another language. The verses.csv template has only sample rows: replace them with the full text.', 'estudobiblico-biblia-digital' ); ?></p>
 
 			<ol class="bdwp70-admin-list">
 				<li>
-					<strong>books.csv</strong> — <?php esc_html_e( 'a primeira linha é o cabeçalho, e depois vem um livro por linha, os 66 livros, numerados de 1 (Gênesis) a 66 (Apocalipse) na ordem protestante tradicional:', 'estudobiblico-biblia-digital' ); ?>
+					<strong>books.csv</strong> — <?php esc_html_e( 'the first line is the header, followed by one book per line, all 66 books, numbered from 1 (Genesis) to 66 (Revelation) in the traditional Protestant order:', 'estudobiblico-biblia-digital' ); ?>
 					<pre>livro_seq,livro,livro_desc
-1,Gn,Gênesis
-2,Êx,Êxodo
+1,Gen,Genesis
+2,Exod,Exodus
 …
-66,Ap,Apocalipse</pre>
+66,Rev,Revelation</pre>
 				</li>
 				<li>
-					<strong>verses.csv</strong> — <?php esc_html_e( 'a primeira linha é o cabeçalho, e depois vem um versículo por linha. Coloque o texto do versículo entre aspas; aspas dentro do texto são escritas dobradas.', 'estudobiblico-biblia-digital' ); ?>
+					<strong>verses.csv</strong> — <?php esc_html_e( 'the first line is the header, followed by one verse per line. Put the verse text in quotes; quotes inside the text are written doubled.', 'estudobiblico-biblia-digital' ); ?>
 					<pre>testamento,livroseq,livro,capitulo,versiculo,palavra
-AT,1,Gn,1,1,"Texto de Gênesis 1:1."
-NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
+OT,1,Gen,1,1,"Text of Genesis 1:1."
+NT,43,John,3,16,"Text with commas, and ""doubled"" quotes."</pre>
 				</li>
-				<li><?php esc_html_e( 'Salve os dois arquivos em UTF-8, com vírgula como separador. No Excel, use "CSV UTF-8 (delimitado por vírgulas)". No LibreOffice, marque o conjunto de caracteres Unicode (UTF-8), o separador vírgula e as aspas como delimitador de texto.', 'estudobiblico-biblia-digital' ); ?></li>
-				<li><?php esc_html_e( 'Compacte os dois arquivos num ZIP. Eles podem ficar na raiz do ZIP ou dentro de uma única pasta.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Save both files in UTF-8, with a comma as the separator. In Excel, use "CSV UTF-8 (Comma delimited)". In LibreOffice, choose the Unicode (UTF-8) character set, the comma separator, and quotes as the text delimiter.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Compress both files into a ZIP. They can be at the root of the ZIP or inside a single folder.', 'estudobiblico-biblia-digital' ); ?></li>
 			</ol>
 
-			<h4><?php esc_html_e( 'Antes de importar, confira', 'estudobiblico-biblia-digital' ); ?></h4>
+			<h4><?php esc_html_e( 'Before importing, check', 'estudobiblico-biblia-digital' ); ?></h4>
 			<ul class="bdwp70-admin-list">
-				<li><?php esc_html_e( 'O nome em livro_desc é exibido no site e também forma a URL do livro: "Colossenses" gera /colossenses/. Revise a grafia antes de importar, porque corrigir depois muda a URL.', 'estudobiblico-biblia-digital' ); ?></li>
-				<li><?php esc_html_e( 'Cada importação cria uma nova versão e a deixa ativa. Para substituir uma tradução, importe a nova e exclua a antiga na aba Versões.', 'estudobiblico-biblia-digital' ); ?></li>
-				<li><?php esc_html_e( 'O texto é importado sem formatação (HTML é removido), com até 5.000 caracteres por versículo.', 'estudobiblico-biblia-digital' ); ?></li>
-				<li><?php esc_html_e( 'A coluna testamento pode ficar com AT/NT, OT/NT ou vazia: o testamento é deduzido pelo número do livro.', 'estudobiblico-biblia-digital' ); ?></li>
-				<li><?php esc_html_e( 'Informe o idioma no formato pt-BR, en-US ou es-ES.', 'estudobiblico-biblia-digital' ); ?></li>
-				<li><?php esc_html_e( 'Livros deuterocanônicos (Tobias, Judite, Macabeus e outros) não são suportados.', 'estudobiblico-biblia-digital' ); ?></li>
-				<li><?php esc_html_e( 'Limites: ZIP de até 50 MB e até 25 MB descompactado. O servidor precisa da extensão PHP zip.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'The name in livro_desc is shown on the site and also becomes the book URL: "Colossians" produces /colossians/. Review the spelling before importing, because correcting it later changes the URL.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Each import creates a new version and makes it active. To replace a translation, import the new one and delete the old one on the Versions tab.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'The text is imported without formatting (HTML is removed), with up to 5,000 characters per verse.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'The testamento column can hold AT/NT, OT/NT, or be empty: the testament is derived from the book number.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Enter the language in the pt-BR, en-US, or es-ES format.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Deuterocanonical books (Tobit, Judith, Maccabees, and others) are not supported.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Limits: ZIP up to 50 MB and up to 25 MB uncompressed. The server needs the PHP zip extension.', 'estudobiblico-biblia-digital' ); ?></li>
 			</ul>
 		</div>
 		<?php
@@ -3898,8 +3928,8 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 
 	private function render_admin_tab_versions( $versions, $active_bible ) {
 		?>
-		<h2><?php esc_html_e( 'Versões da Bíblia', 'estudobiblico-biblia-digital' ); ?></h2>
-		<p><?php esc_html_e( 'Gerencie a Bíblia ativa do site e acompanhe as versões importadas. A seleção pública de uma versão no frontend não altera esta Bíblia ativa global.', 'estudobiblico-biblia-digital' ); ?></p>
+		<h2><?php esc_html_e( 'Bible Versions', 'estudobiblico-biblia-digital' ); ?></h2>
+		<p><?php esc_html_e( 'Manage the site\'s active Bible and review the imported versions. A visitor selecting a version on the frontend does not change this global active Bible.', 'estudobiblico-biblia-digital' ); ?></p>
 
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="bdwp70-admin-form">
 			<?php wp_nonce_field( 'bdwp70_save_settings' ); ?>
@@ -3907,7 +3937,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 			<input type="hidden" name="bdwp70_settings_context" value="versions">
 			<table class="form-table" role="presentation">
 				<tr>
-					<th scope="row"><label for="bdwp70_active_bible_id"><?php esc_html_e( 'Bíblia ativa do site', 'estudobiblico-biblia-digital' ); ?></label></th>
+					<th scope="row"><label for="bdwp70_active_bible_id"><?php esc_html_e( 'Site\'s active Bible', 'estudobiblico-biblia-digital' ); ?></label></th>
 					<td>
 						<?php if ( ! empty( $versions ) ) : ?>
 							<select id="bdwp70_active_bible_id" name="bdwp70_active_bible_id">
@@ -3915,20 +3945,20 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 									<option value="<?php echo esc_attr( (int) $version->id ); ?>" <?php selected( $active_bible, (int) $version->id ); ?>><?php echo esc_html( $this->admin_version_option_label( $version ) ); ?></option>
 								<?php endforeach; ?>
 							</select>
-							<p class="description"><?php esc_html_e( 'Usada como padrão em shortcodes, widgets, busca e URLs quando o visitante não seleciona outra versão.', 'estudobiblico-biblia-digital' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Used as the default in shortcodes, widgets, search, and URLs when the visitor does not select another version.', 'estudobiblico-biblia-digital' ); ?></p>
 						<?php else : ?>
-							<p class="description"><strong><?php esc_html_e( 'Nenhuma Bíblia importada.', 'estudobiblico-biblia-digital' ); ?></strong> <?php esc_html_e( 'Use a aba Importar Bíblia para enviar um ZIP contendo books.csv e verses.csv.', 'estudobiblico-biblia-digital' ); ?></p>
+							<p class="description"><strong><?php esc_html_e( 'No Bible imported.', 'estudobiblico-biblia-digital' ); ?></strong> <?php esc_html_e( 'Use the Import Bible tab to upload a ZIP containing books.csv and verses.csv.', 'estudobiblico-biblia-digital' ); ?></p>
 						<?php endif; ?>
 					</td>
 				</tr>
 			</table>
-			<?php submit_button( __( 'Salvar Bíblia ativa', 'estudobiblico-biblia-digital' ), 'primary', 'submit', false ); ?>
+			<?php submit_button( __( 'Save active Bible', 'estudobiblico-biblia-digital' ), 'primary', 'submit', false ); ?>
 		</form>
 
-		<p class="description"><strong><?php esc_html_e( 'Excluir uma versão', 'estudobiblico-biblia-digital' ); ?></strong> — <?php esc_html_e( 'apaga o cadastro, os livros e os versículos dela, e não pode ser desfeito. As URLs da versão excluída passam a redirecionar para o mesmo trecho na Bíblia ativa. Para substituir uma tradução, importe a nova, ative-a e então exclua a antiga.', 'estudobiblico-biblia-digital' ); ?></p>
+		<p class="description"><strong><?php esc_html_e( 'Deleting a version', 'estudobiblico-biblia-digital' ); ?></strong> — <?php esc_html_e( 'removes its record, books, and verses, and cannot be undone. URLs of the deleted version redirect to the same passage in the active Bible. To replace a translation, import the new one, activate it, and then delete the old one.', 'estudobiblico-biblia-digital' ); ?></p>
 
 		<table class="widefat striped bdwp70-admin-table">
-			<thead><tr><th><?php esc_html_e( 'ID', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Nome', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Idioma', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Livros', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Versículos', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Status', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Excluir', 'estudobiblico-biblia-digital' ); ?></th></tr></thead>
+			<thead><tr><th><?php esc_html_e( 'ID', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Name', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Language', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Books', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Verses', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Status', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Delete', 'estudobiblico-biblia-digital' ); ?></th></tr></thead>
 			<tbody>
 				<?php if ( ! empty( $versions ) ) : ?>
 					<?php foreach ( $versions as $version ) : ?>
@@ -3938,38 +3968,38 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 							<td><?php echo esc_html( (string) $version->language_code ); ?></td>
 							<td><?php echo esc_html( number_format_i18n( BDWP70_Activator::count_books( (int) $version->id ) ) ); ?></td>
 							<td><?php echo esc_html( number_format_i18n( BDWP70_Activator::count_verses( (int) $version->id ) ) ); ?></td>
-							<td><?php echo ( (int) $version->id === (int) $active_bible ) ? '<span class="bdwp70-admin-badge">' . esc_html__( 'Ativa', 'estudobiblico-biblia-digital' ) . '</span>' : esc_html__( 'Importada', 'estudobiblico-biblia-digital' ); ?></td>
+							<td><?php echo ( (int) $version->id === (int) $active_bible ) ? '<span class="bdwp70-admin-badge">' . esc_html__( 'Active', 'estudobiblico-biblia-digital' ) . '</span>' : esc_html__( 'Imported', 'estudobiblico-biblia-digital' ); ?></td>
 							<td>
 								<?php if ( ! empty( $version->is_builtin ) ) : ?>
 									&mdash;
 								<?php elseif ( (int) $version->id === (int) $active_bible ) : ?>
-									<span class="description"><?php esc_html_e( 'Ative outra versão para poder excluir esta.', 'estudobiblico-biblia-digital' ); ?></span>
+									<span class="description"><?php esc_html_e( 'Activate another version to be able to delete this one.', 'estudobiblico-biblia-digital' ); ?></span>
 								<?php else : ?>
 									<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 										<?php wp_nonce_field( 'bdwp70_delete_version_' . (int) $version->id ); ?>
 										<input type="hidden" name="action" value="bdwp70_delete_version">
 										<input type="hidden" name="bdwp70_bible_id" value="<?php echo esc_attr( (string) (int) $version->id ); ?>">
-										<label><input type="checkbox" name="bdwp70_confirm_delete" value="1" required> <?php esc_html_e( 'Confirmo', 'estudobiblico-biblia-digital' ); ?></label>
-										<button type="submit" class="button button-link-delete"><?php esc_html_e( 'Excluir versão', 'estudobiblico-biblia-digital' ); ?></button>
+										<label><input type="checkbox" name="bdwp70_confirm_delete" value="1" required> <?php esc_html_e( 'I confirm', 'estudobiblico-biblia-digital' ); ?></label>
+										<button type="submit" class="button button-link-delete"><?php esc_html_e( 'Delete version', 'estudobiblico-biblia-digital' ); ?></button>
 									</form>
 								<?php endif; ?>
 							</td>
 						</tr>
 					<?php endforeach; ?>
 				<?php else : ?>
-					<tr><td colspan="7"><?php esc_html_e( 'Nenhuma versão importada ainda.', 'estudobiblico-biblia-digital' ); ?></td></tr>
+					<tr><td colspan="7"><?php esc_html_e( 'No version imported yet.', 'estudobiblico-biblia-digital' ); ?></td></tr>
 				<?php endif; ?>
 			</tbody>
 		</table>
-		<p class="description"><?php esc_html_e( 'A base para rótulo público, visibilidade pública e múltiplas versões no mesmo idioma permanece no plugin. Esta etapa não altera reescrita/permalinks.', 'estudobiblico-biblia-digital' ); ?></p>
+		<p class="description"><?php esc_html_e( 'The groundwork for public labels, public visibility, and multiple versions in the same language stays in the plugin. This step does not change rewrites/permalinks.', 'estudobiblico-biblia-digital' ); ?></p>
 		<?php
 	}
 
 	private function render_admin_tab_translation() {
 		?>
-		<h2><?php esc_html_e( 'Tradução do Frontend', 'estudobiblico-biblia-digital' ); ?></h2>
+		<h2><?php esc_html_e( 'Frontend Translation', 'estudobiblico-biblia-digital' ); ?></h2>
 		<div class="notice notice-info inline bdwp70-admin-notice">
-			<p><strong><?php esc_html_e( 'Esta etapa vem depois da importação da Bíblia.', 'estudobiblico-biblia-digital' ); ?></strong> <?php esc_html_e( 'Arquivos .pot, .po e .mo traduzem as strings do plugin no frontend. Eles não substituem o texto bíblico importado.', 'estudobiblico-biblia-digital' ); ?></p>
+			<p><strong><?php esc_html_e( 'This step comes after importing the Bible.', 'estudobiblico-biblia-digital' ); ?></strong> <?php esc_html_e( '.pot, .po, and .mo files translate the plugin strings on the frontend. They do not replace the imported Bible text.', 'estudobiblico-biblia-digital' ); ?></p>
 		</div>
 		<?php $this->render_translation_upload_form( 'settings' ); ?>
 		<?php $this->render_translation_files_status(); ?>
@@ -3980,7 +4010,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 		$groups = $this->admin_shortcodes_reference();
 		?>
 		<h2><?php esc_html_e( 'Shortcodes', 'estudobiblico-biblia-digital' ); ?></h2>
-		<p><?php esc_html_e( 'Use esta seção como referência rápida para páginas, widgets e blocos HTML. Os aliases antigos foram preservados para compatibilidade.', 'estudobiblico-biblia-digital' ); ?></p>
+		<p><?php esc_html_e( 'Use this section as a quick reference for pages, widgets, and HTML blocks. The old aliases have been kept for compatibility.', 'estudobiblico-biblia-digital' ); ?></p>
 		<div class="bdwp70-shortcode-grid">
 			<?php foreach ( $groups as $group ) : ?>
 				<section class="bdwp70-shortcode-card">
@@ -3993,15 +4023,15 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 						<p><strong><?php esc_html_e( 'Aliases:', 'estudobiblico-biblia-digital' ); ?></strong> <?php echo wp_kses_post( implode( ' ', array_map( array( $this, 'admin_code_inline' ), $group['aliases'] ) ) ); ?></p>
 					<?php endif; ?>
 					<div class="bdwp70-shortcode-examples">
-						<p><strong><?php esc_html_e( 'Exemplo básico:', 'estudobiblico-biblia-digital' ); ?></strong></p>
+						<p><strong><?php esc_html_e( 'Basic example:', 'estudobiblico-biblia-digital' ); ?></strong></p>
 						<pre><code><?php echo esc_html( $group['basic'] ); ?></code></pre>
-						<button type="button" class="button bdwp70-copy-shortcode" data-copy="<?php echo esc_attr( $group['basic'] ); ?>"><?php esc_html_e( 'Copiar shortcode', 'estudobiblico-biblia-digital' ); ?></button>
-						<p><strong><?php esc_html_e( 'Exemplo avançado:', 'estudobiblico-biblia-digital' ); ?></strong></p>
+						<button type="button" class="button bdwp70-copy-shortcode" data-copy="<?php echo esc_attr( $group['basic'] ); ?>"><?php esc_html_e( 'Copy shortcode', 'estudobiblico-biblia-digital' ); ?></button>
+						<p><strong><?php esc_html_e( 'Advanced example:', 'estudobiblico-biblia-digital' ); ?></strong></p>
 						<pre><code><?php echo esc_html( $group['advanced'] ); ?></code></pre>
-						<button type="button" class="button bdwp70-copy-shortcode" data-copy="<?php echo esc_attr( $group['advanced'] ); ?>"><?php esc_html_e( 'Copiar exemplo avançado', 'estudobiblico-biblia-digital' ); ?></button>
+						<button type="button" class="button bdwp70-copy-shortcode" data-copy="<?php echo esc_attr( $group['advanced'] ); ?>"><?php esc_html_e( 'Copy advanced example', 'estudobiblico-biblia-digital' ); ?></button>
 					</div>
 					<table class="widefat striped bdwp70-shortcode-attributes">
-						<thead><tr><th><?php esc_html_e( 'Atributo', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Descrição', 'estudobiblico-biblia-digital' ); ?></th></tr></thead>
+						<thead><tr><th><?php esc_html_e( 'Attribute', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Description', 'estudobiblico-biblia-digital' ); ?></th></tr></thead>
 						<tbody>
 							<?php foreach ( $group['attributes'] as $attribute => $description ) : ?>
 								<tr><td><code><?php echo esc_html( $attribute ); ?></code></td><td><?php echo esc_html( $description ); ?></td></tr>
@@ -4012,7 +4042,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 			<?php endforeach; ?>
 		</div>
 		<div class="bdwp70-admin-box">
-			<h3><?php esc_html_e( 'Valores aceitos para aleatório', 'estudobiblico-biblia-digital' ); ?></h3>
+			<h3><?php esc_html_e( 'Accepted values for random', 'estudobiblico-biblia-digital' ); ?></h3>
 			<p><code>random</code> <code>aleatorio</code> <code>aleatório</code> <code>rand</code> <code>*</code></p>
 		</div>
 		<?php
@@ -4025,23 +4055,23 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 		$quick_cards       = $this->quick_cards( true );
 		$bible_studio_url  = get_option( self::OPTION_BIBLE_STUDIO_URL, $this->default_bible_studio_url_template() );
 		$quick_card_styles = array(
-			'search'  => __( 'Azul / pesquisa', 'estudobiblico-biblia-digital' ),
-			'reading' => __( 'Amarelo / leitura', 'estudobiblico-biblia-digital' ),
-			'verse'   => __( 'Verde / versículo', 'estudobiblico-biblia-digital' ),
-			'studies' => __( 'Roxo / estudos', 'estudobiblico-biblia-digital' ),
+			'search'  => __( 'Blue / search', 'estudobiblico-biblia-digital' ),
+			'reading' => __( 'Yellow / reading', 'estudobiblico-biblia-digital' ),
+			'verse'   => __( 'Green / verse', 'estudobiblico-biblia-digital' ),
+			'studies' => __( 'Purple / studies', 'estudobiblico-biblia-digital' ),
 		);
 		?>
-		<h2><?php esc_html_e( 'SEO, URLs e elementos da landing', 'estudobiblico-biblia-digital' ); ?></h2>
-		<p><?php esc_html_e( 'As regras de URL amigável foram revisadas para preservar URLs antigas e aceitar URLs com versão no caminho. Após alterar o slug/base, salve os Links permanentes uma vez.', 'estudobiblico-biblia-digital' ); ?></p>
+		<h2><?php esc_html_e( 'SEO, URLs, and landing elements', 'estudobiblico-biblia-digital' ); ?></h2>
+		<p><?php esc_html_e( 'The friendly URL rules were revised to keep old URLs working and to accept URLs with the version in the path. After changing the slug/base, save the Permalinks once.', 'estudobiblico-biblia-digital' ); ?></p>
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="bdwp70-admin-form bdwp70-admin-form--wide">
 			<?php wp_nonce_field( 'bdwp70_save_settings' ); ?>
 			<input type="hidden" name="action" value="bdwp70_save_settings">
 			<input type="hidden" name="bdwp70_settings_context" value="seo">
 			<input type="hidden" name="bdwp70_general_settings" value="1">
 			<table class="form-table" role="presentation">
-				<tr><th scope="row"><label for="bdwp70_bible_title"><?php esc_html_e( 'Título da Bíblia', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="text" class="regular-text" id="bdwp70_bible_title" name="bdwp70_bible_title" value="<?php echo esc_attr( $site_title ); ?>"><p class="description"><?php esc_html_e( 'Define o título exibido no frontend e usado nos metadados de SEO da Bíblia.', 'estudobiblico-biblia-digital' ); ?></p></td></tr>
+				<tr><th scope="row"><label for="bdwp70_bible_title"><?php esc_html_e( 'Bible title', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="text" class="regular-text" id="bdwp70_bible_title" name="bdwp70_bible_title" value="<?php echo esc_attr( $site_title ); ?>"><p class="description"><?php esc_html_e( 'Sets the title shown on the frontend and used in the Bible\'s SEO metadata.', 'estudobiblico-biblia-digital' ); ?></p></td></tr>
 				<tr>
-					<th scope="row"><label for="bdwp70_title_image_id"><?php esc_html_e( 'Imagem acima do título', 'estudobiblico-biblia-digital' ); ?></label></th>
+					<th scope="row"><label for="bdwp70_title_image_id"><?php esc_html_e( 'Image above the title', 'estudobiblico-biblia-digital' ); ?></label></th>
 					<td>
 						<input type="hidden" id="bdwp70_title_image_id" name="bdwp70_title_image_id" value="<?php echo esc_attr( $title_image_id ); ?>">
 						<div id="bdwp70_title_image_preview" class="bdwp70-title-image-preview">
@@ -4050,15 +4080,15 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 								?>
 								<img src="<?php echo esc_url( $title_image_url ); ?>" alt=""><?php endif; ?>
 						</div>
-						<button type="button" class="button" id="bdwp70_select_title_image"><?php esc_html_e( 'Selecionar imagem', 'estudobiblico-biblia-digital' ); ?></button>
-						<button type="button" class="button" id="bdwp70_remove_title_image" <?php echo $title_image_url ? '' : 'style="display:none"'; ?>><?php esc_html_e( 'Remover imagem', 'estudobiblico-biblia-digital' ); ?></button>
-						<p class="description"><?php esc_html_e( 'Imagem exibida acima do título da Bíblia no frontend. Não confundir com logo visual do tema.', 'estudobiblico-biblia-digital' ); ?></p>
+						<button type="button" class="button" id="bdwp70_select_title_image"><?php esc_html_e( 'Select image', 'estudobiblico-biblia-digital' ); ?></button>
+						<button type="button" class="button" id="bdwp70_remove_title_image" <?php echo $title_image_url ? '' : 'style="display:none"'; ?>><?php esc_html_e( 'Remove image', 'estudobiblico-biblia-digital' ); ?></button>
+						<p class="description"><?php esc_html_e( 'Image shown above the Bible title on the frontend. Not to be confused with the theme logo.', 'estudobiblico-biblia-digital' ); ?></p>
 					</td>
 				</tr>
-				<tr><th scope="row"><label for="bdwp70_seo_base"><?php esc_html_e( 'Slug/base da Bíblia', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="text" class="regular-text" id="bdwp70_seo_base" name="bdwp70_seo_base" value="<?php echo esc_attr( $base ); ?>"><p class="description"><?php esc_html_e( 'Crie uma página com este slug e insira [biblia-digital]. Depois de alterar este campo, acesse Configurações > Links permanentes e clique em Salvar alterações uma vez.', 'estudobiblico-biblia-digital' ); ?> <code><?php echo esc_html( home_url( '/' . $base . '/joao/3/16/' ) ); ?></code></p></td></tr>
-				<tr><th scope="row"><label for="bdwp70_bible_studio_url"><?php esc_html_e( 'URL da Bíblia Studio', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="text" class="regular-text" id="bdwp70_bible_studio_url" name="bdwp70_bible_studio_url" value="<?php echo esc_attr( $bible_studio_url ); ?>"><p class="description"><?php esc_html_e( 'Modelo legado de URL externa preservado por compatibilidade. Pode usar {book}, {book_slug}, {chapter}, {verse} e {reference}.', 'estudobiblico-biblia-digital' ); ?></p></td></tr>
-				<tr><th scope="row"><?php esc_html_e( 'Crédito público', 'estudobiblico-biblia-digital' ); ?></th><td><label for="bdwp70_show_credit"><input type="checkbox" id="bdwp70_show_credit" name="bdwp70_show_credit" value="1" <?php checked( 1, (int) get_option( self::OPTION_CREDIT, 0 ) ); ?>> <?php esc_html_e( 'Exibir crédito com link para Estudo Bíblico no frontend.', 'estudobiblico-biblia-digital' ); ?></label></td></tr>
-				<tr><th scope="row"><?php esc_html_e( 'Dados ao desinstalar', 'estudobiblico-biblia-digital' ); ?></th><td><label for="bdwp70_delete_data_on_uninstall"><input type="checkbox" id="bdwp70_delete_data_on_uninstall" name="bdwp70_delete_data_on_uninstall" value="1" <?php checked( 1, (int) get_option( self::OPTION_DELETE_DATA_ON_UNINSTALL, 0 ) ); ?>> <?php esc_html_e( 'Apagar tabelas, opções e Bíblias importadas quando o plugin for excluído.', 'estudobiblico-biblia-digital' ); ?></label><p class="description"><strong><?php esc_html_e( 'Atenção:', 'estudobiblico-biblia-digital' ); ?></strong> <?php esc_html_e( 'desativar o plugin nunca remove dados. Ao excluir, os dados também são preservados por padrão.', 'estudobiblico-biblia-digital' ); ?></p></td></tr>
+				<tr><th scope="row"><label for="bdwp70_seo_base"><?php esc_html_e( 'Bible slug/base', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="text" class="regular-text" id="bdwp70_seo_base" name="bdwp70_seo_base" value="<?php echo esc_attr( $base ); ?>"><p class="description"><?php esc_html_e( 'Create a page with this slug and add [biblia-digital] to it. After changing this field, go to Settings > Permalinks and click Save Changes once.', 'estudobiblico-biblia-digital' ); ?> <code><?php echo esc_html( home_url( '/' . $base . '/joao/3/16/' ) ); ?></code></p></td></tr>
+				<tr><th scope="row"><label for="bdwp70_bible_studio_url"><?php esc_html_e( 'Bíblia Studio URL', 'estudobiblico-biblia-digital' ); ?></label></th><td><input type="text" class="regular-text" id="bdwp70_bible_studio_url" name="bdwp70_bible_studio_url" value="<?php echo esc_attr( $bible_studio_url ); ?>"><p class="description"><?php esc_html_e( 'Legacy external URL template kept for compatibility. It can use {book}, {book_slug}, {chapter}, {verse}, and {reference}.', 'estudobiblico-biblia-digital' ); ?></p></td></tr>
+				<tr><th scope="row"><?php esc_html_e( 'Public credit', 'estudobiblico-biblia-digital' ); ?></th><td><label for="bdwp70_show_credit"><input type="checkbox" id="bdwp70_show_credit" name="bdwp70_show_credit" value="1" <?php checked( 1, (int) get_option( self::OPTION_CREDIT, 0 ) ); ?>> <?php esc_html_e( 'Show a credit linking to Estudo Bíblico on the frontend.', 'estudobiblico-biblia-digital' ); ?></label></td></tr>
+				<tr><th scope="row"><?php esc_html_e( 'Data on uninstall', 'estudobiblico-biblia-digital' ); ?></th><td><label for="bdwp70_delete_data_on_uninstall"><input type="checkbox" id="bdwp70_delete_data_on_uninstall" name="bdwp70_delete_data_on_uninstall" value="1" <?php checked( 1, (int) get_option( self::OPTION_DELETE_DATA_ON_UNINSTALL, 0 ) ); ?>> <?php esc_html_e( 'Delete tables, options, and imported Bibles when the plugin is deleted.', 'estudobiblico-biblia-digital' ); ?></label><p class="description"><strong><?php esc_html_e( 'Note:', 'estudobiblico-biblia-digital' ); ?></strong> <?php esc_html_e( 'deactivating the plugin never removes data. When the plugin is deleted, data is also kept by default.', 'estudobiblico-biblia-digital' ); ?></p></td></tr>
 				<?php
 				$sitemap_enabled   = (int) get_option( self::OPTION_SITEMAP_ENABLED, 1 );
 				$sitemap_incl_v    = (int) get_option( BDWP70_Sitemap::OPTION_INCL_VERSES, 1 );
@@ -4068,10 +4098,10 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 				$wp_sitemap_url    = home_url( '/wp-sitemap.xml' );
 				?>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Sitemap XML', 'estudobiblico-biblia-digital' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'XML sitemap', 'estudobiblico-biblia-digital' ); ?></th>
 					<td>
 						<fieldset>
-							<legend class="screen-reader-text"><?php esc_html_e( 'Sitemap XML', 'estudobiblico-biblia-digital' ); ?></legend>
+							<legend class="screen-reader-text"><?php esc_html_e( 'XML sitemap', 'estudobiblico-biblia-digital' ); ?></legend>
 
 							<p>
 								<label for="bdwp70_sitemap_enabled">
@@ -4083,25 +4113,25 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 										value="1"
 										<?php checked( 1, $sitemap_enabled ); ?>
 									>
-									<strong><?php esc_html_e( 'Ativar sitemap XML automático da Bíblia', 'estudobiblico-biblia-digital' ); ?></strong>
+									<strong><?php esc_html_e( 'Enable the automatic Bible XML sitemap', 'estudobiblico-biblia-digital' ); ?></strong>
 								</label>
 							</p>
 							<p class="description">
-								<?php esc_html_e( 'Gera um sitemap dedicado com as URLs da Bíblia e também integra ao sitemap nativo do WordPress (/wp-sitemap.xml). Não inclui outras páginas do site.', 'estudobiblico-biblia-digital' ); ?>
+								<?php esc_html_e( 'Generates a dedicated sitemap with the Bible URLs and also integrates with the native WordPress sitemap (/wp-sitemap.xml). It does not include other pages of the site.', 'estudobiblico-biblia-digital' ); ?>
 								<?php if ( $sitemap_enabled ) : ?>
 									<br><br>
-									<strong><?php esc_html_e( 'Sitemap dedicado:', 'estudobiblico-biblia-digital' ); ?></strong>
+									<strong><?php esc_html_e( 'Dedicated sitemap:', 'estudobiblico-biblia-digital' ); ?></strong>
 									<a href="<?php echo esc_url( $sitemap_index_url ); ?>" target="_blank" rel="noopener noreferrer">
 										<code><?php echo esc_html( $sitemap_index_url ); ?></code>
 									</a>
 									<br>
-									<strong><?php esc_html_e( 'Sitemap nativo WordPress:', 'estudobiblico-biblia-digital' ); ?></strong>
+									<strong><?php esc_html_e( 'Native WordPress sitemap:', 'estudobiblico-biblia-digital' ); ?></strong>
 									<a href="<?php echo esc_url( $wp_sitemap_url ); ?>" target="_blank" rel="noopener noreferrer">
 										<code><?php echo esc_html( $wp_sitemap_url ); ?></code>
 									</a>
-									<br><em><?php esc_html_e( 'Após ativar pela primeira vez, acesse Configurações → Links permanentes e clique em Salvar.', 'estudobiblico-biblia-digital' ); ?></em>
+									<br><em><?php esc_html_e( 'After enabling it for the first time, go to Settings → Permalinks and click Save.', 'estudobiblico-biblia-digital' ); ?></em>
 								<?php else : ?>
-									<br><?php esc_html_e( 'Quando ativado, o sitemap estará em:', 'estudobiblico-biblia-digital' ); ?>
+									<br><?php esc_html_e( 'When enabled, the sitemap will be at:', 'estudobiblico-biblia-digital' ); ?>
 									<code><?php echo esc_html( $sitemap_index_url ); ?></code>
 								<?php endif; ?>
 							</p>
@@ -4119,16 +4149,16 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 										<?php checked( 1, $sitemap_incl_v ); ?>
 										disabled
 									>
-									<?php esc_html_e( 'Incluir versículos individuais no sitemap', 'estudobiblico-biblia-digital' ); ?>
+									<?php esc_html_e( 'Include individual verses in the sitemap', 'estudobiblico-biblia-digital' ); ?>
 								</label>
 								<span class="description">
-									— <?php esc_html_e( 'Sem efeito: as URLs de versículo declaram o capítulo como canônico e, por isso, não entram no sitemap. Elas continuam funcionando como link direto para o versículo.', 'estudobiblico-biblia-digital' ); ?>
+									— <?php esc_html_e( 'No effect: verse URLs declare the chapter as canonical and are therefore left out of the sitemap. They keep working as direct links to the verse.', 'estudobiblico-biblia-digital' ); ?>
 								</span>
 							</p>
 
 							<p>
 								<label for="bdwp70_sitemap_per_page">
-									<?php esc_html_e( 'Máximo de URLs por arquivo de sitemap:', 'estudobiblico-biblia-digital' ); ?>
+									<?php esc_html_e( 'Maximum URLs per sitemap file:', 'estudobiblico-biblia-digital' ); ?>
 									<input
 										type="number"
 										id="bdwp70_sitemap_per_page"
@@ -4140,7 +4170,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 										class="small-text"
 									>
 								</label>
-								<span class="description">— <?php esc_html_e( 'Mínimo: 100. Máximo: 50.000. Padrão: 2.000.', 'estudobiblico-biblia-digital' ); ?></span>
+								<span class="description">— <?php esc_html_e( 'Minimum: 100. Maximum: 50,000. Default: 2,000.', 'estudobiblico-biblia-digital' ); ?></span>
 							</p>
 
 						</fieldset>
@@ -4195,46 +4225,46 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 							$has_content = $diag_books > 0 && $diag_verses > 0;
 							?>
 							<div class="bdwp70-sitemap-diag" style="margin-top:16px;padding:12px 16px;background:<?php echo $has_content ? '#eaf6ea' : '#fef6e4'; ?>;border-left:4px solid <?php echo $has_content ? '#46b450' : '#ffb900'; ?>;border-radius:3px;">
-								<strong><?php esc_html_e( 'Diagnóstico do Sitemap XML', 'estudobiblico-biblia-digital' ); ?></strong>
+								<strong><?php esc_html_e( 'XML Sitemap diagnostics', 'estudobiblico-biblia-digital' ); ?></strong>
 								<ul style="margin:.6em 0 0;padding:0 0 0 1.2em;list-style:disc;">
 									<li>
 										<?php
 										/* translators: %d: configured active Bible ID. */
-										echo esc_html( sprintf( __( 'Bíblia ativa configurada: #%d', 'estudobiblico-biblia-digital' ), $diag_active_id ) );
+										echo esc_html( sprintf( __( 'Configured active Bible: #%d', 'estudobiblico-biblia-digital' ), $diag_active_id ) );
 										?>
 									</li>
 									<li>
 										<?php
 										/* translators: %d: Bible ID used by the sitemap. */
-										echo esc_html( sprintf( __( 'Bíblia usada no sitemap: #%d', 'estudobiblico-biblia-digital' ), $diag_sitemap_id ) );
+										echo esc_html( sprintf( __( 'Bible used in the sitemap: #%d', 'estudobiblico-biblia-digital' ), $diag_sitemap_id ) );
 										?>
 									</li>
 									<li>
 										<?php
 										/* translators: %s: number of published books. */
-										echo esc_html( sprintf( __( 'Livros publicados: %s', 'estudobiblico-biblia-digital' ), number_format_i18n( $diag_books ) ) );
+										echo esc_html( sprintf( __( 'Published books: %s', 'estudobiblico-biblia-digital' ), number_format_i18n( $diag_books ) ) );
 										?>
 									</li>
 									<li>
 										<?php
 										/* translators: %s: number of published chapters. */
-										echo esc_html( sprintf( __( 'Capítulos publicados: %s', 'estudobiblico-biblia-digital' ), number_format_i18n( $diag_chapters ) ) );
+										echo esc_html( sprintf( __( 'Published chapters: %s', 'estudobiblico-biblia-digital' ), number_format_i18n( $diag_chapters ) ) );
 										?>
 									</li>
 									<li>
 										<?php
 										/* translators: %s: number of published verses. */
-										echo esc_html( sprintf( __( 'Versículos publicados: %s', 'estudobiblico-biblia-digital' ), number_format_i18n( $diag_verses ) ) );
+										echo esc_html( sprintf( __( 'Published verses: %s', 'estudobiblico-biblia-digital' ), number_format_i18n( $diag_verses ) ) );
 										?>
 									</li>
 									<li>
-										<?php esc_html_e( 'Sitemap dedicado:', 'estudobiblico-biblia-digital' ); ?>
+										<?php esc_html_e( 'Dedicated sitemap:', 'estudobiblico-biblia-digital' ); ?>
 										<a href="<?php echo esc_url( $sitemap_index_url ); ?>" target="_blank" rel="noopener noreferrer">
 											<code><?php echo esc_html( $sitemap_index_url ); ?></code>
 										</a>
 									</li>
 									<li>
-										<?php esc_html_e( 'Sitemap nativo WordPress:', 'estudobiblico-biblia-digital' ); ?>
+										<?php esc_html_e( 'Native WordPress sitemap:', 'estudobiblico-biblia-digital' ); ?>
 										<a href="<?php echo esc_url( $wp_sitemap_url ); ?>" target="_blank" rel="noopener noreferrer">
 											<code><?php echo esc_html( $wp_sitemap_url ); ?></code>
 										</a>
@@ -4242,8 +4272,8 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 								</ul>
 								<?php if ( ! $has_content ) : ?>
 									<p style="margin:.8em 0 0;color:#856404;">
-										<strong><?php esc_html_e( 'Atenção:', 'estudobiblico-biblia-digital' ); ?></strong>
-										<?php esc_html_e( 'O sitemap não gerará URLs porque a Bíblia ativa não possui livros ou versículos publicados. Reimporte a Bíblia ou selecione uma Bíblia ativa com conteúdo.', 'estudobiblico-biblia-digital' ); ?>
+										<strong><?php esc_html_e( 'Note:', 'estudobiblico-biblia-digital' ); ?></strong>
+										<?php esc_html_e( 'The sitemap will not generate URLs because the active Bible has no published books or verses. Re-import the Bible or select an active Bible with content.', 'estudobiblico-biblia-digital' ); ?>
 									</p>
 								<?php endif; ?>
 							</div>
@@ -4252,22 +4282,22 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 				</tr>
 			</table>
 
-			<h3><?php esc_html_e( 'Cards de acesso rápido', 'estudobiblico-biblia-digital' ); ?></h3>
-			<p><?php esc_html_e( 'Altere os cards exibidos abaixo do título da página inicial da Bíblia.', 'estudobiblico-biblia-digital' ); ?></p>
+			<h3><?php esc_html_e( 'Quick access cards', 'estudobiblico-biblia-digital' ); ?></h3>
+			<p><?php esc_html_e( 'Change the cards shown below the title on the Bible home page.', 'estudobiblico-biblia-digital' ); ?></p>
 			<table class="widefat striped bdwp70-admin-table">
-				<thead><tr><th style="width:70px;"><?php esc_html_e( 'Exibir', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Card', 'estudobiblico-biblia-digital' ); ?></th><th style="width:180px;"><?php esc_html_e( 'Ícone / cor', 'estudobiblico-biblia-digital' ); ?></th></tr></thead>
+				<thead><tr><th style="width:70px;"><?php esc_html_e( 'Show', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Card', 'estudobiblico-biblia-digital' ); ?></th><th style="width:180px;"><?php esc_html_e( 'Icon / color', 'estudobiblico-biblia-digital' ); ?></th></tr></thead>
 				<tbody>
 					<?php foreach ( $quick_cards as $index => $card ) : ?>
 						<tr>
-							<td><input type="hidden" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][enabled]" value="0"><label><input type="checkbox" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][enabled]" value="1" <?php checked( 1, (int) $card['enabled'] ); ?>> <?php esc_html_e( 'Sim', 'estudobiblico-biblia-digital' ); ?></label></td>
+							<td><input type="hidden" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][enabled]" value="0"><label><input type="checkbox" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][enabled]" value="1" <?php checked( 1, (int) $card['enabled'] ); ?>> <?php esc_html_e( 'Yes', 'estudobiblico-biblia-digital' ); ?></label></td>
 							<td>
-								<p><label><?php esc_html_e( 'Título', 'estudobiblico-biblia-digital' ); ?><br><input type="text" class="regular-text" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][title]" value="<?php echo esc_attr( $card['title'] ); ?>"></label></p>
-								<p><label><?php esc_html_e( 'Descrição', 'estudobiblico-biblia-digital' ); ?><br><input type="text" class="large-text" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][description]" value="<?php echo esc_attr( $card['description'] ); ?>"></label></p>
+								<p><label><?php esc_html_e( 'Title', 'estudobiblico-biblia-digital' ); ?><br><input type="text" class="regular-text" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][title]" value="<?php echo esc_attr( $card['title'] ); ?>"></label></p>
+								<p><label><?php esc_html_e( 'Description', 'estudobiblico-biblia-digital' ); ?><br><input type="text" class="large-text" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][description]" value="<?php echo esc_attr( $card['description'] ); ?>"></label></p>
 								<p><label><?php esc_html_e( 'Link', 'estudobiblico-biblia-digital' ); ?><br><input type="text" class="large-text" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][url]" value="<?php echo esc_attr( $card['url'] ); ?>" placeholder="#bdwp70-livros"></label></p>
 							</td>
 							<td>
-								<p><label><?php esc_html_e( 'Ícone', 'estudobiblico-biblia-digital' ); ?><br><input type="text" class="small-text" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][icon]" value="<?php echo esc_attr( $card['icon'] ); ?>"></label></p>
-								<p><label><?php esc_html_e( 'Cor', 'estudobiblico-biblia-digital' ); ?><br><select name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][style]">
+								<p><label><?php esc_html_e( 'Icon', 'estudobiblico-biblia-digital' ); ?><br><input type="text" class="small-text" name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][icon]" value="<?php echo esc_attr( $card['icon'] ); ?>"></label></p>
+								<p><label><?php esc_html_e( 'Color', 'estudobiblico-biblia-digital' ); ?><br><select name="bdwp70_quick_cards[<?php echo esc_attr( $index ); ?>][style]">
 									<?php
 									foreach ( $quick_card_styles as $style_key => $style_label ) :
 										?>
@@ -4278,7 +4308,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
-			<?php submit_button( __( 'Salvar configurações', 'estudobiblico-biblia-digital' ), 'primary', 'submit', false ); ?>
+			<?php submit_button( __( 'Save settings', 'estudobiblico-biblia-digital' ), 'primary', 'submit', false ); ?>
 		</form>
 		<?php
 	}
@@ -4301,8 +4331,8 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 			'translations_dir_2' => trailingslashit( WP_LANG_DIR ) . 'plugins',
 		);
 		?>
-		<h2><?php esc_html_e( 'Diagnóstico', 'estudobiblico-biblia-digital' ); ?></h2>
-		<p><?php esc_html_e( 'Resumo técnico sem dados sensíveis para conferência do ambiente e suporte.', 'estudobiblico-biblia-digital' ); ?></p>
+		<h2><?php esc_html_e( 'Diagnostics', 'estudobiblico-biblia-digital' ); ?></h2>
+		<p><?php esc_html_e( 'Technical summary without sensitive data, for environment checks and support.', 'estudobiblico-biblia-digital' ); ?></p>
 		<table class="widefat striped bdwp70-admin-table">
 			<tbody>
 				<?php foreach ( $report as $label => $value ) : ?>
@@ -4318,7 +4348,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 					<tr><th><code>last_error</code></th><td><?php echo esc_html( $error ); ?></td></tr><?php endif; ?>
 			</tbody>
 		</table>
-		<p><button type="button" class="button bdwp70-copy-shortcode" data-copy="<?php echo esc_attr( wp_json_encode( $report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) ); ?>"><?php esc_html_e( 'Copiar relatório técnico', 'estudobiblico-biblia-digital' ); ?></button></p>
+		<p><button type="button" class="button bdwp70-copy-shortcode" data-copy="<?php echo esc_attr( wp_json_encode( $report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) ); ?>"><?php esc_html_e( 'Copy technical report', 'estudobiblico-biblia-digital' ); ?></button></p>
 		<?php
 	}
 
@@ -4332,15 +4362,16 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 		}
 		if ( $bible_id ) {
 			/* translators: %d: Bible version ID. */
-			return sprintf( __( 'Bíblia #%d', 'estudobiblico-biblia-digital' ), (int) $bible_id );
+			return sprintf( __( 'Bible #%d', 'estudobiblico-biblia-digital' ), (int) $bible_id );
 		}
 
-		return __( 'Nenhuma Bíblia ativa', 'estudobiblico-biblia-digital' );
+		return __( 'No active Bible', 'estudobiblico-biblia-digital' );
 	}
 
 	private function admin_version_option_label( $version ) {
 		return sprintf(
-			'%1$s - %2$s - %3$s livros / %4$s versículos',
+			/* translators: 1: Bible version name, 2: language code, 3: number of books, 4: number of verses. */
+			__( '%1$s - %2$s - %3$s books / %4$s verses', 'estudobiblico-biblia-digital' ),
 			(string) $version->name,
 			(string) $version->language_code,
 			number_format_i18n( BDWP70_Activator::count_books( (int) $version->id ) ),
@@ -4355,105 +4386,105 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 	private function admin_shortcodes_reference() {
 		return array(
 			array(
-				'title'       => __( 'Leitor principal da Bíblia', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Main Bible reader', 'estudobiblico-biblia-digital' ),
 				'shortcode'   => '[biblia-digital]',
 				'aliases'     => array( '[biblia-wp-estudobiblico]', '[bibliawp-estudobiblico]' ),
-				'description' => __( 'Exibe a Bíblia completa, incluindo landing, livros, capítulos, versículos, busca e navegação.', 'estudobiblico-biblia-digital' ),
+				'description' => __( 'Displays the full Bible, including the landing page, books, chapters, verses, search, and navigation.', 'estudobiblico-biblia-digital' ),
 				'basic'       => '[biblia-digital]',
-				'advanced'    => '[biblia-digital per_page="30" title="Bíblia Digital" version="1"]',
+				'advanced'    => '[biblia-digital per_page="30" title="Online Bible" version="1"]',
 				'attributes'  => array(
-					'per_page' => __( 'Número de itens por página em resultados/listagens quando aplicável. Padrão: 30.', 'estudobiblico-biblia-digital' ),
-					'title'    => __( 'Título exibido pelo shortcode, quando aplicável.', 'estudobiblico-biblia-digital' ),
-					'version'  => __( 'ID da versão/Bíblia a ser usada. Exemplo: version="1".', 'estudobiblico-biblia-digital' ),
+					'per_page' => __( 'Number of items per page in results/listings where applicable. Default: 30.', 'estudobiblico-biblia-digital' ),
+					'title'    => __( 'Title shown by the shortcode, where applicable.', 'estudobiblico-biblia-digital' ),
+					'version'  => __( 'ID of the version/Bible to use. Example: version="1".', 'estudobiblico-biblia-digital' ),
 				),
 			),
 			array(
-				'title'       => __( 'Busca bíblica simples', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Simple Bible search', 'estudobiblico-biblia-digital' ),
 				'shortcode'   => '[biblia-busca]',
 				'aliases'     => array( '[estudo_biblico_busca]' ),
-				'description' => __( 'Exibe somente o formulário de busca bíblica.', 'estudobiblico-biblia-digital' ),
+				'description' => __( 'Displays only the Bible search form.', 'estudobiblico-biblia-digital' ),
 				'basic'       => '[biblia-busca]',
-				'advanced'    => '[biblia-busca title="Pesquisar na Bíblia" placeholder="Digite uma palavra ou frase" button="Pesquisar"]',
+				'advanced'    => '[biblia-busca title="Search the Bible" placeholder="Enter a word or phrase" button="Search"]',
 				'attributes'  => array(
-					'title'       => __( 'Título do formulário.', 'estudobiblico-biblia-digital' ),
-					'placeholder' => __( 'Texto de orientação do campo de pesquisa.', 'estudobiblico-biblia-digital' ),
-					'button'      => __( 'Texto do botão.', 'estudobiblico-biblia-digital' ),
-					'version'     => __( 'ID da versão/Bíblia, se aplicável.', 'estudobiblico-biblia-digital' ),
+					'title'       => __( 'Form title.', 'estudobiblico-biblia-digital' ),
+					'placeholder' => __( 'Hint text for the search field.', 'estudobiblico-biblia-digital' ),
+					'button'      => __( 'Button text.', 'estudobiblico-biblia-digital' ),
+					'version'     => __( 'Version/Bible ID, if applicable.', 'estudobiblico-biblia-digital' ),
 				),
 			),
 			array(
-				'title'       => __( 'Página completa de busca', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Full search page', 'estudobiblico-biblia-digital' ),
 				'shortcode'   => '[biblia-busca-pagina]',
 				'aliases'     => array( '[biblia-digital-busca]' ),
-				'description' => __( 'Exibe formulário de busca, resultados e paginação. Recomendado para uma página pública de pesquisa.', 'estudobiblico-biblia-digital' ),
+				'description' => __( 'Displays the search form, results, and pagination. Recommended for a public search page.', 'estudobiblico-biblia-digital' ),
 				'basic'       => '[biblia-busca-pagina]',
-				'advanced'    => '[biblia-busca-pagina title="Buscar na Bíblia" per_page="30" show_book="1"]',
+				'advanced'    => '[biblia-busca-pagina title="Search in the Bible" per_page="30" show_book="1"]',
 				'attributes'  => array(
-					'title'     => __( 'Título da página/bloco de busca.', 'estudobiblico-biblia-digital' ),
-					'per_page'  => __( 'Quantidade de resultados por página. Padrão sugerido: 30.', 'estudobiblico-biblia-digital' ),
-					'show_book' => __( 'Exibir seletor de livro. Aceita 1 ou 0.', 'estudobiblico-biblia-digital' ),
-					'version'   => __( 'ID da versão/Bíblia, se aplicável.', 'estudobiblico-biblia-digital' ),
+					'title'     => __( 'Title of the search page/block.', 'estudobiblico-biblia-digital' ),
+					'per_page'  => __( 'Number of results per page. Suggested default: 30.', 'estudobiblico-biblia-digital' ),
+					'show_book' => __( 'Show the book selector. Accepts 1 or 0.', 'estudobiblico-biblia-digital' ),
+					'version'   => __( 'Version/Bible ID, if applicable.', 'estudobiblico-biblia-digital' ),
 				),
 			),
 			array(
-				'title'       => __( 'Versículo aleatório', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Random verse', 'estudobiblico-biblia-digital' ),
 				'shortcode'   => '[biblia-versiculo-aleatorio]',
 				'aliases'     => array(),
-				'description' => __( 'Exibe um versículo aleatório.', 'estudobiblico-biblia-digital' ),
+				'description' => __( 'Displays a random verse.', 'estudobiblico-biblia-digital' ),
 				'basic'       => '[biblia-versiculo-aleatorio]',
-				'advanced'    => '[biblia-versiculo-aleatorio title="Versículo do momento" book="19" show_button="1" button_text="Ler o capítulo"]',
+				'advanced'    => '[biblia-versiculo-aleatorio title="Verse of the moment" book="19" show_button="1" button_text="Read the chapter"]',
 				'attributes'  => array(
-					'title'          => __( 'Título do bloco.', 'estudobiblico-biblia-digital' ),
-					'book'           => __( 'ID ou identificação do livro. Exemplo: book="19" para Salmos.', 'estudobiblico-biblia-digital' ),
-					'version'        => __( 'ID da versão/Bíblia.', 'estudobiblico-biblia-digital' ),
-					'show_reference' => __( 'Exibir referência bíblica. Aceita 1 ou 0.', 'estudobiblico-biblia-digital' ),
-					'link_reference' => __( 'Transformar referência em link. Aceita 1 ou 0.', 'estudobiblico-biblia-digital' ),
-					'show_button'    => __( 'Exibir botão para leitura do capítulo. Aceita 1 ou 0.', 'estudobiblico-biblia-digital' ),
-					'button_text'    => __( 'Texto do botão.', 'estudobiblico-biblia-digital' ),
+					'title'          => __( 'Block title.', 'estudobiblico-biblia-digital' ),
+					'book'           => __( 'Book ID or identifier. Example: book="19" for Psalms.', 'estudobiblico-biblia-digital' ),
+					'version'        => __( 'Version/Bible ID.', 'estudobiblico-biblia-digital' ),
+					'show_reference' => __( 'Show the Bible reference. Accepts 1 or 0.', 'estudobiblico-biblia-digital' ),
+					'link_reference' => __( 'Turn the reference into a link. Accepts 1 or 0.', 'estudobiblico-biblia-digital' ),
+					'show_button'    => __( 'Show a button to read the chapter. Accepts 1 or 0.', 'estudobiblico-biblia-digital' ),
+					'button_text'    => __( 'Button text.', 'estudobiblico-biblia-digital' ),
 				),
 			),
 			array(
-				'title'       => __( 'Versículo específico ou aleatório', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Specific or random verse', 'estudobiblico-biblia-digital' ),
 				'shortcode'   => '[biblia-versiculo]',
 				'aliases'     => array(),
-				'description' => __( 'Exibe um versículo específico ou aleatório.', 'estudobiblico-biblia-digital' ),
-				'basic'       => '[biblia-versiculo livro="joao" capitulo="3" versiculo="16"]',
-				'advanced'    => '[biblia-versiculo livro="random" capitulo="random" versiculo="random"]',
+				'description' => __( 'Displays a specific or random verse.', 'estudobiblico-biblia-digital' ),
+				'basic'       => '[biblia-versiculo book="43" chapter="3" verse="16"]',
+				'advanced'    => '[biblia-versiculo book="random" chapter="random" verse="random"]',
 				'attributes'  => array(
-					'title'          => __( 'Título opcional.', 'estudobiblico-biblia-digital' ),
-					'livro'          => __( 'Nome, abreviação ou ID do livro.', 'estudobiblico-biblia-digital' ),
-					'book'           => __( 'Alias em inglês para livro.', 'estudobiblico-biblia-digital' ),
-					'capitulo'       => __( 'Número do capítulo ou random.', 'estudobiblico-biblia-digital' ),
-					'chapter'        => __( 'Alias em inglês para capítulo.', 'estudobiblico-biblia-digital' ),
-					'versiculo'      => __( 'Número do versículo ou random.', 'estudobiblico-biblia-digital' ),
-					'verse'          => __( 'Alias em inglês para versículo.', 'estudobiblico-biblia-digital' ),
-					'version'        => __( 'ID da versão/Bíblia.', 'estudobiblico-biblia-digital' ),
-					'show_reference' => __( 'Exibir referência. Aceita 1 ou 0.', 'estudobiblico-biblia-digital' ),
-					'link_reference' => __( 'Transformar referência em link. Aceita 1 ou 0.', 'estudobiblico-biblia-digital' ),
-					'show_button'    => __( 'Exibir botão. Aceita 1 ou 0.', 'estudobiblico-biblia-digital' ),
-					'button_text'    => __( 'Texto do botão.', 'estudobiblico-biblia-digital' ),
+					'title'          => __( 'Optional title.', 'estudobiblico-biblia-digital' ),
+					'livro'          => __( 'Book name, abbreviation, or ID.', 'estudobiblico-biblia-digital' ),
+					'book'           => __( 'English alias for livro.', 'estudobiblico-biblia-digital' ),
+					'capitulo'       => __( 'Chapter number or random.', 'estudobiblico-biblia-digital' ),
+					'chapter'        => __( 'English alias for capitulo.', 'estudobiblico-biblia-digital' ),
+					'versiculo'      => __( 'Verse number or random.', 'estudobiblico-biblia-digital' ),
+					'verse'          => __( 'English alias for versiculo.', 'estudobiblico-biblia-digital' ),
+					'version'        => __( 'Version/Bible ID.', 'estudobiblico-biblia-digital' ),
+					'show_reference' => __( 'Show the reference. Accepts 1 or 0.', 'estudobiblico-biblia-digital' ),
+					'link_reference' => __( 'Turn the reference into a link. Accepts 1 or 0.', 'estudobiblico-biblia-digital' ),
+					'show_button'    => __( 'Show the button. Accepts 1 or 0.', 'estudobiblico-biblia-digital' ),
+					'button_text'    => __( 'Button text.', 'estudobiblico-biblia-digital' ),
 				),
 			),
 			array(
-				'title'       => __( 'Capítulo específico ou aleatório', 'estudobiblico-biblia-digital' ),
+				'title'       => __( 'Specific or random chapter', 'estudobiblico-biblia-digital' ),
 				'shortcode'   => '[biblia-capitulo]',
 				'aliases'     => array(),
-				'description' => __( 'Exibe um capítulo específico ou um capítulo aleatório.', 'estudobiblico-biblia-digital' ),
-				'basic'       => '[biblia-capitulo random="1" limite="15"]',
-				'advanced'    => '[biblia-capitulo livro="joao" capitulo="3" show_title="1" show_button="1"]',
+				'description' => __( 'Displays a specific chapter or a random chapter.', 'estudobiblico-biblia-digital' ),
+				'basic'       => '[biblia-capitulo random="1" limit="15"]',
+				'advanced'    => '[biblia-capitulo book="43" chapter="3" show_title="1" show_button="1"]',
 				'attributes'  => array(
-					'title'       => __( 'Título opcional.', 'estudobiblico-biblia-digital' ),
-					'livro'       => __( 'Nome, abreviação ou ID do livro.', 'estudobiblico-biblia-digital' ),
-					'book'        => __( 'Alias em inglês para livro.', 'estudobiblico-biblia-digital' ),
-					'capitulo'    => __( 'Número do capítulo.', 'estudobiblico-biblia-digital' ),
-					'chapter'     => __( 'Alias em inglês para capítulo.', 'estudobiblico-biblia-digital' ),
-					'random'      => __( 'Ativar capítulo aleatório. Aceita 1 ou 0.', 'estudobiblico-biblia-digital' ),
-					'limite'      => __( 'Limitar quantidade de versículos exibidos.', 'estudobiblico-biblia-digital' ),
-					'limit'       => __( 'Alias em inglês para limite.', 'estudobiblico-biblia-digital' ),
-					'version'     => __( 'ID da versão/Bíblia.', 'estudobiblico-biblia-digital' ),
-					'show_title'  => __( 'Exibir título do capítulo. Aceita 1 ou 0.', 'estudobiblico-biblia-digital' ),
-					'show_button' => __( 'Exibir botão para abrir capítulo completo. Aceita 1 ou 0.', 'estudobiblico-biblia-digital' ),
-					'button_text' => __( 'Texto do botão.', 'estudobiblico-biblia-digital' ),
+					'title'       => __( 'Optional title.', 'estudobiblico-biblia-digital' ),
+					'livro'       => __( 'Book name, abbreviation, or ID.', 'estudobiblico-biblia-digital' ),
+					'book'        => __( 'English alias for livro.', 'estudobiblico-biblia-digital' ),
+					'capitulo'    => __( 'Chapter number.', 'estudobiblico-biblia-digital' ),
+					'chapter'     => __( 'English alias for capitulo.', 'estudobiblico-biblia-digital' ),
+					'random'      => __( 'Enable a random chapter. Accepts 1 or 0.', 'estudobiblico-biblia-digital' ),
+					'limite'      => __( 'Limit the number of verses displayed.', 'estudobiblico-biblia-digital' ),
+					'limit'       => __( 'English alias for limite.', 'estudobiblico-biblia-digital' ),
+					'version'     => __( 'Version/Bible ID.', 'estudobiblico-biblia-digital' ),
+					'show_title'  => __( 'Show the chapter title. Accepts 1 or 0.', 'estudobiblico-biblia-digital' ),
+					'show_button' => __( 'Show a button to open the full chapter. Accepts 1 or 0.', 'estudobiblico-biblia-digital' ),
+					'button_text' => __( 'Button text.', 'estudobiblico-biblia-digital' ),
 				),
 			),
 		);
@@ -4479,28 +4510,41 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 	private function render_translation_upload_form( $page = 'settings' ) {
 		$page = 'translations' === $page ? 'translations' : 'settings';
 		?>
-		<h2 id="bdwp70-translation-upload">Enviar arquivos de tradução</h2>
+		<h2 id="bdwp70-translation-upload"><?php esc_html_e( 'Upload translation files', 'estudobiblico-biblia-digital' ); ?></h2>
 		<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="max-width:760px;margin-bottom:2rem;">
 			<?php wp_nonce_field( 'bdwp70_upload_translation' ); ?>
 			<input type="hidden" name="action" value="bdwp70_upload_translation">
 			<input type="hidden" name="bdwp70_translation_page" value="<?php echo esc_attr( $page ); ?>">
 			<table class="form-table" role="presentation">
 				<tr>
-					<th scope="row"><label for="bdwp70_translation_locale_<?php echo esc_attr( $page ); ?>">Locale</label></th>
+					<th scope="row"><label for="bdwp70_translation_locale_<?php echo esc_attr( $page ); ?>"><?php esc_html_e( 'Locale', 'estudobiblico-biblia-digital' ); ?></label></th>
 					<td>
-						<input type="text" class="regular-text" id="bdwp70_translation_locale_<?php echo esc_attr( $page ); ?>" name="bdwp70_translation_locale" placeholder="Ex.: en_US, es_ES, pt_BR">
-						<p class="description">Opcional quando o arquivo já estiver nomeado como <code>biblia-digital-en_US.po</code> ou <code>biblia-digital-en_US.mo</code>. Para <code>.pot</code>, este campo é ignorado.</p>
+						<input type="text" class="regular-text" id="bdwp70_translation_locale_<?php echo esc_attr( $page ); ?>" name="bdwp70_translation_locale" placeholder="<?php esc_attr_e( 'E.g.: en_US, es_ES, pt_BR', 'estudobiblico-biblia-digital' ); ?>">
+						<p class="description">
+							<?php
+							echo wp_kses(
+								sprintf(
+									/* translators: 1: example .po file name, 2: example .mo file name, 3: the .pot extension. */
+									__( 'Optional when the file is already named %1$s or %2$s. This field is ignored for %3$s files.', 'estudobiblico-biblia-digital' ),
+									'<code>' . esc_html( self::TEXT_DOMAIN . '-en_US.po' ) . '</code>',
+									'<code>' . esc_html( self::TEXT_DOMAIN . '-en_US.mo' ) . '</code>',
+									'<code>.pot</code>'
+								),
+								array( 'code' => array() )
+							);
+							?>
+						</p>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="bdwp70_translation_files_<?php echo esc_attr( $page ); ?>">Arquivos .pot, .po ou .mo</label></th>
+					<th scope="row"><label for="bdwp70_translation_files_<?php echo esc_attr( $page ); ?>"><?php esc_html_e( '.pot, .po, or .mo files', 'estudobiblico-biblia-digital' ); ?></label></th>
 					<td>
 						<input type="file" id="bdwp70_translation_files_<?php echo esc_attr( $page ); ?>" name="bdwp70_translation_files[]" accept=".pot,.po,.mo,text/plain,application/octet-stream" multiple required>
-						<p class="description">Para a tradução aparecer no frontend, envie o arquivo <code>.mo</code> correspondente. O <code>.po</code> fica disponível para edição humana e o <code>.pot</code> como modelo de tradução.</p>
+						<p class="description"><?php echo wp_kses( __( 'For the translation to appear on the frontend, upload the matching <code>.mo</code> file. The <code>.po</code> file stays available for human editing, and the <code>.pot</code> file serves as the translation template.', 'estudobiblico-biblia-digital' ), array( 'code' => array() ) ); ?></p>
 					</td>
 				</tr>
 			</table>
-			<?php submit_button( 'Enviar arquivos de tradução', 'primary', 'submit', false ); ?>
+			<?php submit_button( __( 'Upload translation files', 'estudobiblico-biblia-digital' ), 'primary', 'submit', false ); ?>
 		</form>
 		<?php
 	}
@@ -4531,7 +4575,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 			}
 		}
 		if ( ! $found ) {
-			echo '<tr><td colspan="2">Nenhum arquivo de tradução personalizado encontrado ainda.</td></tr>';
+			echo '<tr><td colspan="2">' . esc_html__( 'No custom translation file found yet.', 'estudobiblico-biblia-digital' ) . '</td></tr>';
 		}
 		echo '</tbody></table>';
 	}
@@ -4547,7 +4591,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 
 	public function handle_save_settings() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Acesso negado.', 'estudobiblico-biblia-digital' ) );
+			wp_die( esc_html__( 'Access denied.', 'estudobiblico-biblia-digital' ) );
 		}
 		check_admin_referer( 'bdwp70_save_settings' );
 
@@ -4571,7 +4615,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 
 		if ( isset( $_POST['bdwp70_bible_title'] ) ) {
 			$title = sanitize_text_field( wp_unslash( $_POST['bdwp70_bible_title'] ) );
-			update_option( self::OPTION_TITLE, $title ? $title : 'Bíblia Digital Online' );
+			update_option( self::OPTION_TITLE, $title ? $title : __( 'Online Bible', 'estudobiblico-biblia-digital' ) );
 		}
 
 		if ( isset( $_POST['bdwp70_title_image_id'] ) ) {
@@ -4656,7 +4700,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 	 */
 	public function handle_delete_version() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Acesso negado.', 'estudobiblico-biblia-digital' ) );
+			wp_die( esc_html__( 'Access denied.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verificado logo abaixo, com o id no nome da ação.
@@ -4723,12 +4767,12 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 
 	public function handle_reimport() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Acesso negado.', 'estudobiblico-biblia-digital' ) );
+			wp_die( esc_html__( 'Access denied.', 'estudobiblico-biblia-digital' ) );
 		}
 		check_admin_referer( 'bdwp70_reimport' );
 		update_option( BDWP70_Activator::OPTION_STATUS, 'pending' );
-		update_option( BDWP70_Activator::OPTION_ERROR, 'A importação nativa por SQL foi removida do pacote público. Use um ZIP contendo books.csv e verses.csv.' );
-		update_option( BDWP70_Activator::OPTION_PROGRESS, 'O pacote público não distribui traduções bíblicas; a licença do pacote importado é responsabilidade do usuário final.' );
+		update_option( BDWP70_Activator::OPTION_ERROR, __( 'The built-in SQL import was removed from the public package. Use a ZIP containing books.csv and verses.csv.', 'estudobiblico-biblia-digital' ) );
+		update_option( BDWP70_Activator::OPTION_PROGRESS, __( 'The public package does not distribute Bible translations; the end user is responsible for the license of the imported package.', 'estudobiblico-biblia-digital' ) );
 		wp_safe_redirect(
 			add_query_arg(
 				array(
@@ -4744,32 +4788,33 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 
 	public function handle_upload_bible() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Acesso negado.', 'estudobiblico-biblia-digital' ) );
+			wp_die( esc_html__( 'Access denied.', 'estudobiblico-biblia-digital' ) );
 		}
 		check_admin_referer( 'bdwp70_upload_bible' );
 
 		if ( empty( $_FILES['bdwp70_bible_file'] ) || ! is_array( $_FILES['bdwp70_bible_file'] ) ) {
-			$this->redirect_upload_error( 'Nenhum arquivo foi enviado.' );
+			$this->redirect_upload_error( __( 'No file was uploaded.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		$file         = map_deep( wp_unslash( $_FILES['bdwp70_bible_file'] ), 'sanitize_text_field' );
 		$upload_error = isset( $file['error'] ) ? (int) $file['error'] : UPLOAD_ERR_NO_FILE;
 		if ( UPLOAD_ERR_OK !== $upload_error ) {
-			$this->redirect_upload_error( 'Falha no upload. Código: ' . absint( $upload_error ) . '.' );
+			/* translators: %d: PHP upload error code. */
+			$this->redirect_upload_error( sprintf( __( 'Upload failed. Error code: %d.', 'estudobiblico-biblia-digital' ), absint( $upload_error ) ) );
 		}
 
 		$max_size = (int) apply_filters( 'bdwp70_upload_max_zip_size', 50 * MB_IN_BYTES );
 		if ( ! empty( $file['size'] ) && (int) $file['size'] > $max_size ) {
-			$this->redirect_upload_error( 'O arquivo ZIP excede o tamanho máximo permitido.' );
+			$this->redirect_upload_error( __( 'The ZIP file exceeds the maximum allowed size.', 'estudobiblico-biblia-digital' ) );
 		}
 
-		$name = isset( $_POST['bdwp70_bible_name'] ) ? sanitize_text_field( wp_unslash( $_POST['bdwp70_bible_name'] ) ) : 'Bíblia importada';
+		$name = isset( $_POST['bdwp70_bible_name'] ) ? sanitize_text_field( wp_unslash( $_POST['bdwp70_bible_name'] ) ) : __( 'Imported Bible', 'estudobiblico-biblia-digital' );
 		$lang = isset( $_POST['bdwp70_bible_lang'] ) ? sanitize_text_field( wp_unslash( $_POST['bdwp70_bible_lang'] ) ) : 'und';
 		$lang = preg_match( '/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})?$/', $lang ) ? $lang : 'und';
 
 		$filename = isset( $file['name'] ) ? sanitize_file_name( wp_unslash( $file['name'] ) ) : '';
 		if ( empty( $filename ) || 'zip' !== strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) ) ) {
-			$this->redirect_upload_error( 'Envie um arquivo ZIP contendo books.csv e verses.csv.' );
+			$this->redirect_upload_error( __( 'Upload a ZIP file containing books.csv and verses.csv.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -4800,7 +4845,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 		);
 		if ( empty( $typecheck['ext'] ) || 'zip' !== strtolower( $typecheck['ext'] ) ) {
 			wp_delete_file( $upload['file'] );
-			$this->redirect_upload_error( 'O arquivo enviado não foi reconhecido como ZIP válido.' );
+			$this->redirect_upload_error( __( 'The uploaded file was not recognized as a valid ZIP.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		$archive_validation = $this->validate_uploaded_zip_archive( $upload['file'] );
@@ -4816,7 +4861,8 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 
 		if ( is_wp_error( $unzipped ) ) {
 			$this->remove_directory( $tmp_dir );
-			$this->redirect_upload_error( 'Não foi possível descompactar o ZIP: ' . sanitize_text_field( $unzipped->get_error_message() ) );
+			/* translators: %s: error message. */
+			$this->redirect_upload_error( sprintf( __( 'The ZIP could not be extracted: %s', 'estudobiblico-biblia-digital' ), sanitize_text_field( $unzipped->get_error_message() ) ) );
 		}
 
 		$zip_validation = $this->validate_uploaded_zip_contents( $tmp_dir );
@@ -4955,40 +5001,162 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 	 *
 	 * @return void
 	 */
+	/**
+	 * Mapa das chaves de tradução anteriores à 1.2.0.
+	 *
+	 * @return array md5( contexto . "\x04" . msgid antigo ) => array( msgid novo, plural novo ou null ).
+	 */
+	public static function legacy_msgid_map() {
+		static $map = null;
+		if ( null === $map ) {
+			$map = include BDWP70_DIR . 'includes/legacy-msgids.php';
+			$map = is_array( $map ) ? $map : array();
+		}
+		return $map;
+	}
+
+	/**
+	 * Converte um .po ou .mo com as chaves em português (até a 1.1.80) para as chaves em inglês.
+	 *
+	 * Só troca msgid/msgid_plural; as traduções (msgstr) ficam como estão. Arquivo que
+	 * já usa as chaves novas não é regravado.
+	 *
+	 * @param string $file Caminho do arquivo.
+	 * @return int|false Número de entradas convertidas, ou false se o arquivo não pôde ser lido ou gravado.
+	 */
+	public static function remap_legacy_translation_file( $file ) {
+		$ext = strtolower( pathinfo( (string) $file, PATHINFO_EXTENSION ) );
+		if ( ! in_array( $ext, array( 'po', 'mo' ), true ) || ! is_readable( $file ) || ! wp_is_writable( $file ) ) {
+			return false;
+		}
+
+		require_once ABSPATH . WPINC . '/pomo/mo.php';
+		require_once ABSPATH . WPINC . '/pomo/po.php';
+
+		$origem = 'mo' === $ext ? new MO() : new PO();
+		if ( ! $origem->import_from_file( $file ) ) {
+			return false;
+		}
+
+		$map     = self::legacy_msgid_map();
+		$destino = 'mo' === $ext ? new MO() : new PO();
+		$destino->set_headers( $origem->headers );
+		$convertidas = 0;
+
+		foreach ( $origem->entries as $entry ) {
+			$hash = md5( ( null === $entry->context ? '' : $entry->context ) . "\x04" . $entry->singular );
+			if ( isset( $map[ $hash ] ) ) {
+				$entry->singular = $map[ $hash ][0];
+				if ( null !== $entry->plural && null !== $map[ $hash ][1] ) {
+					$entry->plural = $map[ $hash ][1];
+				}
+				++$convertidas;
+			}
+			$destino->add_entry( $entry );
+		}
+
+		if ( 0 === $convertidas ) {
+			return 0;
+		}
+
+		return $destino->export_to_file( $file ) ? $convertidas : false;
+	}
+
+	/**
+	 * Converte todas as traduções personalizadas deste site para as chaves em inglês.
+	 *
+	 * @return int Total de entradas convertidas.
+	 */
+	public static function remap_custom_translations_to_english() {
+		$dir = self::custom_translations_dir();
+		if ( '' === $dir ) {
+			return 0;
+		}
+
+		$total = 0;
+		foreach ( (array) glob( trailingslashit( $dir ) . '{' . self::TEXT_DOMAIN . ',' . self::LEGACY_TEXT_DOMAIN . '}-*.{po,mo}', GLOB_BRACE ) as $file ) {
+			$convertidas = self::remap_legacy_translation_file( $file );
+			$total      += is_int( $convertidas ) ? $convertidas : 0;
+		}
+
+		return $total;
+	}
+
+	/**
+	 * Informa se há tradução disponível para o idioma do painel.
+	 *
+	 * @param string $locale Locale.
+	 * @return bool
+	 */
+	private static function has_translation_for_locale( $locale ) {
+		if ( 0 === strpos( $locale, 'en_' ) ) {
+			return true;
+		}
+
+		$candidatos = array( trailingslashit( WP_LANG_DIR ) . 'plugins/' . self::TEXT_DOMAIN . '-' . $locale . '.mo' );
+		$dir        = self::custom_translations_dir();
+		if ( '' !== $dir ) {
+			$candidatos[] = trailingslashit( $dir ) . self::TEXT_DOMAIN . '-' . $locale . '.mo';
+		}
+
+		foreach ( $candidatos as $file ) {
+			if ( is_readable( $file ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public function load_custom_translations() {
 		$locale = determine_locale();
 		if ( ! is_string( $locale ) || '' === $locale ) {
 			return;
 		}
 
-		$dir = self::custom_translations_dir();
+		$carregou = false;
+		$dir      = self::custom_translations_dir();
 		if ( '' !== $dir ) {
 			$file = $dir . self::TEXT_DOMAIN . '-' . $locale . '.mo';
 			if ( is_readable( $file ) ) {
-				load_textdomain( self::TEXT_DOMAIN, $file );
-				return;
+				$carregou = load_textdomain( self::TEXT_DOMAIN, $file );
 			}
 		}
 
-		$legacy = self::legacy_custom_translation_file( $locale );
-		if ( '' !== $legacy && is_readable( $legacy ) ) {
-			load_textdomain( self::TEXT_DOMAIN, $legacy );
+		if ( ! $carregou ) {
+			$legacy = self::legacy_custom_translation_file( $locale );
+			if ( '' !== $legacy && is_readable( $legacy ) ) {
+				$carregou = load_textdomain( self::TEXT_DOMAIN, $legacy );
+			}
+		}
+
+		/*
+		 * Com o domínio já carregado, o WordPress deixa de buscar o pacote de idioma
+		 * do translate.wordpress.org. Carregá-lo aqui, depois do personalizado, faz o
+		 * pacote completar as strings que a tradução personalizada não cobre; o
+		 * arquivo carregado primeiro continua com prioridade.
+		 */
+		if ( $carregou ) {
+			$pack = trailingslashit( WP_LANG_DIR ) . 'plugins/' . self::TEXT_DOMAIN . '-' . $locale . '.mo';
+			if ( is_readable( $pack ) ) {
+				load_textdomain( self::TEXT_DOMAIN, $pack );
+			}
 		}
 	}
 
 	public function handle_upload_translation() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Acesso negado.', 'estudobiblico-biblia-digital' ) );
+			wp_die( esc_html__( 'Access denied.', 'estudobiblico-biblia-digital' ) );
 		}
 		check_admin_referer( 'bdwp70_upload_translation' );
 
 		if ( empty( $_FILES['bdwp70_translation_files'] ) || ! is_array( $_FILES['bdwp70_translation_files'] ) ) {
-			$this->redirect_translation_error( 'Nenhum arquivo de tradução foi enviado.' );
+			$this->redirect_translation_error( __( 'No translation file was uploaded.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		$files = $this->normalize_uploaded_files_array( map_deep( wp_unslash( $_FILES['bdwp70_translation_files'] ), 'sanitize_text_field' ) );
 		if ( empty( $files ) ) {
-			$this->redirect_translation_error( 'Nenhum arquivo de tradução válido foi enviado.' );
+			$this->redirect_translation_error( __( 'No valid translation file was uploaded.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		$locale_field = isset( $_POST['bdwp70_translation_locale'] ) ? sanitize_text_field( wp_unslash( $_POST['bdwp70_translation_locale'] ) ) : '';
@@ -5000,7 +5168,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 		$target_dir = self::custom_translations_dir( true );
 
 		if ( '' === $target_dir || ! wp_is_writable( $target_dir ) ) {
-			$this->redirect_translation_error( 'A pasta de traduções em uploads não pôde ser criada ou não tem permissão de escrita.' );
+			$this->redirect_translation_error( __( 'The translations folder in uploads could not be created or is not writable.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -5017,7 +5185,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 		}
 
 		if ( $uploaded_count < 1 ) {
-			$this->redirect_translation_error( $last_error ? $last_error : 'Nenhum arquivo de tradução foi salvo.' );
+			$this->redirect_translation_error( $last_error ? $last_error : __( 'No translation file was saved.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		update_option( BDWP70_Activator::OPTION_ERROR, '' );
@@ -5065,30 +5233,31 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 	private function store_translation_file( $file, $target_dir, $locale_field = '' ) {
 		$upload_error = isset( $file['error'] ) ? (int) $file['error'] : UPLOAD_ERR_NO_FILE;
 		if ( UPLOAD_ERR_OK !== $upload_error ) {
-			return new WP_Error( 'bdwp70_translation_upload_error', 'Falha no upload de tradução. Código: ' . absint( $upload_error ) . '.' );
+			/* translators: %d: PHP upload error code. */
+			return new WP_Error( 'bdwp70_translation_upload_error', sprintf( __( 'Translation upload failed. Error code: %d.', 'estudobiblico-biblia-digital' ), absint( $upload_error ) ) );
 		}
 
 		$max_size = (int) apply_filters( 'bdwp70_translation_upload_max_size', 2 * MB_IN_BYTES );
 		if ( ! empty( $file['size'] ) && (int) $file['size'] > $max_size ) {
-			return new WP_Error( 'bdwp70_translation_size', 'Um arquivo de tradução excede o tamanho máximo permitido.' );
+			return new WP_Error( 'bdwp70_translation_size', __( 'A translation file exceeds the maximum allowed size.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		$original_name = isset( $file['name'] ) ? sanitize_file_name( wp_unslash( $file['name'] ) ) : '';
 		$ext           = strtolower( pathinfo( $original_name, PATHINFO_EXTENSION ) );
 		if ( ! in_array( $ext, array( 'pot', 'po', 'mo' ), true ) ) {
-			return new WP_Error( 'bdwp70_translation_ext', 'Envie somente arquivos .pot, .po ou .mo.' );
+			return new WP_Error( 'bdwp70_translation_ext', __( 'Upload only .pot, .po, or .mo files.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		if ( in_array( $ext, array( 'pot', 'po' ), true ) && ! $this->translation_text_file_looks_safe( $file['tmp_name'] ) ) {
-			return new WP_Error( 'bdwp70_translation_unsafe', 'O arquivo de tradução textual parece inválido ou contém conteúdo não permitido.' );
+			return new WP_Error( 'bdwp70_translation_unsafe', __( 'The text translation file looks invalid or contains disallowed content.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		if ( ! $this->translation_filetype_looks_safe( $file['tmp_name'], $original_name, $ext ) ) {
-			return new WP_Error( 'bdwp70_translation_mime', 'O arquivo de tradução não passou na validação de tipo.' );
+			return new WP_Error( 'bdwp70_translation_mime', __( 'The translation file did not pass the file type check.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		if ( 'mo' === $ext && ! $this->translation_mo_file_looks_safe( $file['tmp_name'] ) ) {
-			return new WP_Error( 'bdwp70_translation_mo', 'O arquivo .mo não passou na validação básica.' );
+			return new WP_Error( 'bdwp70_translation_mo', __( 'The .mo file did not pass the basic check.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		$target_name = $this->target_translation_filename( $original_name, $ext, $locale_field );
@@ -5108,7 +5277,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 		);
 
 		if ( empty( $upload['file'] ) ) {
-			return new WP_Error( 'bdwp70_translation_handle', ! empty( $upload['error'] ) ? sanitize_text_field( $upload['error'] ) : 'Falha ao processar o upload de tradução.' );
+			return new WP_Error( 'bdwp70_translation_handle', ! empty( $upload['error'] ) ? sanitize_text_field( $upload['error'] ) : __( 'The translation upload could not be processed.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		global $wp_filesystem;
@@ -5122,7 +5291,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 			$backup = $destination . '.bak.' . gmdate( 'YmdHis' );
 			if ( ! $wp_filesystem->copy( $destination, $backup, false, FS_CHMOD_FILE ) ) {
 				wp_delete_file( $upload['file'] );
-				return new WP_Error( 'bdwp70_translation_backup', 'Não foi possível criar backup da tradução existente.' );
+				return new WP_Error( 'bdwp70_translation_backup', __( 'The existing translation could not be backed up.', 'estudobiblico-biblia-digital' ) );
 			}
 		}
 
@@ -5130,12 +5299,15 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 		wp_delete_file( $upload['file'] );
 
 		if ( ! $copied ) {
-			return new WP_Error( 'bdwp70_translation_copy', 'Não foi possível salvar o arquivo de tradução no destino.' );
+			return new WP_Error( 'bdwp70_translation_copy', __( 'The translation file could not be saved to its destination.', 'estudobiblico-biblia-digital' ) );
 		}
 
 		if ( $wp_filesystem ) {
 			$wp_filesystem->chmod( $destination, FS_CHMOD_FILE );
 		}
+
+		// Tradução feita para 1.1.80 ou anterior usa as chaves em português.
+		self::remap_legacy_translation_file( $destination );
 
 		return $destination;
 	}
@@ -5163,7 +5335,8 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 		$locale = $this->normalize_locale_code( $locale );
 
 		if ( '' === $locale ) {
-			return new WP_Error( 'bdwp70_translation_locale', 'Informe o locale, como en_US, es_ES ou pt_BR, ou envie o arquivo nomeado como ' . self::TEXT_DOMAIN . '-en_US.' . $ext . '.' );
+			/* translators: %s: example file name. */
+			return new WP_Error( 'bdwp70_translation_locale', sprintf( __( 'Enter the locale, such as en_US, es_ES, or pt_BR, or upload the file named as %s.', 'estudobiblico-biblia-digital' ), self::TEXT_DOMAIN . '-en_US.' . $ext ) );
 		}
 
 		return self::TEXT_DOMAIN . '-' . $locale . '.' . $ext;
@@ -5377,20 +5550,20 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 			// Aceita os CSVs na raiz ou dentro de uma única pasta ("Compactar pasta").
 			if ( substr_count( $name, '/' ) > 1 ) {
 				$zip->close();
-				return new WP_Error( 'bdwp70_zip_depth', __( 'Os arquivos books.csv e verses.csv devem estar na raiz do ZIP ou dentro de uma única pasta.', 'estudobiblico-biblia-digital' ) );
+				return new WP_Error( 'bdwp70_zip_depth', __( 'The books.csv and verses.csv files must be at the root of the ZIP or inside a single folder.', 'estudobiblico-biblia-digital' ) );
 			}
 
 			$basename = strtolower( sanitize_file_name( basename( $name ) ) );
 			if ( ! array_key_exists( $basename, $required ) ) {
 				$zip->close();
 				/* translators: %s: unexpected file name inside the ZIP. */
-				return new WP_Error( 'bdwp70_zip_unexpected_file', sprintf( __( 'O ZIP deve conter apenas books.csv e verses.csv. Arquivo inesperado: %s', 'estudobiblico-biblia-digital' ), $name ) );
+				return new WP_Error( 'bdwp70_zip_unexpected_file', sprintf( __( 'The ZIP must contain only books.csv and verses.csv. Unexpected file: %s', 'estudobiblico-biblia-digital' ), $name ) );
 			}
 
 			if ( $required[ $basename ] ) {
 				$zip->close();
 				/* translators: %s: CSV file name. */
-				return new WP_Error( 'bdwp70_zip_duplicate', sprintf( __( 'O ZIP contém mais de um %s.', 'estudobiblico-biblia-digital' ), $basename ) );
+				return new WP_Error( 'bdwp70_zip_duplicate', sprintf( __( 'The ZIP contains more than one %s.', 'estudobiblico-biblia-digital' ), $basename ) );
 			}
 
 			++$files;
@@ -5466,18 +5639,18 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 			}
 
 			if ( substr_count( $relative_url, '/' ) > 1 ) {
-				return new WP_Error( 'bdwp70_zip_depth', __( 'Os arquivos books.csv e verses.csv devem estar na raiz do ZIP ou dentro de uma única pasta.', 'estudobiblico-biblia-digital' ) );
+				return new WP_Error( 'bdwp70_zip_depth', __( 'The books.csv and verses.csv files must be at the root of the ZIP or inside a single folder.', 'estudobiblico-biblia-digital' ) );
 			}
 
 			$basename = strtolower( $file->getFilename() );
 			if ( ! array_key_exists( $basename, $required ) ) {
 				/* translators: %s: unexpected file name inside the ZIP. */
-				return new WP_Error( 'bdwp70_zip_unexpected_file', sprintf( __( 'O ZIP deve conter apenas books.csv e verses.csv. Arquivo inesperado: %s', 'estudobiblico-biblia-digital' ), $relative_url ) );
+				return new WP_Error( 'bdwp70_zip_unexpected_file', sprintf( __( 'The ZIP must contain only books.csv and verses.csv. Unexpected file: %s', 'estudobiblico-biblia-digital' ), $relative_url ) );
 			}
 
 			if ( $required[ $basename ] ) {
 				/* translators: %s: CSV file name. */
-				return new WP_Error( 'bdwp70_zip_duplicate', sprintf( __( 'O ZIP contém mais de um %s.', 'estudobiblico-biblia-digital' ), $basename ) );
+				return new WP_Error( 'bdwp70_zip_duplicate', sprintf( __( 'The ZIP contains more than one %s.', 'estudobiblico-biblia-digital' ), $basename ) );
 			}
 
 			++$files;
