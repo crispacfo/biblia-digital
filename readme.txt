@@ -353,6 +353,10 @@ Keeps the functional translation selector below the book lists and improves drop
 * O manifest.json, pedido por todo navegador que carrega uma página da Bíblia, também deixa de enviar no-cache.
 * Em uma resposta 404, o plugin deixa de gerar título, description e canonical do trecho inexistente.
 * Canonical: o plugin imprime o seu apenas quando nenhum plugin de SEO gerou canonical para a página, evitando duas tags no <head>. A detecção é pela execução do filtro do próprio plugin de SEO (Rank Math, Yoast, AIOSEO, SEOPress), e não pela simples presença dele — nestas páginas virtuais, que não são posts, o Rank Math não emite canonical, e suprimir o do plugin por presença deixaria a página sem nenhum. Filtro `bdwp70_print_canonical`.
+* Bloco de busca: text domain corrigido de `biblia-digital` para `estudobiblico-biblia-digital` em block.json e index.js. A migração de domínio da 1.1.70 não alcançou o bloco, então suas strings não eram traduzíveis nem entravam no .pot.
+* Bloco de busca: título, placeholder e botão deixam de ter valor padrão fixo em inglês no block.json. O WordPress aplica esses padrões antes do render_callback, então um bloco inserido sem alterações exibia "Search the Bible" no site; agora usa o mesmo texto traduzível do widget. Blocos com textos personalizados não mudam.
+* Bloco de busca: título, descrição e rótulos do editor em português, alinhados ao widget de busca.
+* .pot regenerado para 1.1.80. O arquivo da 1.1.70 havia sido gerado antes do aviso de ativação e não trazia as suas quatro strings.
 * get_single_verse() passa a memorizar o resultado por requisição: a validação da rota e a description pediam o mesmo versículo duas vezes.
 
 = 1.1.79 =

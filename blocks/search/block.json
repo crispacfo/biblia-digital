@@ -1,24 +1,21 @@
 {
   "apiVersion": 3,
   "name": "biblia-digital/search",
-  "title": "Biblia Digital - Search",
+  "title": "Bíblia Digital - Busca",
   "category": "widgets",
   "icon": "search",
-  "description": "Displays the Biblia Digital search form using the active Bible for the site.",
-  "textdomain": "biblia-digital",
+  "description": "Exibe o formulário de pesquisa da Bíblia Digital usando a Bíblia ativa do site.",
+  "textdomain": "estudobiblico-biblia-digital",
   "editorScript": "file:./index.js",
   "attributes": {
     "title": {
-      "type": "string",
-      "default": "Search the Bible"
+      "type": "string"
     },
     "placeholder": {
-      "type": "string",
-      "default": "Enter a word or phrase"
+      "type": "string"
     },
     "button": {
-      "type": "string",
-      "default": "Search"
+      "type": "string"
     },
     "showBook": {
       "type": "boolean",
