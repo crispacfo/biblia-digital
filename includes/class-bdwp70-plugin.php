@@ -574,7 +574,14 @@ BDWP70_JS;
 		$novo = sanitize_title( (string) $aliases[ $slug ] );
 		$seq  = $this->book_seq_from_slug( $novo );
 
-		return $seq > 0 ? array( 'seq' => $seq, 'slug' => $novo ) : null;
+		if ( $seq < 1 ) {
+			return null;
+		}
+
+		return array(
+			'seq'  => $seq,
+			'slug' => $novo,
+		);
 	}
 
 	/**
@@ -812,6 +819,7 @@ BDWP70_JS;
 				'theme_color'      => '#1e73be',
 				'lang'             => str_replace( '_', '-', determine_locale() ),
 			);
+
 			/*
 			 * O manifest é pedido por todo navegador que carrega uma página da
 			 * Bíblia; é público e muda apenas quando o título ou o idioma do site
@@ -2166,7 +2174,7 @@ BDWP70_JS;
 			if ( ( '' === $icon || preg_match( '/^\?+$/', $icon ) ) && ! empty( $base['icon'] ) ) {
 				$icon = $base['icon'];
 			}
-			$style       = isset( $source['style'] ) ? sanitize_key( $source['style'] ) : ( isset( $base['style'] ) ? $base['style'] : 'search' );
+			$style = isset( $source['style'] ) ? sanitize_key( $source['style'] ) : ( isset( $base['style'] ) ? $base['style'] : 'search' );
 			if ( ! in_array( $style, $allowed_styles, true ) ) {
 				$style = isset( $base['style'] ) && in_array( $base['style'], $allowed_styles, true ) ? $base['style'] : 'search';
 			}
@@ -2921,10 +2929,10 @@ BDWP70_JS;
 	 *
 	 * @param string $search Termo digitado.
 	 * @param bool   $exact  Busca por frase exata.
-	 * @param string $match  'all' para exigir todas as palavras, 'any' caso contrario.
+	 * @param string $match_mode 'all' para exigir todas as palavras, 'any' caso contrario.
 	 * @return string Expressao para AGAINST(), ou '' para usar o LIKE.
 	 */
-	private function fulltext_boolean_expression( $search, $exact, $match ) {
+	private function fulltext_boolean_expression( $search, $exact, $match_mode ) {
 		if ( ! apply_filters( 'bdwp70_use_fulltext_search', true ) ) {
 			return '';
 		}
@@ -2959,7 +2967,7 @@ BDWP70_JS;
 			return '"' . implode( ' ', $palavras ) . '"';
 		}
 
-		$prefixo = ( 'all' === $match ) ? '+' : '';
+		$prefixo = ( 'all' === $match_mode ) ? '+' : '';
 		$termos  = array();
 		foreach ( $palavras as $palavra ) {
 			$termos[] = $prefixo . $palavra . '*';
@@ -4700,7 +4708,7 @@ NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
 		update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
 
 		// As páginas em cache da versão excluída não devem continuar no ar.
-		do_action( 'litespeed_purge_all' );
+		do_action( 'litespeed_purge_all' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- hook do plugin LiteSpeed Cache, não deste plugin.
 
 		/**
 		 * Disparado depois que uma versão bíblica foi excluída pelo painel.

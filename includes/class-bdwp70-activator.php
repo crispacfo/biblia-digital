@@ -216,8 +216,28 @@ class BDWP70_Activator {
 				}
 				list( $errado, $certo ) = array_values( $par );
 
-				$em_livros = $wpdb->update( $books, array( 'livro_desc' => $certo ), array( 'bible_id' => $id, 'livro_seq' => absint( $seq ), 'livro_desc' => $errado ), array( '%s' ), array( '%d', '%d', '%s' ) );
-				$em_verses = $wpdb->update( $verses, array( 'livro' => $certo ), array( 'bible_id' => $id, 'livroseq' => absint( $seq ), 'livro' => $errado ), array( '%s' ), array( '%d', '%d', '%s' ) );
+				$em_livros = $wpdb->update(
+					$books,
+					array( 'livro_desc' => $certo ),
+					array(
+						'bible_id'   => $id,
+						'livro_seq'  => absint( $seq ),
+						'livro_desc' => $errado,
+					),
+					array( '%s' ),
+					array( '%d', '%d', '%s' )
+				);
+				$em_verses = $wpdb->update(
+					$verses,
+					array( 'livro' => $certo ),
+					array(
+						'bible_id' => $id,
+						'livroseq' => absint( $seq ),
+						'livro'    => $errado,
+					),
+					array( '%s' ),
+					array( '%d', '%d', '%s' )
+				);
 
 				if ( $em_livros || $em_verses ) {
 					$changes[] = array(
@@ -241,7 +261,7 @@ class BDWP70_Activator {
 			update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
 
 			// Páginas em cache ainda trazem os nomes antigos.
-			do_action( 'litespeed_purge_all' );
+			do_action( 'litespeed_purge_all' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- hook do plugin LiteSpeed Cache, não deste plugin.
 
 			/**
 			 * Disparado depois que nomes de livros foram corrigidos.

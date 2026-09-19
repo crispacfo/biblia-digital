@@ -50,10 +50,17 @@ if ( 'reader' === $state['mode'] && $bdwp70_selected_book && ! empty( $state['ch
 		$bdwp70_next_chapter_url = $this->chapter_url( $bdwp70_selected_book, $bdwp70_current_chapter + 1, $bdwp70_books, (int) $state['bible_id'] );
 	}
 }
+
+// Atributos de navegação entre capítulos (setas do teclado em frontend.js).
+$bdwp70_nav_attrs = '';
+if ( $bdwp70_previous_chapter_url ) {
+	$bdwp70_nav_attrs .= ' data-bdwp70-prev="' . esc_url( $bdwp70_previous_chapter_url ) . '"';
+}
+if ( $bdwp70_next_chapter_url ) {
+	$bdwp70_nav_attrs .= ' data-bdwp70-next="' . esc_url( $bdwp70_next_chapter_url ) . '"';
+}
 ?>
-<div class="<?php echo esc_attr( $bdwp70_root_class ); ?>" data-bdwp70
-	<?php if ( $bdwp70_previous_chapter_url ) : ?> data-bdwp70-prev="<?php echo esc_url( $bdwp70_previous_chapter_url ); ?>"<?php endif; ?>
-	<?php if ( $bdwp70_next_chapter_url ) : ?> data-bdwp70-next="<?php echo esc_url( $bdwp70_next_chapter_url ); ?>"<?php endif; ?>>
+<div class="<?php echo esc_attr( $bdwp70_root_class ); ?>" data-bdwp70<?php echo $bdwp70_nav_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- URLs escapadas com esc_url() acima. ?>>
 	<?php echo $this->render_breadcrumbs( $state, $bdwp70_books ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 	<?php if ( 'books' !== $state['mode'] ) : ?>

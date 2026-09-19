@@ -109,6 +109,7 @@ trait BDWP70_SEO {
 		if ( ! empty( $state['verse'] ) ) {
 			$verse     = $this->get_single_verse( (int) $state['book'], (int) $state['chapter'], (int) $state['verse'], (int) $state['bible_id'] );
 			$title_ref = $book_name . ' ' . (int) $state['chapter'] . ':' . (int) $state['verse'];
+
 			/*
 			 * A URL de versiculo entrega o capitulo inteiro, com o versiculo
 			 * destacado. Declarar canonical proprio fazia cada versiculo se
