@@ -5004,7 +5004,7 @@ NT,43,John,3,16,"Text with commas, and ""doubled"" quotes."</pre>
 	/**
 	 * Mapa das chaves de tradução anteriores à 1.2.0.
 	 *
-	 * @return array md5( contexto . "\x04" . msgid antigo ) => array( msgid novo, plural novo ou null ).
+	 * @return array md5( contexto . "\x04" . msgid antigo ) => array( msgid novo, plural novo ou null, contexto ou null ).
 	 */
 	public static function legacy_msgid_map() {
 		static $map = null;

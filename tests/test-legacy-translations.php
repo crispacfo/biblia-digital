@@ -99,8 +99,9 @@ class Test_BDWP70_Legacy_Translations extends WP_UnitTestCase {
 		foreach ( $map as $hash => $pair ) {
 			$this->assertMatchesRegularExpression( '/^[a-f0-9]{32}$/', $hash );
 			$this->assertIsArray( $pair );
-			$this->assertCount( 2, $pair );
-			$targets[] = $pair[0];
+			$this->assertCount( 3, $pair );
+			// The context is kept on conversion, so the new key is context + msgid.
+			$targets[] = ( null === $pair[2] ? '' : $pair[2] ) . "\x04" . $pair[0];
 		}
 		$this->assertGreaterThan( 300, count( $map ) );
 		// Two old strings mapped to one new key would lose a translation.

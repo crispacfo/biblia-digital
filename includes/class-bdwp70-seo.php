@@ -104,8 +104,9 @@ trait BDWP70_SEO {
 			return false;
 		}
 
-		$canonical   = $this->chapter_url( (int) $state['book'], (int) $state['chapter'], $books, (int) $state['bible_id'] );
-		$title_ref   = $book_name . ' ' . (int) $state['chapter'];
+		$canonical = $this->chapter_url( (int) $state['book'], (int) $state['chapter'], $books, (int) $state['bible_id'] );
+		$title_ref = $book_name . ' ' . (int) $state['chapter'];
+
 		/* translators: 1: book name, 2: chapter number, 3: Bible title. */
 		$description = sprintf( __( 'Read %1$s chapter %2$d in full on %3$s.', 'estudobiblico-biblia-digital' ), $book_name, (int) $state['chapter'], $this->display_title() );
 
