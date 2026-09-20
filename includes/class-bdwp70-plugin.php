@@ -836,6 +836,13 @@ BDWP70_JS;
 				status_header( 404 );
 				nocache_headers();
 
+				/*
+				 * A resposta 404 fica no cache pelo TTL de erro do servidor. Sem a marca,
+				 * uma URL que passe a existir depois de uma importação continuaria
+				 * respondendo 404 até esse prazo terminar.
+				 */
+				$this->lscache_tag_bible_page();
+
 				// Sem exit: o tema renderiza o próprio 404.
 				return;
 			}
@@ -854,8 +861,6 @@ BDWP70_JS;
 				$wp_query->is_home = false;
 			}
 			status_header( 200 );
-
-			$this->lscache_tag_bible_page();
 
 			/*
 			 * O HTML de um capítulo é público e determinístico, e enviar
@@ -2033,7 +2038,6 @@ BDWP70_JS;
 	public function shortcode( $atts = array() ) {
 		wp_enqueue_style( 'bdwp70-frontend' );
 		wp_enqueue_script( 'bdwp70-frontend' );
-		$this->lscache_tag_bible_page();
 
 		$atts = shortcode_atts(
 			array(
@@ -2049,6 +2053,11 @@ BDWP70_JS;
 		if ( ! empty( $atts['version'] ) ) {
 			$state['bible_id'] = absint( $atts['version'] );
 		}
+
+		// Só aqui a versão exibida é conhecida: /versao/<slug>/ e o atributo version
+		// podem apontar para outra Bíblia que não a ativa do site.
+		$this->lscache_tag_bible_page( isset( $state['bible_id'] ) ? (int) $state['bible_id'] : 0 );
+
 		$bdwp70_versions = $this->get_bible_versions();
 		$books           = $this->get_books( $state['bible_id'] );
 		$bdwp70_books    = $books;
@@ -4701,6 +4710,9 @@ NT,43,John,3,16,"Text with commas, and ""doubled"" quotes."</pre>
 				// Atualiza lastmod ao trocar Bíblia ativa (Passo 8).
 				if ( $old_active !== $active_bible_id ) {
 					update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
+
+					// As páginas em cache ainda trazem o texto da versão anterior.
+					self::purge_bible_cache();
 				}
 			}
 		}
