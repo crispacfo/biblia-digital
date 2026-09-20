@@ -4,7 +4,7 @@ Tags: bible, scripture, search, shortcode, gutenberg
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -331,6 +331,9 @@ This plugin is licensed under GPLv2 or later. Imported Bible data must be public
 
 == Upgrade Notice ==
 
+= 1.2.1 =
+Bible pages get their own LiteSpeed Cache tag, so publishing a post no longer purges every Bible URL. The plugin's own purges now clear only the Bible pages instead of the whole site cache.
+
 = 1.2.0 =
 The source language is now English; other languages come from translate.wordpress.org. Uploaded custom translations are converted automatically. Portuguese sites without a pt_BR language pack: upload a pt_BR translation before updating.
 
@@ -354,6 +357,11 @@ Keeps the functional translation selector below the book lists and improves drop
 
 == Changelog ==
 
+= 1.2.1 =
+* Bible pages get their own LiteSpeed Cache tag (`bdwp70_bible`). Until now the virtual pages only carried the tags LiteSpeed derives from the query: the page that hosts the shortcode, the blog home, and "pages". Every Bible URL shared those tags, so publishing or updating any post purged all of them at once, and the server had to render tens of thousands of pages again.
+* The virtual query no longer reports itself as the blog home (`is_home`), which is where the home cache tag came from.
+* The plugin's own purges (book name corrections, deleting a version) now purge only the Bible tag instead of the whole site cache. The `bdwp70_purge_all_caches` filter restores the previous site-wide purge.
+
 = 1.2.0 =
 * The plugin's source strings are now in English, as translate.wordpress.org expects. Until now they were in Portuguese: translators had no English original to start from, and sites in English could never get an English interface, since en_US has no translation project.
 * Interface text that was hardcoded in Portuguese is now translatable English: import and upload error messages, the translation upload form, the search pagination label, the media picker, the Bible version labels, and the search engine titles and descriptions.
@@ -364,9 +372,6 @@ Keeps the functional translation selector below the book lists and improves drop
 * Shortcode examples in the admin panel use the English attribute aliases (`book`, `chapter`, `verse`, `limit`) and English sample values. The Portuguese attribute names keep working.
 * CSV examples in the import instructions use English sample data.
 * The changelog and upgrade notices in this readme are now in English.
-* Bible pages get their own LiteSpeed Cache tag (`bdwp70_bible`). Until now the virtual pages only carried the tags LiteSpeed derives from the query: the page that hosts the shortcode, the blog home, and "pages". Every Bible URL shared those tags, so publishing or updating any post purged all of them at once, and the server had to render tens of thousands of pages again.
-* The virtual query no longer reports itself as the blog home (`is_home`), which is where the home cache tag came from.
-* The plugin's own purges (book name corrections, deleting a version) now purge only the Bible tag instead of the whole site cache. The `bdwp70_purge_all_caches` filter restores the previous site-wide purge.
 
 = 1.1.80 =
 * Public Bible pages no longer send `nocache_headers()`. A chapter's HTML is the same for every anonymous visitor, and no-cache on every virtual page defeated page caching, proxies and CDNs on the most visited URLs. No-cache is still sent to logged-in users; the `bdwp70_bible_page_nocache` filter adjusts the rule.
