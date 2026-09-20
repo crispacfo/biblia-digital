@@ -270,7 +270,9 @@ class BDWP70_Activator {
 			update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
 
 			// Páginas em cache ainda trazem os nomes antigos.
-			do_action( 'litespeed_purge_all' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- hook do plugin LiteSpeed Cache, não deste plugin.
+			if ( class_exists( 'BDWP70_Plugin' ) ) {
+				BDWP70_Plugin::purge_bible_cache();
+			}
 
 			/**
 			 * Disparado depois que nomes de livros foram corrigidos.

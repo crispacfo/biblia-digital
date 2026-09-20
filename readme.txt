@@ -364,6 +364,9 @@ Keeps the functional translation selector below the book lists and improves drop
 * Shortcode examples in the admin panel use the English attribute aliases (`book`, `chapter`, `verse`, `limit`) and English sample values. The Portuguese attribute names keep working.
 * CSV examples in the import instructions use English sample data.
 * The changelog and upgrade notices in this readme are now in English.
+* Bible pages get their own LiteSpeed Cache tag (`bdwp70_bible`). Until now the virtual pages only carried the tags LiteSpeed derives from the query: the page that hosts the shortcode, the blog home, and "pages". Every Bible URL shared those tags, so publishing or updating any post purged all of them at once, and the server had to render tens of thousands of pages again.
+* The virtual query no longer reports itself as the blog home (`is_home`), which is where the home cache tag came from.
+* The plugin's own purges (book name corrections, deleting a version) now purge only the Bible tag instead of the whole site cache. The `bdwp70_purge_all_caches` filter restores the previous site-wide purge.
 
 = 1.1.80 =
 * Public Bible pages no longer send `nocache_headers()`. A chapter's HTML is the same for every anonymous visitor, and no-cache on every virtual page defeated page caching, proxies and CDNs on the most visited URLs. No-cache is still sent to logged-in users; the `bdwp70_bible_page_nocache` filter adjusts the rule.

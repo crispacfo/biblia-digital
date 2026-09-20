@@ -752,6 +752,61 @@ BDWP70_JS;
 		return false;
 	}
 
+	/**
+	 * Marca de cache das páginas da Bíblia no LiteSpeed Cache.
+	 */
+	const LSCACHE_TAG = 'bdwp70_bible';
+
+	/**
+	 * Marca a resposta atual como página da Bíblia para o LiteSpeed Cache.
+	 *
+	 * Sem marca própria, as páginas virtuais ficam apenas com as marcas que o
+	 * LiteSpeed deduz da consulta — a da página que hospeda o shortcode, a da home
+	 * e a de "páginas". Como todas as URLs da Bíblia compartilham essas marcas,
+	 * publicar um artigo qualquer descarta o capítulo de Gênesis junto, e o
+	 * servidor volta a renderizar dezenas de milhares de páginas.
+	 *
+	 * @param int $bible_id Versão exibida, se conhecida.
+	 * @return void
+	 */
+	public function lscache_tag_bible_page( $bible_id = 0 ) {
+		$tags     = array( self::LSCACHE_TAG );
+		$bible_id = $bible_id ? absint( $bible_id ) : $this->active_bible_id();
+		if ( $bible_id ) {
+			$tags[] = self::LSCACHE_TAG . '_' . $bible_id;
+		}
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- hook do plugin LiteSpeed Cache, não deste plugin.
+		do_action( 'litespeed_tag_add', $tags );
+	}
+
+	/**
+	 * Descarta do cache apenas as páginas da Bíblia.
+	 *
+	 * @param int $bible_id Versão específica, ou 0 para todas as páginas da Bíblia.
+	 * @return void
+	 */
+	public static function purge_bible_cache( $bible_id = 0 ) {
+		/**
+		 * Filtra o alcance da purga feita pelo plugin.
+		 *
+		 * @param bool $tudo True para descartar o cache do site inteiro, como até a 1.1.80.
+		 */
+		if ( apply_filters( 'bdwp70_purge_all_caches', false ) ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- hook do plugin LiteSpeed Cache, não deste plugin.
+			do_action( 'litespeed_purge_all' );
+			return;
+		}
+
+		$tags = array( self::LSCACHE_TAG );
+		if ( $bible_id ) {
+			$tags[] = self::LSCACHE_TAG . '_' . absint( $bible_id );
+		}
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- hook do plugin LiteSpeed Cache, não deste plugin.
+		do_action( 'litespeed_purge', $tags );
+	}
+
 	public function template_redirect() {
 		$seo = $this->build_seo_context();
 		if ( $seo ) {
@@ -789,8 +844,18 @@ BDWP70_JS;
 				$wp_query->is_404      = false;
 				$wp_query->is_page     = true;
 				$wp_query->is_singular = true;
+
+				/*
+				 * A consulta virtual não traz post nem página, então o WordPress ainda
+				 * a considera a home do blog. O LiteSpeed marcava cada URL da Bíblia com
+				 * a marca da home, e qualquer purga da home levava as dezenas de milhares
+				 * de páginas junto. is_front_page() deriva de is_home.
+				 */
+				$wp_query->is_home = false;
 			}
 			status_header( 200 );
+
+			$this->lscache_tag_bible_page();
 
 			/*
 			 * O HTML de um capítulo é público e determinístico, e enviar
@@ -1968,6 +2033,7 @@ BDWP70_JS;
 	public function shortcode( $atts = array() ) {
 		wp_enqueue_style( 'bdwp70-frontend' );
 		wp_enqueue_script( 'bdwp70-frontend' );
+		$this->lscache_tag_bible_page();
 
 		$atts = shortcode_atts(
 			array(
@@ -4752,7 +4818,7 @@ NT,43,John,3,16,"Text with commas, and ""doubled"" quotes."</pre>
 		update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
 
 		// As páginas em cache da versão excluída não devem continuar no ar.
-		do_action( 'litespeed_purge_all' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- hook do plugin LiteSpeed Cache, não deste plugin.
+		self::purge_bible_cache();
 
 		/**
 		 * Disparado depois que uma versão bíblica foi excluída pelo painel.
