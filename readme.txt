@@ -4,7 +4,7 @@ Tags: bible, scripture, search, shortcode, gutenberg
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.80
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -305,6 +305,10 @@ Go to Settings > Biblia Digital > Shortcodes. The tab includes examples, attribu
 
 No. `.pot`, `.po`, and `.mo` files translate only the plugin interface strings. Bible text comes from imported CSV files.
 
+= How is the plugin interface translated? =
+
+The plugin is written in English. Other languages come from translate.wordpress.org as language packs, which WordPress installs automatically. You can also upload your own `.po` and `.mo` files in Settings > Bíblia Digital > Frontend Translation. An uploaded translation takes priority, and the language pack fills in any strings it does not cover.
+
 = Does the plugin collect visitor data? =
 
 No. Reading and search are processed locally in WordPress. The plugin does not create tracking cookies or send visitor data to third parties.
@@ -327,14 +331,17 @@ This plugin is licensed under GPLv2 or later. Imported Bible data must be public
 
 == Upgrade Notice ==
 
+= 1.2.0 =
+The source language is now English; other languages come from translate.wordpress.org. Uploaded custom translations are converted automatically. Portuguese sites without a pt_BR language pack: upload a pt_BR translation before updating.
+
 = 1.1.70 =
 New public name and slug. The Bible URLs, shortcodes and stored options are unchanged. Custom translation files uploaded by the administrator move to the uploads directory automatically; the previous copies are kept and still read.
 
 = 1.1.65 =
-Remove o card automático que estreitava os versículos e adiciona seletor compacto de capítulos no topo do leitor.
+Removes the automatic card that narrowed the verses and adds a compact chapter selector at the top of the reader.
 
 = 1.1.64 =
-Corrige a exibição do card lateral de capítulos, adiciona widget real para sidebar e ajusta o painel Aa no mobile.
+Fixes the display of the chapter side card, adds a real sidebar widget, and adjusts the Aa panel on mobile.
 
 = 1.1.51 =
 Fixes Plugin Check findings, revises rewrite/query vars, improves legacy URL compatibility, and keeps permalink flushing controlled.
@@ -347,179 +354,185 @@ Keeps the functional translation selector below the book lists and improves drop
 
 == Changelog ==
 
+= 1.2.0 =
+* The plugin's source strings are now in English, as translate.wordpress.org expects. Until now they were in Portuguese: translators had no English original to start from, and sites in English could never get an English interface, since en_US has no translation project.
+* Interface text that was hardcoded in Portuguese is now translatable English: import and upload error messages, the translation upload form, the search pagination label, the media picker, the Bible version labels, and the search engine titles and descriptions.
+* Custom translation files uploaded before this version use the old Portuguese keys. On update they are converted once to the new English keys, and any file uploaded later with the old keys is converted on upload. The conversion map ships only hashes of the old keys, not translated text.
+* When a custom translation is loaded, the translate.wordpress.org language pack for the same locale is loaded after it, filling in any strings the custom file does not cover.
+* A notice on the plugin screens explains when the site's language has neither a language pack nor a custom translation.
+* Reading options: the font size label ("Small", "Medium", "Large") was rewritten by frontend.js with fixed Portuguese text after each change. It now uses the translated labels rendered by PHP.
+* Shortcode examples in the admin panel use the English attribute aliases (`book`, `chapter`, `verse`, `limit`) and English sample values. The Portuguese attribute names keep working.
+* CSV examples in the import instructions use English sample data.
+* The changelog and upgrade notices in this readme are now in English.
+
 = 1.1.80 =
-* PUBLIC_BIBLE_CACHE_HEADERS: as páginas públicas da Bíblia deixam de enviar `nocache_headers()`. O HTML de um capítulo é igual para todo visitante anônimo, e o no-cache em toda página virtual atrapalhava cache de página, proxy e CDN justamente nas URLs mais visitadas. O no-cache continua para quem está logado, e o filtro `bdwp70_bible_page_nocache` ajusta a regra.
-* INVALID_BIBLE_ROUTE_404: livro, capítulo e versículo são validados antes de responder 200. As regras de reescrita aceitam qualquer número, então /romanos/3/999/ e /romanos/999/1/ respondiam 200 com o capítulo mais próximo — um soft 404 que multiplicava o espaço de URLs rastreáveis. Agora respondem 404 e o tema renderiza a própria página de erro. Os redirecionamentos 301 de versão removida e de slug antigo continuam vindo antes da validação, então nenhuma URL que antes redirecionava passa a dar 404. Ajustável pelo filtro `bdwp70_bible_route_not_found`.
-* O manifest.json, pedido por todo navegador que carrega uma página da Bíblia, também deixa de enviar no-cache.
-* Em uma resposta 404, o plugin deixa de gerar título, description e canonical do trecho inexistente.
-* Canonical: o plugin imprime o seu apenas quando nenhum plugin de SEO gerou canonical para a página, evitando duas tags no <head>. A detecção é pela execução do filtro do próprio plugin de SEO (Rank Math, Yoast, AIOSEO, SEOPress), e não pela simples presença dele — nestas páginas virtuais, que não são posts, o Rank Math não emite canonical, e suprimir o do plugin por presença deixaria a página sem nenhum. Filtro `bdwp70_print_canonical`.
-* Bloco de busca: text domain corrigido de `biblia-digital` para `estudobiblico-biblia-digital` em block.json e index.js. A migração de domínio da 1.1.70 não alcançou o bloco, então suas strings não eram traduzíveis nem entravam no .pot.
-* Bloco de busca: título, placeholder e botão deixam de ter valor padrão fixo em inglês no block.json. O WordPress aplica esses padrões antes do render_callback, então um bloco inserido sem alterações exibia "Search the Bible" no site; agora usa o mesmo texto traduzível do widget. Blocos com textos personalizados não mudam.
-* Bloco de busca: título, descrição e rótulos do editor em português, alinhados ao widget de busca.
-* .pot regenerado para 1.1.80. O arquivo da 1.1.70 havia sido gerado antes do aviso de ativação e não trazia as suas quatro strings.
-* get_single_verse() passa a memorizar o resultado por requisição: a validação da rota e a description pediam o mesmo versículo duas vezes.
+* Public Bible pages no longer send `nocache_headers()`. A chapter's HTML is the same for every anonymous visitor, and no-cache on every virtual page defeated page caching, proxies and CDNs on the most visited URLs. No-cache is still sent to logged-in users; the `bdwp70_bible_page_nocache` filter adjusts the rule.
+* Book, chapter and verse are validated before responding with 200. The rewrite rules accept any number, so /romans/3/999/ and /romans/999/1/ used to respond 200 with the nearest chapter, a soft 404 that multiplied the crawlable URL space. They now respond 404 and the theme renders its own error page. The 301 redirects for removed versions and old slugs still run before the validation, so no URL that used to redirect starts returning 404. Adjustable with the `bdwp70_bible_route_not_found` filter.
+* manifest.json, requested by every browser that loads a Bible page, no longer sends no-cache either.
+* On a 404 response the plugin no longer outputs a title, description or canonical for the missing passage.
+* Canonical: the plugin prints its own only when no SEO plugin produced one for the page, avoiding two tags in the head. Detection relies on the SEO plugin's own filter running (Rank Math, Yoast, AIOSEO, SEOPress), not on the plugin merely being active: on these virtual pages, which are not posts, Rank Math emits no canonical, and suppressing ours based on presence would leave the page without one. Filter: `bdwp70_print_canonical`.
+* Search block: text domain fixed from `biblia-digital` to `estudobiblico-biblia-digital` in block.json and index.js. The 1.1.70 domain migration had missed the block, so its strings were neither translatable nor in the .pot.
+* Search block: title, placeholder and button no longer have fixed English defaults in block.json. WordPress applies those defaults before the render callback, so a block inserted without changes showed "Search the Bible" on the site; it now uses the same translatable text as the widget. Blocks with custom text are unchanged.
+* .pot regenerated. The 1.1.70 file had been generated before the activation notice was added and lacked its four strings.
+* get_single_verse() memoizes its result per request: route validation and the meta description were asking for the same verse twice.
+* Coding standards fixes, and the book name correction query now uses `$wpdb->prepare()` with `%i`.
 
 = 1.1.79 =
-* Importação: o separador do CSV passa a ser detectado uma única vez, no cabeçalho. Antes era decidido linha a linha, e um versículo com muitas vírgulas num arquivo separado por ponto e vírgula (uma genealogia, por exemplo) abortava a importação.
-* Importação: a leitura usa fgetcsv(), que aceita quebra de linha dentro do texto entre aspas.
-* Importação: arquivos que não estão em UTF-8 (o "CSV" comum do Excel em português, em Windows-1252) são recusados com o número da linha, em vez de perderem os acentos em silêncio.
-* Importação: mensagens específicas para cabeçalho ausente, cabeçalho inválido, arquivo vazio e livros faltando. O books.csv incompleto informa quantos e quais números de livro faltam.
-* ZIP: books.csv e verses.csv podem estar na raiz ou dentro de uma única pasta, como gera o "Compactar pasta" do Windows e do macOS. Entradas de sistema (__MACOSX/, ._arquivo, .DS_Store, Thumbs.db, desktop.ini) são ignoradas. Arquivo inesperado ou duplicado é informado pelo nome.
-* Instruções de importação reescritas no painel e no readme: passo a passo, exemplos com cabeçalho, aspas, codificação no Excel e no LibreOffice, e os efeitos de livro_desc na URL. Modelos books.csv (66 livros) e verses.csv (exemplos) para baixar.
-* Versões: nova opção para excluir uma versão importada na aba Versões, com confirmação obrigatória. Apaga cadastro, livros e versículos. A Bíblia ativa não pode ser excluída diretamente. A exclusão limpa os caches por chave (inclusive em object cache) e pede a purga ao LiteSpeed Cache.
-* URLs de uma versão excluída passam a responder com 301 para o mesmo livro, capítulo e versículo na Bíblia ativa.
+* Import: the CSV separator is detected once, from the header. It used to be decided line by line, and a verse with many commas in a semicolon-separated file (a genealogy, for example) aborted the import.
+* Import: reading uses fgetcsv(), which accepts line breaks inside quoted text.
+* Import: files that are not UTF-8 (the usual Excel "CSV" in Windows-1252) are rejected with the line number, instead of silently losing accented characters.
+* Import: specific messages for a missing header, an invalid header, an empty file and missing books. An incomplete books.csv reports how many book numbers are missing and which ones.
+* ZIP: books.csv and verses.csv can be at the root or inside a single folder, as produced by "Compress folder" on Windows and macOS. System entries (__MACOSX/, ._file, .DS_Store, Thumbs.db, desktop.ini) are ignored. An unexpected or duplicated file is reported by name.
+* Import instructions rewritten in the admin panel and in this readme, with a step-by-step guide, header examples, quoting, Excel and LibreOffice encoding settings, and the effect of livro_desc on the URL. Downloadable books.csv (66 books) and verses.csv (examples) templates.
+* Versions: new option to delete an imported version on the Versions tab, with a required confirmation. It removes the record, books and verses. The active Bible cannot be deleted directly. Deleting clears the keyed caches (object cache included) and asks LiteSpeed Cache to purge.
+* URLs of a deleted version respond with a 301 to the same book, chapter and verse in the active Bible.
 
 = 1.1.78 =
-* Nomes de livros corrigidos de forma nativa, sem ferramenta avulsa: na atualização para esta versão, cada site da rede corrige uma única vez a grafia errada dos nomes em versões pt-* (Genesis → Gênesis, Exodo → Êxodo, Levitico → Levítico, Deuteronomio → Deuteronômio, Juizes → Juízes, Cântares → Cantares, Oséias → Oseias, Miquéias → Miqueias, 1 e 2 Corintios → Coríntios, Efesios → Efésios, Colosenses → Colossenses, 1 e 2 Tesalonicenses → Tessalonicenses, 2 Timoteo → 2 Timóteo). Só a grafia errada exata é trocada, então nomes já corretos e outras versões não mudam.
-* A mesma correção roda ao fim de toda importação, para que um CSV com a grafia antiga não traga os erros de volta.
-* Depois da correção o plugin limpa os próprios caches e pede ao LiteSpeed Cache a purga das páginas, e mostra um aviso único no painel com as trocas feitas.
-* Correções ajustáveis pelo filtro `bdwp70_book_name_corrections`.
-* Livro 22 entre versões: "Cantares" (ACF, slug `cantares`) e "Cânticos" (Almeida 1911, ARC, ARA, slug `canticos`) passam a se redirecionar com 301 quando o slug pedido não existe na versão escolhida. Ao trocar de versão lendo esse livro, a URL deixa de levar a uma página inexistente.
-* O mapa de slugs antigos fica de mão dupla também para Colossenses e 1/2 Tessalonicenses, cobrindo a ACF enquanto os nomes antigos ainda estiverem no banco.
+* Book names are fixed natively, without a separate tool: on update to this version, each network site corrects once the wrong spelling of book names in pt-* versions (Genesis → Gênesis, Exodo → Êxodo, Levitico → Levítico, Deuteronomio → Deuteronômio, Juizes → Juízes, Cântares → Cantares, Oséias → Oseias, Miquéias → Miqueias, 1 and 2 Corintios → Coríntios, Efesios → Efésios, Colosenses → Colossenses, 1 and 2 Tesalonicenses → Tessalonicenses, 2 Timoteo → 2 Timóteo). Only the exact wrong spelling is replaced, so correct names and other versions do not change.
+* The same correction runs at the end of every import, so a CSV with the old spelling does not bring the errors back.
+* After the correction the plugin clears its own caches, asks LiteSpeed Cache to purge pages, and shows a one-time admin notice listing the changes.
+* Corrections are adjustable with the `bdwp70_book_name_corrections` filter.
+* Book 22 across versions: "Cantares" (ACF, slug `cantares`) and "Cânticos" (Almeida 1911, ARC, ARA, slug `canticos`) redirect to each other with a 301 when the requested slug does not exist in the chosen version, so switching versions while reading this book no longer leads to a missing page.
+* The old slug map also works both ways for Colossenses and 1/2 Tessalonicenses, covering ACF while the old names are still in the database.
 
 = 1.1.77 =
-* Português: títulos e descrições gerados para os buscadores passam a ter acentuação correta ("Livros da Bíblia", "capítulos", "versículos", "capítulo").
-* Cartões de acesso rápido: os ícones padrão estavam gravados como "?" no código, resto de emoji perdido. Passam a usar símbolos do plano básico Unicode, que sobrevivem mesmo em bancos sem utf8mb4. Um ícone já salvo como "?" volta ao padrão.
-* Mapa de nomes do sitemap: "Cantares" (grafia da ACF), "Oseias" e "Miqueias" (Acordo Ortográfico).
-* Exemplo de books.csv no painel com "Gênesis" acentuado.
-* Os nomes dos livros exibidos vêm do banco, gravados na importação; esta versão não os altera.
-* URLs de livro com grafia corrigida: /colosenses/, /1-tesalonicenses/ e /2-tesalonicenses/ passam a responder com 301 para /colossenses/, /1-tessalonicenses/ e /2-tessalonicenses/, com capítulo e versículo preservados. O redirecionamento só age quando o slug pedido não existe na versão: enquanto o nome antigo estiver no banco, ou numa versão em que ele seja a grafia correta, nada muda. Shortcodes com a grafia antiga continuam resolvendo. Mapa ajustável pelo filtro `bdwp70_legacy_book_slugs`.
+* Portuguese: titles and descriptions generated for search engines now have correct accents ("Livros da Bíblia", "capítulos", "versículos", "capítulo").
+* Quick access cards: the default icons were stored as "?" in the code, left over from lost emoji. They now use Basic Multilingual Plane symbols, which survive even in databases without utf8mb4. An icon already saved as "?" falls back to the default.
+* Sitemap name map: "Cantares" (ACF spelling), "Oseias" and "Miqueias" (current Portuguese orthography).
+* books.csv example in the admin panel with an accented "Gênesis".
+* The displayed book names come from the database, stored at import time; this version does not change them.
+* Book URLs with corrected spelling: /colosenses/, /1-tesalonicenses/ and /2-tesalonicenses/ respond with a 301 to /colossenses/, /1-tessalonicenses/ and /2-tessalonicenses/, keeping chapter and verse. The redirect only applies when the requested slug does not exist in the version: while the old name is in the database, or in a version where it is the correct spelling, nothing changes. Shortcodes with the old spelling keep resolving. Map adjustable with the `bdwp70_legacy_book_slugs` filter.
 
 = 1.1.76 =
-* SEO: a URL de versiculo (/livro/capitulo/versiculo/) passa a declarar a URL do capitulo como canonical. Ela entrega o capitulo inteiro com o versiculo destacado, e antes se declarava canonica de si mesma, o que multiplicava duplicatas por versiculo e por traducao.
-* SEO: o noindex das URLs de versiculo introduzido na 1.1.74 fica desligado. noindex combinado com canonical para outra pagina e sinal contraditorio. O filtro `bdwp70_noindex_verse_urls` ainda religa a estrategia antiga por inteiro, e nesse caso o canonical volta a ser a propria URL.
-* SEO: o canonical do capitulo tambem e aplicado ao Rank Math (`rank_math/frontend/canonical`) e ao Yoast (`wpseo_canonical`), caso emitam o proprio.
-* Sitemap: URLs de versiculo nao entram mais, independente da opcao gravada, porque deixaram de ser canonicas. A caixa correspondente no painel fica desativada com a explicacao; o filtro `bdwp70_sitemap_include_verses` ainda pode forcar a inclusao.
-* Deep link: ao abrir uma URL de versiculo, a pagina rola ate o versiculo destacado, sem sobrescrever uma ancora explicita na URL.
+* SEO: the verse URL (/book/chapter/verse/) declares the chapter URL as canonical. It serves the whole chapter with the verse highlighted, and it used to declare itself canonical, which multiplied duplicates per verse and per translation.
+* SEO: the verse URL noindex introduced in 1.1.74 is turned off. noindex combined with a canonical pointing to another page is a contradictory signal. The `bdwp70_noindex_verse_urls` filter still turns the old strategy back on as a whole, in which case the canonical returns to the URL itself.
+* SEO: the chapter canonical is also applied to Rank Math (`rank_math/frontend/canonical`) and Yoast (`wpseo_canonical`), in case they emit their own.
+* Sitemap: verse URLs are no longer included, regardless of the stored option, because they are no longer canonical. The matching checkbox in the admin panel is disabled with an explanation; the `bdwp70_sitemap_include_verses` filter can still force them in.
+* Deep link: opening a verse URL scrolls the page to the highlighted verse, without overriding an explicit anchor in the URL.
 
 = 1.1.75 =
-* Correcao do cabecalho `X-Robots-Tag` introduzido na 1.1.74: ele estava registrado em `template_redirect` na prioridade 1, mas o plugin renderiza a pagina virtual na prioridade 0 e encerra com `exit`, de modo que o callback nunca rodava. Passou para `send_headers`.
-* A meta robots `noindex, follow` da 1.1.74 ja funcionava e nao muda; o cabecalho e redundancia para instalacoes sem plugin de SEO.
+* Fix for the `X-Robots-Tag` header introduced in 1.1.74: it was registered on `template_redirect` at priority 1, but the plugin renders the virtual page at priority 0 and ends with `exit`, so the callback never ran. It moved to `send_headers`.
+* The `noindex, follow` robots meta from 1.1.74 already worked and is unchanged; the header is a fallback for installs without an SEO plugin.
 
 = 1.1.74 =
-* As URLs de versiculo individual passam a ser marcadas como `noindex, follow`. Elas sao quase-duplicatas da pagina do capitulo, que ja traz cada versiculo com ancora propria. `follow` e mantido de proposito: os links seguem transmitindo sinal, apenas a pagina sai do indice.
-* A marcacao cobre quatro caminhos, para valer com ou sem plugin de SEO: o `wp_robots` do WordPress, o filtro do Rank Math, o do Yoast e um cabecalho `X-Robots-Tag` na resposta.
-* Funciona por requisicao, sem opcao no banco, entao vale automaticamente em todos os sites de uma rede multisite assim que o plugin e atualizado.
-* Desligavel pelo filtro `bdwp70_noindex_verse_urls`.
+* Individual verse URLs are marked `noindex, follow`. They are near-duplicates of the chapter page, which already includes every verse with its own anchor. `follow` is kept on purpose: links keep passing signals, only the page leaves the index.
+* The marking covers four paths, so it works with or without an SEO plugin: WordPress `wp_robots`, the Rank Math filter, the Yoast filter and an `X-Robots-Tag` response header.
+* It works per request, without a database option, so it applies to every site in a multisite network as soon as the plugin is updated.
+* Can be turned off with the `bdwp70_noindex_verse_urls` filter.
 
 = 1.1.73 =
-* A opcao "Incluir versiculos individuais no sitemap" passa a vir DESMARCADA em instalacoes novas. Ligada, ela publica cerca de 30.000 URLs contra ~1.200 de capitulos; como a pagina do capitulo ja traz cada versiculo com ancora propria, sao quase-duplicatas, e cada visita de rastreador a uma delas custa uma renderizacao completa.
-* A descricao da opcao no painel deixa de recomenda-la e passa a explicar o custo.
-* Instalacoes existentes nao sao alteradas: quem ja tem a opcao marcada continua com ela marcada. Para desligar, use Configuracoes > Biblia Digital > SEO e URLs, ou o filtro `bdwp70_sitemap_include_verses`.
+* The "Include individual verses in the sitemap" option is unchecked on new installs. When on, it publishes about 30,000 URLs against ~1,200 chapter URLs; since the chapter page already includes every verse with its own anchor, they are near-duplicates, and each crawler visit to one of them costs a full render.
+* The option's description in the admin panel no longer recommends it and explains the cost instead.
+* Existing installs are not changed: if the option was checked, it stays checked. To turn it off, use Settings > Bíblia Digital > SEO and URLs, or the `bdwp70_sitemap_include_verses` filter.
 
 = 1.1.72 =
-* Leitura: o texto biblico passa a ter medida controlada e centrada (80ch, cerca de 690px e 63 caracteres por linha no desktop). A pagina continua em largura inteira; so o texto recebe limite.
-* Leitura no celular: o plugin deixa de somar o proprio recuo lateral ao do tema, e o texto volta a ocupar a largura disponivel.
-* Leitura no celular: o tamanho de fonte so e gravado quando o leitor escolhe um. Gravar sempre anulava o passo menor que o CSS ja define para telas estreitas, e o texto ficava em 22px numa coluna estreita.
-* Toque: a linha inteira do versiculo vira area de selecao, com realce suave. Selecionar e copiar o texto continua funcionando, e cliques em links seguem o proprio destino.
-* Seletor de capitulos: no celular abre como folha inferior rolavel, com fundo escurecido. Antes era um painel absoluto que ultrapassava a borda da tela e deixava capitulos inalcancaveis.
-* Barra fixa no topo do capitulo com livro, numero e navegacao; no celular ela some ao rolar para baixo e volta ao rolar para cima.
-* Teclado: setas esquerda e direita mudam de capitulo, sem interferir quando o foco esta num campo de texto.
+* Reading: the Bible text has a controlled, centered measure (80ch, about 690px and 63 characters per line on desktop). The page stays full width; only the text is limited.
+* Reading on mobile: the plugin no longer adds its own side padding to the theme's, and the text uses the available width again.
+* Reading on mobile: the font size is saved only when the reader picks one. Always saving it overrode the smaller step the CSS already sets for narrow screens, leaving the text at 22px in a narrow column.
+* Touch: the whole verse line becomes a selection area, with a soft highlight. Selecting and copying text still works, and link clicks follow their own target.
+* Chapter selector: on mobile it opens as a scrollable bottom sheet with a dimmed backdrop. It used to be an absolute panel that overflowed the screen edge and left chapters out of reach.
+* Sticky bar at the top of the chapter with the book, chapter number and navigation; on mobile it hides when scrolling down and returns when scrolling up.
+* Keyboard: the left and right arrow keys change chapters, without interfering when focus is in a text field.
 
 = 1.1.71 =
-* Desempenho: a busca passa a usar o indice FULLTEXT `palavra_fulltext`, que ja existia no esquema e nao era consultado por nenhuma query. O caminho anterior, com `LIKE '%termo%'`, tinha curinga a esquerda e varria a tabela inteira duas vezes por busca.
-* A busca por indice casa palavras e prefixos: procurar "amor" continua encontrando "amoroso", mas nao "desamor". Quando o indice nao devolve resultado, a busca anterior roda como antes, de modo que nenhuma consulta passa a terminar em zero por causa da mudanca.
-* Termos com palavras menores que o token minimo do indice, buscas por frase exata com palavras curtas e instalacoes sem o indice continuam no caminho antigo. Filtros `bdwp70_use_fulltext_search` e `bdwp70_fulltext_min_token` permitem ajustar ou desligar.
-* Desempenho: a lista de livros e a contagem de capitulos por livro passam a ficar em cache de 12 horas com memo por requisicao, no mesmo padrao ja usado pelas versoes biblicas. A contagem de capitulos era um agregado GROUP BY sobre a tabela de versiculos, refeito a cada pagina.
-* Desempenho: o cache de resultados de busca sobe de 5 minutos para 12 horas, ajustavel pelo filtro `bdwp70_search_cache_ttl`. A importacao ja limpa esses caches.
+* Performance: search uses the `palavra_fulltext` FULLTEXT index, which already existed in the schema but was not used by any query. The previous path, with `LIKE '%term%'`, had a leading wildcard and scanned the whole table twice per search.
+* Index search matches words and prefixes: searching "amor" still finds "amoroso", but not "desamor". When the index returns nothing, the previous search runs as before, so no query ends up with zero results because of the change.
+* Terms with words shorter than the index's minimum token, exact phrase searches with short words, and installs without the index keep the old path. The `bdwp70_use_fulltext_search` and `bdwp70_fulltext_min_token` filters adjust or disable it.
+* Performance: the book list and the chapter count per book are cached for 12 hours with a per-request memo, following the pattern already used for Bible versions. The chapter count was a GROUP BY aggregate over the verses table, recomputed on every page.
+* Performance: the search results cache goes from 5 minutes to 12 hours, adjustable with the `bdwp70_search_cache_ttl` filter. Importing already clears these caches.
 
 = 1.1.70 =
-* Nova identidade pública: nome de exibição `EstudoBiblico Bíblia Digital`, slug e text domain `estudobiblico-biblia-digital`, e `Contributors: crispaorg`.
-* Adequações solicitadas na revisão do WordPress.org.
-* CSS e JavaScript de compatibilidade de tema deixam de ser impressos como `<style>`/`<script>` e passam a usar `wp_register_style()`, `wp_register_script()`, `wp_add_inline_style()` e `wp_add_inline_script()`, carregados apenas nas páginas da Bíblia.
-* Sitemap: removida a gravação do índice físico na raiz do WordPress. As URLs públicas continuam as mesmas, servidas dinamicamente pelas rotas já existentes. O arquivo remanescente de versões anteriores é apagado na atualização, e apenas quando comprovadamente gerado pelo plugin.
-* Traduções personalizadas enviadas pelo administrador passam a ser gravadas em uma subpasta própria dentro de `wp_upload_dir()`, por site, protegida contra acesso direto. `WP_LANG_DIR` e a pasta do plugin não são mais usados como destino de escrita; arquivos antigos são copiados sem serem apagados e continuam sendo lidos como fallback.
-* Revisão de nonces, capabilities e sanitização nas ações administrativas.
-* Auditoria dos avisos administrativos quanto à Diretriz 11.
-* Pacote distribuído deixa de incluir `.po` e `.mo`: as traduções passam a vir do translate.wordpress.org.
-* Preservados URLs públicas, shortcodes, opções, tabelas, hooks, handles e o prefixo BDWP70.
+* New public identity: display name `EstudoBiblico Bíblia Digital`, slug and text domain `estudobiblico-biblia-digital`, and `Contributors: crispaorg`.
+* Changes requested in the WordPress.org review.
+* Theme compatibility CSS and JavaScript are no longer printed as `<style>`/`<script>` and use `wp_register_style()`, `wp_register_script()`, `wp_add_inline_style()` and `wp_add_inline_script()`, loaded only on Bible pages.
+* Sitemap: the physical index file is no longer written to the WordPress root. The public URLs stay the same, served dynamically by the existing routes. A leftover file from previous versions is deleted on update, and only when it was provably generated by the plugin.
+* Custom translations uploaded by the administrator are stored in a dedicated subfolder of `wp_upload_dir()`, per site, protected against direct access. `WP_LANG_DIR` and the plugin folder are no longer used as write targets; old files are copied without being deleted and are still read as a fallback.
+* Review of nonces, capabilities and sanitization in admin actions.
+* Admin notices audited against Guideline 11.
+* The distributed package no longer includes `.po` and `.mo` files: translations come from translate.wordpress.org.
+* Public URLs, shortcodes, options, tables, hooks, handles and the BDWP70 prefix are preserved.
 
 = 1.1.69 =
-* Metadados: cabeçalho do plugin adequado aos requisitos oficiais do WordPress.org.
-* Nome de exibição passa a `Bíblia Digital`, com acentuação, no cabeçalho e no readme. O slug, o text domain, a pasta e o arquivo principal continuam `biblia-digital`.
-* `Plugin URI` passa a apontar para a página do plugin (`https://estudobiblico.org/biblia-sagrada-online/`), distinta da `Author URI`, que permanece na raiz do site.
-* `Description` reescrita em português, alinhada ao público do plugin.
-* `License` normalizada para o identificador SPDX `GPL-2.0-or-later`; a licença em si não muda.
-* Removido `Tested up to` do cabeçalho PHP: não é um campo de cabeçalho de plugin reconhecido pelo WordPress e permanece declarado no readme.txt.
-* Nenhum `Update URI` foi adicionado, para não desviar as atualizações do WordPress.org.
-* Catálogos `.pot` e pt_BR regenerados por refletirem nome, descrição e versão.
+* Metadata: plugin header aligned with the official WordPress.org requirements.
+* Display name changed to `Bíblia Digital`, with the accent, in the header and in the readme. The slug, text domain, folder and main file remain `biblia-digital`.
+* `Plugin URI` points to the plugin page (`https://estudobiblico.org/biblia-sagrada-online/`), distinct from the `Author URI`, which stays at the site root.
+* `Description` rewritten in Portuguese, aligned with the plugin's audience.
+* `License` normalized to the SPDX identifier `GPL-2.0-or-later`; the license itself does not change.
+* `Tested up to` removed from the PHP header: it is not a plugin header field recognized by WordPress and remains declared in readme.txt.
+* No `Update URI` was added, so updates are not diverted from WordPress.org.
+* `.pot` and pt_BR catalogs regenerated to reflect the name, description and version.
 
 = 1.1.68 =
-* Consolida a linha 1.1.67 (abuse-fix) com o auto-reparo de schema, o reforço de importação por ZIP e o ferramental de qualidade.
-* Database: adiciona `BDWP70_Activator::maybe_upgrade()`, que cria/atualiza tabelas e índices em atualizações do plugin e em ativações pelos loaders legados, sem exigir reativação. A verificação inline anterior foi centralizada nesse método, agora com trava de concorrência e limpeza dos caches de runtime.
-* Segurança: `validate_uploaded_zip_archive()` passa a recusar o upload com `WP_Error` quando a extensão PHP zip está ausente, em vez de ignorar silenciosamente as validações de path traversal, contagem e tamanho.
-* Compatibilidade: `str_getcsv()` passa a receber `$escape` explícito, eliminando o aviso de depreciação no PHP 8.4/8.5; removido o registro do hook `wpmu_new_blog`, depreciado desde o WP 5.1.
-* Internacionalização: mensagens de importação e de validação de ZIP passam a usar `__()`; catálogo `.pot` regenerado e tradução pt_BR incluída.
-* Qualidade/distribuição: workflow de CI (lint PHP 7.4–8.5, PHPCS/WPCS, PHPUnit em WordPress 6.6 e 7.0.x, Plugin Check sobre o ZIP), `composer.json`, `phpcs.xml.dist`, `.distignore` e testes de integração.
-* Correções de defeito preexistente: `.gitignore` versionado continha o comando que o gerou; doze comentários corrompidos nos arquivos de sitemap foram restaurados.
-* Nenhuma alteração em dados, opções, slugs, nomes canônicos de livros, tabelas, shortcodes, hooks ou no prefixo BDWP70.
+* Consolidates the 1.1.67 line (abuse fix) with schema self-repair, hardened ZIP import and the quality tooling.
+* Database: adds `BDWP70_Activator::maybe_upgrade()`, which creates/updates tables and indexes on plugin updates and on activations through the legacy loaders, without requiring reactivation. The previous inline check was centralized in this method, now with a concurrency lock and runtime cache clearing.
+* Security: `validate_uploaded_zip_archive()` rejects the upload with a `WP_Error` when the PHP zip extension is missing, instead of silently skipping the path traversal, count and size checks.
+* Compatibility: `str_getcsv()` receives an explicit `$escape`, removing the deprecation warning on PHP 8.4/8.5; the `wpmu_new_blog` hook, deprecated since WP 5.1, is no longer registered.
+* Internationalization: import and ZIP validation messages use `__()`; `.pot` catalog regenerated and pt_BR translation included.
+* Quality/distribution: CI workflow (PHP 7.4–8.5 lint, PHPCS/WPCS, PHPUnit on WordPress 6.6 and 7.0.x, Plugin Check on the ZIP), `composer.json`, `phpcs.xml.dist`, `.distignore` and integration tests.
+* Fixes for pre-existing defects: the versioned `.gitignore` contained the command that generated it; twelve corrupted comments in the sitemap files were restored.
+* No changes to data, options, slugs, canonical book names, tables, shortcodes, hooks or the BDWP70 prefix.
 
 = 1.1.67 =
-* Abuse report hardening: elimina consultas aleatórias com GROUP BY/OFFSET em runtime e usa seleção por faixa de ID indexada.
-* Performance: cache persistente para existência de versões, Bíblia ativa e contagens do sitemap, reduzindo SELECT id repetido e COUNT(*) em acessos de bots.
-* Database: índices complementares para contagens e seleção aleatória por bible_id/published/id.
+* Abuse report hardening: removes runtime random queries with GROUP BY/OFFSET and uses indexed ID range selection.
+* Performance: persistent cache for version existence, the active Bible and sitemap counts, reducing repeated SELECT id and COUNT(*) on bot traffic.
+* Database: additional indexes for counts and random selection by bible_id/published/id.
 
 = 1.1.66 =
-* Performance: sitemap físico deixou de validar em toda requisição pública; verificação agora usa transient e só revalida periodicamente.
-* Performance: versículo e capítulo aleatórios não usam mais ordenação randômica no banco.
-* Performance: importação CSV usa inserção em lote real para livros e versículos.
-* Performance: consultas de busca recebem cache transitório curto e índices auxiliares.
-* Performance: contexto SEO possui cache interno por requisição.
+* Performance: the physical sitemap is no longer validated on every public request; the check uses a transient and revalidates only periodically.
+* Performance: random verse and random chapter no longer use random ordering in the database.
+* Performance: CSV import uses real batch inserts for books and verses.
+* Performance: search queries get a short transient cache and helper indexes.
+* Performance: the SEO context has an internal per-request cache.
 
 = 1.1.65 =
-* Remove o card automático interno de capítulos do layout do leitor, evitando que o texto bíblico seja estreitado em temas com sidebar própria.
-* Adiciona botão compacto “Capítulos” no topo do capítulo, com painel suspenso contendo todos os capítulos do livro, tradução ativa e link para a lista completa.
-* Mantém disponíveis o widget nativo e o shortcode [biblia-capitulos-sidebar] para uso manual em sidebars reais.
-* Reforça o ajuste mobile dos botões Versículo/Corrido, ocultando o ícone que consumia espaço e evitando corte de texto.
+* Removes the reader layout's internal automatic chapter card, which narrowed the Bible text in themes with their own sidebar.
+* Adds a compact "Chapters" button at the top of the chapter, with a drop-down panel containing all the book's chapters, the active translation and a link to the full list.
+* Keeps the native widget and the [biblia-capitulos-sidebar] shortcode available for manual use in real sidebars.
+* Improves the mobile layout of the Verse by verse/Continuous buttons, hiding the icon that took up space and avoiding truncated text.
 
 = 1.1.64 =
-* Corrige a regra de layout que empurrava o card de capítulos para depois do texto em alguns temas.
-* Adiciona o widget nativo “Bíblia Digital - Capítulos do livro atual” para uso em Aparência > Widgets.
-* Adiciona o shortcode [biblia-capitulos-sidebar] para inserir o card manualmente em blocos/áreas laterais.
-* Ajusta o painel Aa no mobile para evitar corte nos botões Versículo/Corrido.
+* Fixes the layout rule that pushed the chapter card below the text in some themes.
+* Adds the native "Bíblia Digital - Chapters of the current book" widget for use in Appearance > Widgets.
+* Adds the [biblia-capitulos-sidebar] shortcode to insert the card manually in blocks or side areas.
+* Adjusts the Aa panel on mobile to avoid truncated Verse by verse/Continuous buttons.
 
 = 1.1.63 =
-* Adiciona painel compacto de opções de leitura com tamanho da fonte, formato por versículo/corrido, fonte Padrão/Lexend e fundo de leitura.
-* Adiciona persistência das preferências do leitor no navegador.
-* Melhora o widget lateral de capítulos com título do livro, capítulo atual, tradução ativa e grade de navegação.
+* Adds a compact reading options panel with font size, verse by verse/continuous layout, Default/Lexend font and reading background.
+* Saves the reader's preferences in the browser.
+* Improves the chapter side widget with the book title, current chapter, active translation and navigation grid.
 
 = 1.1.62 =
-* Remove duplicidade da mensagem de busca sem resultados na página dedicada de busca.
-* Mantém a mensagem única no resumo da busca dedicada.
-* Mantém o fallback do shortcode principal e widgets quando não há resultados.
-
+* Removes the duplicated "no results" message on the dedicated search page.
+* Keeps a single message in the dedicated search summary.
+* Keeps the no-results fallback in the main shortcode and widgets.
 
 = 1.1.61 =
-* Corrige definitivamente a ausência de mensagem quando a busca não encontra termo/palavra.
-* A versão 1.1.60 corrigia a função de lista e a página dedicada, mas o template principal só chamava a lista quando havia itens.
-* Agora o template principal também chama o fallback de sem resultados no modo de busca.
-* Mantém mensagem acessível e estilizada no shortcode principal, na página dedicada e nos fluxos de busca pública.
-
+* Definitively fixes the missing message when a search finds no term or word.
+* Version 1.1.60 fixed the list function and the dedicated page, but the main template only called the list when there were items.
+* The main template now also calls the no-results fallback in search mode.
+* Keeps an accessible, styled message in the main shortcode, the dedicated page and the public search flows.
 
 = 1.1.60 =
-* Corrige a exibição de mensagem quando uma busca não encontra termo ou palavra na Bíblia.
-* A mensagem agora aparece tanto na página de busca dedicada quanto no modo de busca do shortcode principal.
-* Adiciona marcação aria-live para acessibilidade e estilo visual discreto para o aviso de busca vazia.
-
+* Fixes the message shown when a search finds no term or word in the Bible.
+* The message now appears both on the dedicated search page and in the main shortcode's search mode.
+* Adds aria-live markup for accessibility and a subtle visual style for the empty search notice.
 
 = 1.1.59 =
-* Adiciona XSL próprio para exibição visual dos sitemaps da Bíblia Digital no navegador.
-* Mantém a estrutura XML pura para crawlers e buscadores.
-
+* Adds a dedicated XSL to display the Bíblia Digital sitemaps visually in the browser.
+* Keeps the XML structure plain for crawlers and search engines.
 
 = 1.1.58 =
-* Corrige apontamentos do Plugin Check no diagnóstico do sitemap e nas consultas SQL do sitemap.
-* Adiciona comentários translators em strings com placeholders.
-* Remove fragmentos SQL dinâmicos de filtro published e usa ramificações preparadas/escapadas.
-* Adiciona cache/declarações seguras nas consultas paginadas do sitemap sem alterar a lógica funcional da versão 1.1.57.
+* Fixes Plugin Check findings in the sitemap diagnostics and in the sitemap SQL queries.
+* Adds translators comments to strings with placeholders.
+* Removes dynamic SQL fragments for the published filter and uses prepared/escaped branches.
+* Adds caching and safe declarations to the sitemap's paginated queries without changing the functional logic of version 1.1.57.
 
 = 1.1.56 =
-* Corrige definitivamente a geração de URLs no sitemap XML da Bíblia.
-* Adiciona fallback robusto para resolver Bíblia com conteúdo real a partir da tabela de versículos.
-* Evita sitemap vazio quando a tabela de livros estiver incompleta, mas os versículos existirem.
-* Torna o filtro published resiliente para bases legadas.
-* Mantém paginação por blocos, LIMIT/OFFSET e integração com WP Sitemap API.
-
+* Definitively fixes URL generation in the Bible XML sitemap.
+* Adds a robust fallback that resolves a Bible with real content from the verses table.
+* Avoids an empty sitemap when the books table is incomplete but the verses exist.
+* Makes the published filter resilient for legacy databases.
+* Keeps block pagination, LIMIT/OFFSET and integration with the WP Sitemap API.
 
 = 1.1.51 =
 * Fixes missing translator comments reported by Plugin Check.
