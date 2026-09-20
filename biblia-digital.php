@@ -3,7 +3,7 @@
  * Plugin Name: EstudoBiblico Bíblia Digital
  * Plugin URI: https://estudobiblico.org/biblia-sagrada-online/
  * Description: Disponibiliza leitura, pesquisa, navegação e recursos bíblicos no WordPress.
- * Version: 1.1.70
+ * Version: 1.1.80
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author: Claudio Crispim
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'BDWP70_VERSION' ) ) {
-	define( 'BDWP70_VERSION', '1.1.70' );
+	define( 'BDWP70_VERSION', '1.1.80' );
 }
 
 if ( ! defined( 'BDWP70_FILE' ) ) {

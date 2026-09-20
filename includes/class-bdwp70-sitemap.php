@@ -99,8 +99,14 @@ class BDWP70_Sitemap {
 	}
 
 	public static function include_verses() {
-		$val = get_option( self::OPTION_INCL_VERSES, 1 );
-		return (bool) apply_filters( 'bdwp70_sitemap_include_verses', $val );
+		/*
+		 * Sitemap lista apenas URLs canonicas. Desde a 1.1.76 a URL de versiculo
+		 * declara o capitulo como canonical (ou sai como noindex, se o filtro
+		 * bdwp70_noindex_verse_urls religar essa estrategia) — nos dois casos ela
+		 * nao pertence ao sitemap. A opcao gravada no banco deixa de valer; so o
+		 * filtro abaixo, deliberadamente, pode forcar a inclusao.
+		 */
+		return (bool) apply_filters( 'bdwp70_sitemap_include_verses', false );
 	}
 
 	public static function per_page() {
@@ -1270,18 +1276,18 @@ class BDWP70_Sitemap {
 			19 => 'Salmos',
 			20 => 'Provérbios',
 			21 => 'Eclesiastes',
-			22 => 'Cânticos',
+			22 => 'Cantares',
 			23 => 'Isaías',
 			24 => 'Jeremias',
 			25 => 'Lamentações',
 			26 => 'Ezequiel',
 			27 => 'Daniel',
-			28 => 'Oséias',
+			28 => 'Oseias',
 			29 => 'Joel',
 			30 => 'Amós',
 			31 => 'Obadias',
 			32 => 'Jonas',
-			33 => 'Miquéias',
+			33 => 'Miqueias',
 			34 => 'Naum',
 			35 => 'Habacuque',
 			36 => 'Sofonias',

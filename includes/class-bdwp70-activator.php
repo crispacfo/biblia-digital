@@ -61,7 +61,7 @@ class BDWP70_Activator {
 
 		// Opções padrão do sitemap — add_option não sobrescreve se já existirem.
 		add_option( 'bdwp70_sitemap_enabled', 1 );
-		add_option( 'bdwp70_sitemap_include_verses', 1 );
+		add_option( 'bdwp70_sitemap_include_verses', 0 );
 		add_option( 'bdwp70_sitemap_per_page', 2000 );
 		add_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
 	}
@@ -105,7 +105,7 @@ class BDWP70_Activator {
 		add_option( self::OPTION_ACTIVE_BIBLE, 0 );
 		add_option( self::OPTION_DELETE_DATA_ON_UNINSTALL, 0 );
 		add_option( 'bdwp70_sitemap_enabled', 1 );
-		add_option( 'bdwp70_sitemap_include_verses', 1 );
+		add_option( 'bdwp70_sitemap_include_verses', 0 );
 		add_option( 'bdwp70_sitemap_per_page', 2000 );
 		add_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
 
@@ -125,10 +125,154 @@ class BDWP70_Activator {
 		// 1.1.70: migra traduções personalizadas de WP_LANG_DIR para uploads.
 		self::migrate_custom_translations();
 
+		// 1.1.78: corrige a grafia de nomes de livros em versões pt-* (idempotente).
+		$nomes_corrigidos = self::fix_book_names();
+		if ( $nomes_corrigidos ) {
+			update_option( 'bdwp70_book_names_fixed_notice', $nomes_corrigidos, false );
+		}
+
 		update_option( 'bdwp70_flush_rewrite', 1 );
 		update_option( self::OPTION_VERSION, defined( 'BDWP70_VERSION' ) ? BDWP70_VERSION : '0' );
 
 		delete_transient( $lock );
+	}
+
+	/**
+	 * Grafias corrigidas de nomes de livros em versões bíblicas em português.
+	 *
+	 * Nomes importados de fontes com grafia do espanhol ou sem acentos
+	 * ("Genesis", "Colosenses", "1 Tesalonicenses"). Só a grafia errada exata é
+	 * trocada, no livro de número correspondente, então a correção é idempotente
+	 * e nunca toca um nome que já esteja certo.
+	 *
+	 * Onze itens são só de acentuação e não mudam o slug. Colosenses e 1/2
+	 * Tesalonicenses mudam; as URLs antigas respondem com 301 pelo mapa de
+	 * BDWP70_Plugin::legacy_book_slugs().
+	 *
+	 * @return array número do livro => array( grafia errada, grafia correta ).
+	 */
+	public static function book_name_corrections() {
+		/**
+		 * Filtra as correções de nomes de livros aplicadas a versões pt-*.
+		 *
+		 * @param array $corrections número do livro => array( errado, correto ).
+		 */
+		return (array) apply_filters(
+			'bdwp70_book_name_corrections',
+			array(
+				1  => array( 'Genesis', 'Gênesis' ),
+				2  => array( 'Exodo', 'Êxodo' ),
+				3  => array( 'Levitico', 'Levítico' ),
+				5  => array( 'Deuteronomio', 'Deuteronômio' ),
+				7  => array( 'Juizes', 'Juízes' ),
+				22 => array( 'Cântares', 'Cantares' ),
+				28 => array( 'Oséias', 'Oseias' ),
+				33 => array( 'Miquéias', 'Miqueias' ),
+				46 => array( '1 Corintios', '1 Coríntios' ),
+				47 => array( '2 Corintios', '2 Coríntios' ),
+				49 => array( 'Efesios', 'Efésios' ),
+				51 => array( 'Colosenses', 'Colossenses' ),
+				52 => array( '1 Tesalonicenses', '1 Tessalonicenses' ),
+				53 => array( '2 Tesalonicenses', '2 Tessalonicenses' ),
+				55 => array( '2 Timoteo', '2 Timóteo' ),
+			)
+		);
+	}
+
+	/**
+	 * Aplica as correções de nomes de livros às versões em português.
+	 *
+	 * Roda na atualização do plugin (uma vez por site da rede) e ao fim de cada
+	 * importação, para que um CSV com a grafia antiga não traga os erros de volta.
+	 *
+	 * @param int $bible_id Versão específica, ou 0 para todas as versões pt-*.
+	 * @return array Lista das trocas efetivamente feitas.
+	 */
+	public static function fix_book_names( $bible_id = 0 ) {
+		global $wpdb;
+
+		$versions = self::versions_table();
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $versions ) ) !== $versions ) {
+			return array();
+		}
+
+		$pt_like = $wpdb->esc_like( 'pt' ) . '%';
+		if ( $bible_id ) {
+			$ids = $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE language_code LIKE %s AND id = %d', $versions, $pt_like, absint( $bible_id ) ) );
+		} else {
+			$ids = $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE language_code LIKE %s', $versions, $pt_like ) );
+		}
+		$ids = array_map( 'absint', (array) $ids );
+
+		$books   = self::books_table();
+		$verses  = self::verses_table();
+		$changes = array();
+
+		foreach ( $ids as $id ) {
+			$mudou = false;
+
+			foreach ( self::book_name_corrections() as $seq => $par ) {
+				if ( ! is_array( $par ) || 2 !== count( $par ) ) {
+					continue;
+				}
+				list( $errado, $certo ) = array_values( $par );
+
+				$em_livros = $wpdb->update(
+					$books,
+					array( 'livro_desc' => $certo ),
+					array(
+						'bible_id'   => $id,
+						'livro_seq'  => absint( $seq ),
+						'livro_desc' => $errado,
+					),
+					array( '%s' ),
+					array( '%d', '%d', '%s' )
+				);
+				$em_verses = $wpdb->update(
+					$verses,
+					array( 'livro' => $certo ),
+					array(
+						'bible_id' => $id,
+						'livroseq' => absint( $seq ),
+						'livro'    => $errado,
+					),
+					array( '%s' ),
+					array( '%d', '%d', '%s' )
+				);
+
+				if ( $em_livros || $em_verses ) {
+					$changes[] = array(
+						'bible_id'   => $id,
+						'de'         => $errado,
+						'para'       => $certo,
+						'livros'     => (int) $em_livros,
+						'versiculos' => (int) $em_verses,
+					);
+					$mudou     = true;
+				}
+			}
+
+			if ( $mudou ) {
+				delete_transient( 'bdwp70_bookslist_' . $id );
+			}
+		}
+
+		if ( $changes ) {
+			self::clear_runtime_caches();
+			update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
+
+			// Páginas em cache ainda trazem os nomes antigos.
+			do_action( 'litespeed_purge_all' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- hook do plugin LiteSpeed Cache, não deste plugin.
+
+			/**
+			 * Disparado depois que nomes de livros foram corrigidos.
+			 *
+			 * @param array $changes Trocas feitas.
+			 */
+			do_action( 'bdwp70_book_names_fixed', $changes );
+		}
+
+		return $changes;
 	}
 
 	/**
@@ -608,6 +752,13 @@ class BDWP70_Activator {
 		self::clear_bible_data( $bible_id );
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM `' . esc_sql( self::versions_table() ) . '` WHERE id = %d AND is_builtin = 0', $bible_id ) );
 		self::clear_runtime_caches();
+
+		// clear_runtime_caches() apaga transients por SQL, o que não alcança um
+		// object cache persistente. As chaves que citam esta versão são removidas
+		// uma a uma, para ela sumir de listas e verificações imediatamente.
+		foreach ( array( 'bdwp70_bible_versions_rows', 'bdwp70_default_bible_version_id', 'bdwp70_bible_exists_' . $bible_id, 'bdwp70_bookslist_' . $bible_id, 'bdwp70_chapters_counts_' . $bible_id ) as $chave ) {
+			delete_transient( $chave );
+		}
 		if ( $was_active ) {
 			update_option( self::OPTION_ACTIVE_BIBLE, self::ensure_default_bible_version() );
 		}
@@ -813,7 +964,10 @@ class BDWP70_Activator {
 		$books = self::parse_books_csv( $books_file );
 		if ( empty( $books ) ) {
 			update_option( self::OPTION_STATUS, 'error' );
-			update_option( self::OPTION_ERROR, 'O arquivo books.csv está vazio ou fora do padrão.' );
+			// parse_books_csv() já grava o motivo específico; esta é só a reserva.
+			if ( '' === (string) get_option( self::OPTION_ERROR, '' ) ) {
+				update_option( self::OPTION_ERROR, 'O arquivo books.csv está vazio ou fora do padrão.' );
+			}
 			return false;
 		}
 
@@ -849,6 +1003,8 @@ class BDWP70_Activator {
 		update_option( self::OPTION_PROGRESS, sprintf( __( 'Upload complete: %s verses imported.', 'estudobiblico-biblia-digital' ), number_format_i18n( $count ) ) );
 		// Atualiza lastmod do sitemap após importação bem-sucedida e invalida caches leves.
 		update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
+		// Nomes com grafia errada no CSV são corrigidos já na importação.
+		self::fix_book_names( $bible_id );
 		self::clear_runtime_caches();
 		return $bible_id;
 	}
@@ -864,11 +1020,26 @@ class BDWP70_Activator {
 		if ( ! $handle ) {
 			return array();
 		}
-		$header = null;
-		while ( false !== ( $data = self::csv_get_row( $handle ) ) ) {
+		$header      = null;
+		$delimiter   = null;
+		$line_no     = 0;
+		$fora_limite = 0;
+		while ( false !== ( $data = self::csv_get_row( $handle, $delimiter ) ) ) {
+			++$line_no;
+			if ( ! self::csv_row_is_utf8( $data ) ) {
+				update_option( self::OPTION_ERROR, sprintf( 'books.csv: a linha %d não está em UTF-8. Salve o arquivo como "CSV UTF-8" (no Excel) ou com o conjunto de caracteres Unicode (UTF-8) (no LibreOffice).', $line_no ) );
+				fclose( $handle );
+				return array();
+			}
 			if ( null === $header ) {
 				$header = self::normalize_csv_header( $data );
 				if ( ! self::csv_has_required_columns( $header, array( 'livro_seq', 'livro', 'livro_desc' ) ) ) {
+					update_option(
+						self::OPTION_ERROR,
+						self::csv_first_row_looks_like_data( $data )
+							? 'books.csv: falta a linha de cabeçalho. A primeira linha deve ser livro_seq,livro,livro_desc, e os livros começam na segunda linha.'
+							: 'books.csv: cabeçalho inválido. A primeira linha deve ser exatamente livro_seq,livro,livro_desc.'
+					);
 					fclose( $handle );
 					return array();
 				}
@@ -886,6 +1057,7 @@ class BDWP70_Activator {
 			}
 			$seq = absint( $seq );
 			if ( $seq < 1 || $seq > 66 ) {
+				++$fora_limite;
 				continue;
 			}
 
@@ -905,7 +1077,22 @@ class BDWP70_Activator {
 			);
 		}
 		fclose( $handle );
+		if ( null === $header ) {
+			update_option( self::OPTION_ERROR, 'books.csv: o arquivo está vazio.' );
+			return array();
+		}
 		if ( 66 !== count( $seen ) ) {
+			$faltam   = array_values( array_diff( range( 1, 66 ), array_keys( $seen ) ) );
+			$lista    = implode( ', ', array_slice( $faltam, 0, 20 ) ) . ( count( $faltam ) > 20 ? ', …' : '' );
+			$mensagem = sprintf(
+				'books.csv: são necessários os 66 livros, numerados de 1 (Gênesis) a 66 (Apocalipse), e faltam %1$d: %2$s.',
+				count( $faltam ),
+				$lista
+			);
+			if ( $fora_limite > 0 ) {
+				$mensagem .= sprintf( ' %d linha(s) com número fora de 1 a 66 foram ignoradas: livros deuterocanônicos não são suportados.', $fora_limite );
+			}
+			update_option( self::OPTION_ERROR, $mensagem );
 			return array();
 		}
 		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_operations_fopen, WordPress.WP.AlternativeFunctions.file_system_operations_fclose
@@ -924,16 +1111,27 @@ class BDWP70_Activator {
 			update_option( self::OPTION_ERROR, 'Não foi possível abrir verses.csv.' );
 			return false;
 		}
-		$header  = null;
-		$batch   = array();
-		$count   = 0;
-		$line_no = 0;
-		while ( false !== ( $data = self::csv_get_row( $handle ) ) ) {
+		$header    = null;
+		$delimiter = null;
+		$batch     = array();
+		$count     = 0;
+		$line_no   = 0;
+		while ( false !== ( $data = self::csv_get_row( $handle, $delimiter ) ) ) {
 			++$line_no;
+			if ( ! self::csv_row_is_utf8( $data ) ) {
+				update_option( self::OPTION_ERROR, sprintf( 'verses.csv: o registro %d não está em UTF-8. Salve o arquivo como "CSV UTF-8" (no Excel) ou com o conjunto de caracteres Unicode (UTF-8) (no LibreOffice).', $line_no ) );
+				fclose( $handle );
+				return false;
+			}
 			if ( null === $header ) {
 				$header = self::normalize_csv_header( $data );
 				if ( ! self::csv_has_required_columns( $header, array( 'testamento', 'livroseq', 'livro', 'capitulo', 'versiculo', 'palavra' ) ) ) {
-					update_option( self::OPTION_ERROR, 'verses.csv: cabeçalho inválido.' );
+					update_option(
+						self::OPTION_ERROR,
+						self::csv_first_row_looks_like_data( $data )
+							? 'verses.csv: falta a linha de cabeçalho. A primeira linha deve ser testamento,livroseq,livro,capitulo,versiculo,palavra, e os versículos começam na segunda linha.'
+							: 'verses.csv: cabeçalho inválido. A primeira linha deve ser exatamente testamento,livroseq,livro,capitulo,versiculo,palavra.'
+					);
 					fclose( $handle );
 					return false;
 				}
@@ -1008,7 +1206,7 @@ class BDWP70_Activator {
 	public static function clear_runtime_caches() {
 		global $wpdb;
 		if ( is_object( $wpdb ) ) {
-			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_bdwp70_qv_%' OR `option_name` LIKE '_transient_timeout_bdwp70_qv_%' OR `option_name` LIKE '_transient_bdwp70_rand_%' OR `option_name` LIKE '_transient_timeout_bdwp70_rand_%' OR `option_name` LIKE '_transient_bdwp70_chapters_%' OR `option_name` LIKE '_transient_timeout_bdwp70_chapters_%' OR `option_name` LIKE '_transient_bdwp70_sitemap_%' OR `option_name` LIKE '_transient_timeout_bdwp70_sitemap_%' OR `option_name` LIKE '_transient_bdwp70_bible_%' OR `option_name` LIKE '_transient_timeout_bdwp70_bible_%' OR `option_name` LIKE '_transient_bdwp70_default_bible_version_id' OR `option_name` LIKE '_transient_timeout_bdwp70_default_bible_version_id' OR `option_name` LIKE '_transient_bdwp70_books_count_%' OR `option_name` LIKE '_transient_timeout_bdwp70_books_count_%' OR `option_name` LIKE '_transient_bdwp70_verses_count_%' OR `option_name` LIKE '_transient_timeout_bdwp70_verses_count_%'" );
+			$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_bdwp70_qv_%' OR `option_name` LIKE '_transient_timeout_bdwp70_qv_%' OR `option_name` LIKE '_transient_bdwp70_rand_%' OR `option_name` LIKE '_transient_timeout_bdwp70_rand_%' OR `option_name` LIKE '_transient_bdwp70_chapters_%' OR `option_name` LIKE '_transient_timeout_bdwp70_chapters_%' OR `option_name` LIKE '_transient_bdwp70_sitemap_%' OR `option_name` LIKE '_transient_timeout_bdwp70_sitemap_%' OR `option_name` LIKE '_transient_bdwp70_bible_%' OR `option_name` LIKE '_transient_timeout_bdwp70_bible_%' OR `option_name` LIKE '_transient_bdwp70_default_bible_version_id' OR `option_name` LIKE '_transient_timeout_bdwp70_default_bible_version_id' OR `option_name` LIKE '_transient_bdwp70_books_count_%' OR `option_name` LIKE '_transient_timeout_bdwp70_books_count_%' OR `option_name` LIKE '_transient_bdwp70_verses_count_%' OR `option_name` LIKE '_transient_timeout_bdwp70_verses_count_%' OR `option_name` LIKE '_transient_bdwp70_bookslist_%' OR `option_name` LIKE '_transient_timeout_bdwp70_bookslist_%' OR `option_name` LIKE '_transient_bdwp70_verses_fulltext_ok' OR `option_name` LIKE '_transient_timeout_bdwp70_verses_fulltext_ok'" );
 		}
 	}
 
@@ -1046,16 +1244,88 @@ class BDWP70_Activator {
 		return substr( $text, 0, 5000 );
 	}
 
-	private static function csv_get_row( $handle ) {
-		$line = fgets( $handle );
-		if ( false === $line ) {
+	/**
+	 * Lê o próximo registro de um CSV.
+	 *
+	 * O separador é detectado uma única vez, no cabeçalho, e reaproveitado no
+	 * arquivo inteiro. Antes ele era decidido linha a linha pela contagem de
+	 * vírgulas e ponto e vírgulas, e um versículo com muitas vírgulas num
+	 * arquivo separado por ponto e vírgula (uma genealogia, por exemplo) era lido
+	 * com o separador errado e abortava a importação.
+	 *
+	 * Depois do cabeçalho a leitura usa fgetcsv(), que também aceita quebra de
+	 * linha dentro de um texto entre aspas.
+	 *
+	 * @param resource    $handle    Arquivo aberto.
+	 * @param string|null $delimiter Separador; null na primeira chamada.
+	 * @return array|false
+	 */
+	private static function csv_get_row( $handle, &$delimiter = null ) {
+		// PHP 8.4 deprecates calling str_getcsv()/fgetcsv() without an explicit
+		// $escape. The historical default ('\\') is passed to preserve parsing
+		// behavior across PHP 7.4–8.5.
+		if ( null === $delimiter ) {
+			$line = fgets( $handle );
+			if ( false === $line ) {
+				return false;
+			}
+			$delimiter = self::detect_csv_delimiter( $line );
+			return str_getcsv( $line, $delimiter, '"', '\\' );
+		}
+
+		$data = fgetcsv( $handle, 0, $delimiter, '"', '\\' );
+		if ( false === $data ) {
 			return false;
 		}
-		$delimiter = substr_count( $line, ';' ) > substr_count( $line, ',' ) ? ';' : ',';
-		// PHP 8.4 deprecates calling str_getcsv() without an explicit $escape.
-		// The historical default ('\\') is passed to preserve parsing behavior
-		// across PHP 7.4–8.5.
-		return str_getcsv( $line, $delimiter, '"', '\\' );
+
+		return array_map(
+			static function ( $value ) {
+				return null === $value ? '' : (string) $value;
+			},
+			(array) $data
+		);
+	}
+
+	/**
+	 * Detecta o separador pela linha de cabeçalho, ignorando trechos entre aspas.
+	 *
+	 * @param string $line Primeira linha do arquivo.
+	 * @return string ',' ou ';'.
+	 */
+	private static function detect_csv_delimiter( $line ) {
+		$fora_de_aspas = (string) preg_replace( '/"[^"]*"/', '', (string) $line );
+
+		return substr_count( $fora_de_aspas, ';' ) > substr_count( $fora_de_aspas, ',' ) ? ';' : ',';
+	}
+
+	/**
+	 * Informa se os valores de um registro são UTF-8 válido.
+	 *
+	 * Planilhas em português costumam exportar CSV em Windows-1252. Sem esta
+	 * verificação os acentos inválidos eram descartados em silêncio pela
+	 * sanitização, e o erro aparecia depois como livro ausente ou texto vazio.
+	 *
+	 * @param array $data Valores do registro.
+	 * @return bool
+	 */
+	private static function csv_row_is_utf8( $data ) {
+		if ( ! function_exists( 'mb_check_encoding' ) ) {
+			return true;
+		}
+
+		return mb_check_encoding( implode( '', array_map( 'strval', (array) $data ) ), 'UTF-8' );
+	}
+
+	/**
+	 * Indica se a primeira linha parece dado em vez de cabeçalho.
+	 *
+	 * @param array $data Valores da primeira linha.
+	 * @return bool
+	 */
+	private static function csv_first_row_looks_like_data( $data ) {
+		$primeiro = isset( $data[0] ) ? strtoupper( trim( (string) preg_replace( '/^\xEF\xBB\xBF/', '', (string) $data[0] ) ) ) : '';
+
+		return '' !== $primeiro && ( ctype_digit( $primeiro ) || in_array( $primeiro, array( 'OT', 'NT', 'AT', 'VT' ), true ) );
 	}
 
 	private static function normalize_csv_header( $data ) {

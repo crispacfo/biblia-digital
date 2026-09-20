@@ -84,8 +84,23 @@ class BDWP70_Plugin {
 		add_action( 'template_redirect', array( $this, 'template_redirect' ), 0 );
 		add_filter( 'document_title_parts', array( $this, 'document_title_parts' ), 20 );
 		add_filter( 'pre_get_document_title', array( $this, 'pre_get_document_title' ), 20 );
-		add_action( 'wp_head', array( $this, 'seo_head' ), 1 );
+		// Prioridade 20: Rank Math e Yoast escrevem o <head> na prioridade 1, então
+		// quando chega a vez do plugin já se sabe se algum deles gerou canonical.
+		add_action( 'wp_head', array( $this, 'seo_head' ), 20 );
 		add_filter( 'get_canonical_url', array( $this, 'canonical_filter' ), 20, 2 );
+
+		// noindex nas URLs de versiculo: core, Rank Math, Yoast e cabecalho HTTP.
+		add_filter( 'wp_robots', array( $this, 'robots_noindex_verse' ), 20 );
+		add_filter( 'rank_math/frontend/robots', array( $this, 'robots_noindex_verse_seo_plugin' ), 20 );
+		add_filter( 'wpseo_robots_array', array( $this, 'robots_noindex_verse_seo_plugin' ), 20 );
+		add_filter( 'rank_math/frontend/canonical', array( $this, 'canonical_seo_plugin' ), 20 );
+		add_filter( 'wpseo_canonical', array( $this, 'canonical_seo_plugin' ), 20 );
+		add_filter( 'aioseo_canonical_url', array( $this, 'canonical_seo_plugin' ), 20 );
+		add_filter( 'seopress_titles_canonical', array( $this, 'canonical_seo_plugin' ), 20 );
+		// send_headers, e nao template_redirect: o proprio plugin renderiza a
+		// pagina virtual em template_redirect na prioridade 0 e encerra com exit,
+		// entao qualquer callback de prioridade maior nunca chega a rodar.
+		add_action( 'send_headers', array( $this, 'maybe_send_verse_robots_header' ), 20 );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
@@ -96,6 +111,7 @@ class BDWP70_Plugin {
 		add_action( 'admin_post_bdwp70_save_settings', array( $this, 'handle_save_settings' ) );
 		add_action( 'admin_post_bdwp70_upload_bible', array( $this, 'handle_upload_bible' ) );
 		add_action( 'admin_post_bdwp70_upload_translation', array( $this, 'handle_upload_translation' ) );
+		add_action( 'admin_post_bdwp70_delete_version', array( $this, 'handle_delete_version' ) );
 
 		add_filter( 'the_content', array( $this, 'normalize_bible_shortcode_quotes' ), 7 );
 		add_filter( 'widget_text', array( $this, 'normalize_bible_shortcode_quotes' ), 7 );
@@ -506,6 +522,236 @@ BDWP70_JS;
 		return array_values( array_unique( array_merge( $vars, $plugin_vars ) ) );
 	}
 
+	/**
+	 * Slugs antigos de livros que tiveram a grafia corrigida depois de publicados.
+	 *
+	 * O slug e gerado a partir do nome gravado no banco. Quando o nome muda de
+	 * letra (e nao so de acento), a URL muda junto; a antiga passa a responder
+	 * com 301 para a nova, e shortcodes antigos continuam resolvendo.
+	 *
+	 * @return array slug antigo => slug atual.
+	 */
+	public function legacy_book_slugs() {
+		/**
+		 * Filtra o mapa de slugs antigos de livros.
+		 *
+		 * @param array $aliases slug antigo => slug atual.
+		 */
+		return (array) apply_filters(
+			'bdwp70_legacy_book_slugs',
+			array(
+				// Mapa de mão dupla. Ida e volta não formam laço: o 301 só dispara
+				// quando o slug pedido não existe na versão e o destino existe. A volta
+				// cobre a ACF enquanto os nomes antigos ainda estiverem no banco, e
+				// quem troca de versão vindo de uma que já usa a grafia correta.
+				'colosenses'        => 'colossenses',
+				'colossenses'       => 'colosenses',
+				'1-tesalonicenses'  => '1-tessalonicenses',
+				'1-tessalonicenses' => '1-tesalonicenses',
+				'2-tesalonicenses'  => '2-tessalonicenses',
+				'2-tessalonicenses' => '2-tesalonicenses',
+				// Livro 22: "Cantares" na ACF, "Cânticos" nas demais versões.
+				'cantares'          => 'canticos',
+				'canticos'          => 'cantares',
+			)
+		);
+	}
+
+	/**
+	 * Resolve um slug antigo para o numero do livro, se o destino existir aqui.
+	 *
+	 * @param string $slug Slug solicitado.
+	 * @return array{seq:int,slug:string}|null
+	 */
+	private function resolve_legacy_book_slug( $slug ) {
+		$slug    = sanitize_title( (string) $slug );
+		$aliases = $this->legacy_book_slugs();
+
+		if ( '' === $slug || empty( $aliases[ $slug ] ) ) {
+			return null;
+		}
+
+		$novo = sanitize_title( (string) $aliases[ $slug ] );
+		$seq  = $this->book_seq_from_slug( $novo );
+
+		if ( $seq < 1 ) {
+			return null;
+		}
+
+		return array(
+			'seq'  => $seq,
+			'slug' => $novo,
+		);
+	}
+
+	/**
+	 * URL de destino do 301 quando a requisicao usa um slug de livro antigo.
+	 *
+	 * So age quando o slug pedido nao corresponde a livro nenhum deste site:
+	 * enquanto o nome antigo existir no banco, ou num site em que ele seja a
+	 * grafia correta (em espanhol, "Colosenses"), nada e redirecionado.
+	 *
+	 * @return string URL absoluta, ou string vazia.
+	 */
+	private function legacy_book_slug_redirect_url() {
+		$pedido = sanitize_title( (string) get_query_var( 'bdwp_livro_slug' ) );
+
+		if ( '' === $pedido || $this->book_seq_from_slug( $pedido ) > 0 ) {
+			return '';
+		}
+
+		$destino = $this->resolve_legacy_book_slug( $pedido );
+		if ( ! $destino ) {
+			return '';
+		}
+
+		global $wp;
+		$caminho = isset( $wp->request ) ? (string) $wp->request : '';
+		if ( '' === $caminho ) {
+			return '';
+		}
+
+		$partes = explode( '/', $caminho );
+		$trocou = false;
+		foreach ( $partes as $i => $parte ) {
+			if ( $i > 0 && sanitize_title( $parte ) === $pedido ) {
+				$partes[ $i ] = $destino['slug'];
+				$trocou       = true;
+				break;
+			}
+		}
+
+		if ( ! $trocou ) {
+			return '';
+		}
+
+		$url = home_url( user_trailingslashit( implode( '/', $partes ) ) );
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- repassado como query string, sem interpretar.
+		$query = isset( $_SERVER['QUERY_STRING'] ) ? (string) wp_unslash( $_SERVER['QUERY_STRING'] ) : '';
+		if ( '' !== $query ) {
+			$url .= '?' . $query;
+		}
+
+		return $url;
+	}
+
+	/**
+	 * URL de destino do 301 quando a requisição usa o slug de uma versão que não
+	 * existe mais (excluída pelo painel).
+	 *
+	 * Sem isso a URL antiga continuaria respondendo 200 com o texto de outra
+	 * tradução. O destino é o mesmo livro, capítulo e versículo na Bíblia ativa.
+	 *
+	 * @return string URL absoluta, ou string vazia.
+	 */
+	private function unknown_version_slug_redirect_url() {
+		$pedido = sanitize_title( (string) get_query_var( 'bdwp_versao_slug' ) );
+		if ( '' === $pedido || $this->bible_id_from_version_slug( $pedido ) > 0 ) {
+			return '';
+		}
+
+		$ativa = $this->site_active_bible_id();
+		if ( $ativa < 1 || ! BDWP70_Activator::bible_version_exists( $ativa ) ) {
+			return '';
+		}
+
+		$destino = sanitize_title( $this->bible_version_slug( $ativa ) );
+		if ( '' === $destino || $destino === $pedido ) {
+			return '';
+		}
+
+		global $wp;
+		$partes = explode( '/', isset( $wp->request ) ? (string) $wp->request : '' );
+		$trocou = false;
+		foreach ( $partes as $i => $parte ) {
+			if ( $i > 0 && 'versao' === $partes[ $i - 1 ] && sanitize_title( $parte ) === $pedido ) {
+				$partes[ $i ] = $destino;
+				$trocou       = true;
+				break;
+			}
+		}
+
+		if ( ! $trocou ) {
+			return '';
+		}
+
+		$url = home_url( user_trailingslashit( implode( '/', $partes ) ) );
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- repassado como query string, sem interpretar.
+		$query = isset( $_SERVER['QUERY_STRING'] ) ? (string) wp_unslash( $_SERVER['QUERY_STRING'] ) : '';
+
+		return '' !== $query ? $url . '?' . $query : $url;
+	}
+
+	/**
+	 * Informa se a requisição atual deve enviar cabeçalhos de no-cache.
+	 *
+	 * Páginas públicas da Bíblia não enviam: o HTML é o mesmo para todo
+	 * visitante anônimo, e a política de cache fica com o WordPress, com o
+	 * plugin de cache e com a CDN.
+	 *
+	 * @return bool
+	 */
+	private function bible_page_sends_nocache() {
+		/**
+		 * Filtra o envio de no-cache nas páginas da Bíblia.
+		 *
+		 * @param bool $nocache True para enviar. Padrão: apenas para quem está logado.
+		 */
+		return (bool) apply_filters( 'bdwp70_bible_page_nocache', is_user_logged_in() );
+	}
+
+	/**
+	 * Informa se a rota pedida aponta para livro, capítulo ou versículo que não existe.
+	 *
+	 * As regras de reescrita aceitam qualquer número, então /romanos/3/999/ e
+	 * /romanos/999/1/ chegavam até a renderização e respondiam 200 com o
+	 * capítulo mais próximo — um soft 404 que multiplica indefinidamente o
+	 * espaço de URLs rastreáveis.
+	 *
+	 * A verificação só vale para as rotas com slug de livro; a busca e a lista
+	 * de livros seguem intactas.
+	 *
+	 * @return bool
+	 */
+	private function bible_route_not_found() {
+		$book_slug = (string) get_query_var( 'bdwp_livro_slug' );
+		if ( '' === trim( $book_slug ) ) {
+			return false;
+		}
+
+		$bible_id = $this->active_bible_id();
+		$book_seq = $this->book_seq_from_slug( $book_slug );
+
+		if ( $book_seq < 1 ) {
+			return (bool) apply_filters( 'bdwp70_bible_route_not_found', true, 'book', $book_slug );
+		}
+
+		$chapter = absint( get_query_var( 'bdwp_capitulo' ) );
+		if ( $chapter < 1 ) {
+			return false;
+		}
+
+		$counts   = $this->get_chapter_counts( $bible_id );
+		$chapters = isset( $counts[ $book_seq ] ) ? (int) $counts[ $book_seq ] : 0;
+
+		if ( $chapters < 1 || $chapter > $chapters ) {
+			return (bool) apply_filters( 'bdwp70_bible_route_not_found', true, 'chapter', $book_slug );
+		}
+
+		$verse = absint( get_query_var( 'bdwp_versiculo' ) );
+		if ( $verse < 1 ) {
+			return false;
+		}
+
+		if ( ! $this->get_single_verse( $book_seq, $chapter, $verse, $bible_id ) ) {
+			return (bool) apply_filters( 'bdwp70_bible_route_not_found', true, 'verse', $book_slug );
+		}
+
+		return false;
+	}
+
 	public function template_redirect() {
 		$seo = $this->build_seo_context();
 		if ( $seo ) {
@@ -513,14 +759,49 @@ BDWP70_JS;
 		}
 
 		if ( get_query_var( 'bdwp_bible' ) ) {
+			$versao_removida = $this->unknown_version_slug_redirect_url();
+			if ( '' !== $versao_removida ) {
+				wp_safe_redirect( $versao_removida, 301 );
+				exit;
+			}
+
+			$legado = $this->legacy_book_slug_redirect_url();
+			if ( '' !== $legado ) {
+				wp_safe_redirect( $legado, 301 );
+				exit;
+			}
+
 			global $wp_query;
+
+			// Referência inexistente responde 404 antes de qualquer 200.
+			if ( $this->bible_route_not_found() ) {
+				if ( $wp_query ) {
+					$wp_query->set_404();
+				}
+				status_header( 404 );
+				nocache_headers();
+
+				// Sem exit: o tema renderiza o próprio 404.
+				return;
+			}
+
 			if ( $wp_query ) {
 				$wp_query->is_404      = false;
 				$wp_query->is_page     = true;
 				$wp_query->is_singular = true;
 			}
 			status_header( 200 );
-			nocache_headers();
+
+			/*
+			 * O HTML de um capítulo é público e determinístico, e enviar
+			 * no-cache em toda página virtual impedia cache de página, CDN e
+			 * proxy — justamente nas URLs mais visitadas do site. O no-cache
+			 * fica para quem está logado, onde a página pode variar.
+			 */
+			if ( $this->bible_page_sends_nocache() ) {
+				nocache_headers();
+			}
+
 			$this->render_virtual_bible_page();
 			exit;
 		}
@@ -538,7 +819,15 @@ BDWP70_JS;
 				'theme_color'      => '#1e73be',
 				'lang'             => str_replace( '_', '-', determine_locale() ),
 			);
-			nocache_headers();
+
+			/*
+			 * O manifest é pedido por todo navegador que carrega uma página da
+			 * Bíblia; é público e muda apenas quando o título ou o idioma do site
+			 * mudam, então não faz sentido torná-lo não cacheável.
+			 */
+			if ( $this->bible_page_sends_nocache() ) {
+				nocache_headers();
+			}
 			header( 'Content-Type: application/manifest+json; charset=' . get_option( 'blog_charset' ) );
 			echo wp_json_encode( $manifest, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 			exit;
@@ -1805,7 +2094,7 @@ BDWP70_JS;
 				'title'       => __( 'Pesquisar capítulo', 'estudobiblico-biblia-digital' ),
 				'description' => __( 'Encontre capítulos, palavras ou temas específicos.', 'estudobiblico-biblia-digital' ),
 				'url'         => '#bdwp70-livros',
-				'icon'        => '?',
+				'icon'        => '⌕',
 				'style'       => 'search',
 			),
 			array(
@@ -1813,7 +2102,7 @@ BDWP70_JS;
 				'title'       => __( 'Leitura do dia', 'estudobiblico-biblia-digital' ),
 				'description' => __( 'Sugestão de leitura diária para edificar sua fé.', 'estudobiblico-biblia-digital' ),
 				'url'         => '#bdwp70-livros',
-				'icon'        => '?',
+				'icon'        => '☀',
 				'style'       => 'reading',
 			),
 			array(
@@ -1821,7 +2110,7 @@ BDWP70_JS;
 				'title'       => __( 'Versículo do dia', 'estudobiblico-biblia-digital' ),
 				'description' => __( 'Inspiração diária baseada na Palavra de Deus.', 'estudobiblico-biblia-digital' ),
 				'url'         => '#bdwp70-livros',
-				'icon'        => '?',
+				'icon'        => '❝',
 				'style'       => 'verse',
 			),
 			array(
@@ -1829,7 +2118,7 @@ BDWP70_JS;
 				'title'       => __( 'Últimos estudos', 'estudobiblico-biblia-digital' ),
 				'description' => __( 'Acesse os estudos bíblicos mais recentes.', 'estudobiblico-biblia-digital' ),
 				'url'         => home_url( '/' ),
-				'icon'        => '?',
+				'icon'        => '✎',
 				'style'       => 'studies',
 			),
 		);
@@ -1881,7 +2170,11 @@ BDWP70_JS;
 			$title       = isset( $source['title'] ) ? sanitize_text_field( $source['title'] ) : ( isset( $base['title'] ) ? $base['title'] : '' );
 			$description = isset( $source['description'] ) ? sanitize_text_field( $source['description'] ) : ( isset( $base['description'] ) ? $base['description'] : '' );
 			$icon        = isset( $source['icon'] ) ? sanitize_text_field( $source['icon'] ) : ( isset( $base['icon'] ) ? $base['icon'] : '*' );
-			$style       = isset( $source['style'] ) ? sanitize_key( $source['style'] ) : ( isset( $base['style'] ) ? $base['style'] : 'search' );
+			// "?" e o que sobra de um emoji gravado num banco sem utf8mb4; volta ao icone padrao.
+			if ( ( '' === $icon || preg_match( '/^\?+$/', $icon ) ) && ! empty( $base['icon'] ) ) {
+				$icon = $base['icon'];
+			}
+			$style = isset( $source['style'] ) ? sanitize_key( $source['style'] ) : ( isset( $base['style'] ) ? $base['style'] : 'search' );
 			if ( ! in_array( $style, $allowed_styles, true ) ) {
 				$style = isset( $base['style'] ) && in_array( $base['style'], $allowed_styles, true ) ? $base['style'] : 'search';
 			}
@@ -1933,8 +2226,35 @@ BDWP70_JS;
 		global $wpdb;
 		$table    = BDWP70_Activator::books_table();
 		$bible_id = $bible_id ? absint( $bible_id ) : $this->active_bible_id();
-		$books    = $wpdb->get_results( $wpdb->prepare( 'SELECT livro_seq, livro, livro_desc FROM `' . esc_sql( $table ) . '` WHERE bible_id = %d AND published = 1 AND livro_seq BETWEEN 1 AND 66 ORDER BY livro_seq ASC', $bible_id ) );
-		return is_array( $books ) ? $books : array();
+
+		/*
+		 * A lista de 66 livros nao muda entre importacoes e e pedida em varios
+		 * pontos da mesma pagina. Memo estatico para a requisicao, transient para
+		 * as seguintes, no mesmo padrao ja usado em get_bible_versions().
+		 * Invalidado por BDWP70_Activator::clear_runtime_caches().
+		 */
+		static $memo = array();
+		if ( isset( $memo[ $bible_id ] ) ) {
+			return $memo[ $bible_id ];
+		}
+
+		$chave  = 'bdwp70_bookslist_' . $bible_id;
+		$cached = get_transient( $chave );
+		if ( is_array( $cached ) ) {
+			$memo[ $bible_id ] = $cached;
+			return $cached;
+		}
+
+		$books = $wpdb->get_results( $wpdb->prepare( 'SELECT livro_seq, livro, livro_desc FROM `' . esc_sql( $table ) . '` WHERE bible_id = %d AND published = 1 AND livro_seq BETWEEN 1 AND 66 ORDER BY livro_seq ASC', $bible_id ) );
+		$books = is_array( $books ) ? $books : array();
+
+		if ( ! empty( $books ) ) {
+			set_transient( $chave, $books, 12 * HOUR_IN_SECONDS );
+		}
+
+		$memo[ $bible_id ] = $books;
+
+		return $books;
 	}
 
 	/**
@@ -2312,7 +2632,68 @@ BDWP70_JS;
 			return $cached;
 		}
 
-		if ( '' !== $search && ! empty( $state['exact'] ) ) {
+		/*
+		 * Caminho rapido pelo indice FULLTEXT.
+		 *
+		 * `palavra LIKE '%termo%'` tem curinga a esquerda e por isso varre a
+		 * tabela inteira, duas vezes por busca (COUNT e pagina), com ate 12
+		 * condicoes encadeadas. O indice palavra_fulltext ja existe no esquema e
+		 * nao era usado por consulta nenhuma.
+		 *
+		 * Diferenca de comportamento, assumida de proposito: o FULLTEXT casa
+		 * palavras (com prefixo, via `*`), enquanto o LIKE casa qualquer trecho.
+		 * Buscar "amor" continua achando "amoroso", mas nao "desamor". Quando o
+		 * FULLTEXT nao devolve nada, o caminho LIKE abaixo roda como antes, de
+		 * modo que nenhuma busca passa a terminar em zero resultado por causa
+		 * desta mudanca.
+		 */
+		$usou_fulltext = false;
+		$expressao_ft  = $this->fulltext_boolean_expression(
+			$search,
+			! empty( $state['exact'] ),
+			isset( $state['match'] ) ? (string) $state['match'] : 'any'
+		);
+
+		if ( '' !== $expressao_ft && $this->verses_have_fulltext_index() ) {
+			$total_ft = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(DISTINCT CONCAT(livroseq, ':', capitulo, ':', versiculo)) FROM `" . esc_sql( $table ) . '` WHERE published = 1 AND bible_id = %d AND ( %d = 99 OR livroseq = %d ) AND ( %d = 0 OR capitulo = %d ) AND MATCH(palavra) AGAINST(%s IN BOOLEAN MODE)',
+					$bible_id,
+					$book,
+					$book,
+					$chapter,
+					$chapter,
+					$expressao_ft
+				)
+			);
+
+			if ( null !== $total_ft && (int) $total_ft > 0 ) {
+				$itens_ft = $wpdb->get_results(
+					$wpdb->prepare(
+						'SELECT MIN(id) AS id, testamento, livroseq, livro, capitulo, versiculo, MIN(palavra) AS palavra, published, hits FROM `' . esc_sql( $table ) . '` WHERE published = 1 AND bible_id = %d AND ( %d = 99 OR livroseq = %d ) AND ( %d = 0 OR capitulo = %d ) AND MATCH(palavra) AGAINST(%s IN BOOLEAN MODE) GROUP BY livroseq, capitulo, versiculo ORDER BY livroseq ASC, capitulo ASC, versiculo ASC LIMIT %d OFFSET %d',
+						$bible_id,
+						$book,
+						$book,
+						$chapter,
+						$chapter,
+						$expressao_ft,
+						$per_page,
+						$offset
+					)
+				);
+
+				if ( is_array( $itens_ft ) ) {
+					$total         = (int) $total_ft;
+					$items         = $itens_ft;
+					$usou_fulltext = true;
+				}
+			}
+		}
+
+		if ( $usou_fulltext ) {
+			// Resultados ja obtidos pelo indice acima; nada a fazer aqui.
+			$total = (int) $total;
+		} elseif ( '' !== $search && ! empty( $state['exact'] ) ) {
 			$total = (int) $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(DISTINCT CONCAT(livroseq, ':', capitulo, ':', versiculo)) FROM `" . esc_sql( $table ) . '` WHERE published = 1 AND bible_id = %d AND ( %d = 99 OR livroseq = %d ) AND ( %d = 0 OR capitulo = %d ) AND palavra LIKE %s',
@@ -2475,26 +2856,168 @@ BDWP70_JS;
 			'total_pages' => max( 1, (int) ceil( $total / $per_page ) ),
 			'mode'        => 'search',
 		);
-		set_transient( $cache_key, $result, 5 * MINUTE_IN_SECONDS );
+		set_transient( $cache_key, $result, $this->search_cache_ttl() );
 		return $result;
+	}
+
+	/**
+	 * Tempo de vida do cache de resultados de busca.
+	 *
+	 * O texto biblico so muda em importacao, e a importacao ja limpa os
+	 * transients por BDWP70_Activator::clear_runtime_caches(). Cinco minutos
+	 * expiravam antes de qualquer reaproveitamento util.
+	 *
+	 * @return int Segundos.
+	 */
+	private function search_cache_ttl() {
+		$ttl = (int) apply_filters( 'bdwp70_search_cache_ttl', 12 * HOUR_IN_SECONDS );
+
+		return max( 60, $ttl );
+	}
+
+	/**
+	 * Informa se a tabela de versiculos tem indice FULLTEXT em `palavra`.
+	 *
+	 * O esquema declara palavra_fulltext, mas tabelas criadas por versoes
+	 * antigas podem nao te-lo. Sem a verificacao, MATCH ... AGAINST derrubaria
+	 * a busca inteira com erro de SQL.
+	 *
+	 * @return bool
+	 */
+	private function verses_have_fulltext_index() {
+		static $memo = null;
+
+		if ( null !== $memo ) {
+			return $memo;
+		}
+
+		$cached = get_transient( 'bdwp70_verses_fulltext_ok' );
+		if ( false !== $cached ) {
+			$memo = ( '1' === (string) $cached );
+			return $memo;
+		}
+
+		global $wpdb;
+		$table = BDWP70_Activator::verses_table();
+		$rows  = $wpdb->get_results( 'SHOW INDEX FROM `' . esc_sql( $table ) . '`' );
+		$tem   = false;
+
+		if ( is_array( $rows ) ) {
+			foreach ( $rows as $row ) {
+				$tipo   = isset( $row->Index_type ) ? strtoupper( (string) $row->Index_type ) : '';
+				$coluna = isset( $row->Column_name ) ? strtolower( (string) $row->Column_name ) : '';
+				if ( 'FULLTEXT' === $tipo && 'palavra' === $coluna ) {
+					$tem = true;
+					break;
+				}
+			}
+		}
+
+		set_transient( 'bdwp70_verses_fulltext_ok', $tem ? '1' : '0', 12 * HOUR_IN_SECONDS );
+		$memo = $tem;
+
+		return $memo;
+	}
+
+	/**
+	 * Monta a expressao BOOLEAN MODE da busca, ou '' quando o indice nao serve.
+	 *
+	 * Devolve string vazia — e o LIKE assume — quando o filtro desliga o
+	 * recurso, quando o termo fica vazio depois de remover os operadores, ou
+	 * quando alguma palavra e menor que o token minimo do indice (palavras
+	 * abaixo dele simplesmente nao existem no FULLTEXT e sumiriam do resultado).
+	 *
+	 * @param string $search Termo digitado.
+	 * @param bool   $exact  Busca por frase exata.
+	 * @param string $match_mode 'all' para exigir todas as palavras, 'any' caso contrario.
+	 * @return string Expressao para AGAINST(), ou '' para usar o LIKE.
+	 */
+	private function fulltext_boolean_expression( $search, $exact, $match_mode ) {
+		if ( ! apply_filters( 'bdwp70_use_fulltext_search', true ) ) {
+			return '';
+		}
+
+		$search = trim( (string) $search );
+		if ( '' === $search ) {
+			return '';
+		}
+
+		// Remove os operadores do BOOLEAN MODE: o termo e dado do visitante.
+		$limpo = preg_replace( '/[+\-><\(\)~*"@]+/u', ' ', $search );
+		$limpo = trim( (string) preg_replace( '/\s+/u', ' ', (string) $limpo ) );
+		if ( '' === $limpo ) {
+			return '';
+		}
+
+		$palavras = preg_split( '/\s+/u', $limpo, -1, PREG_SPLIT_NO_EMPTY );
+		if ( ! is_array( $palavras ) || empty( $palavras ) ) {
+			return '';
+		}
+		$palavras = array_slice( $palavras, 0, 12 );
+
+		$minimo = (int) apply_filters( 'bdwp70_fulltext_min_token', 3 );
+		foreach ( $palavras as $palavra ) {
+			$tamanho = function_exists( 'mb_strlen' ) ? mb_strlen( $palavra, 'UTF-8' ) : strlen( $palavra );
+			if ( $tamanho < $minimo ) {
+				return '';
+			}
+		}
+
+		if ( $exact ) {
+			return '"' . implode( ' ', $palavras ) . '"';
+		}
+
+		$prefixo = ( 'all' === $match_mode ) ? '+' : '';
+		$termos  = array();
+		foreach ( $palavras as $palavra ) {
+			$termos[] = $prefixo . $palavra . '*';
+		}
+
+		return implode( ' ', $termos );
 	}
 
 	public function get_chapter_counts( $bible_id = null ) {
 		global $wpdb;
 		$table    = BDWP70_Activator::verses_table();
 		$bible_id = $bible_id ? absint( $bible_id ) : $this->active_bible_id();
-		$rows     = $wpdb->get_results(
+
+		/*
+		 * Agregado GROUP BY sobre a tabela inteira de versiculos para obter 66
+		 * numeros que so mudam na importacao. Mesmo coberto pelo indice
+		 * bible_published_ref, nao ha motivo para repeti-lo a cada pagina.
+		 * Invalidado por BDWP70_Activator::clear_runtime_caches().
+		 */
+		static $memo = array();
+		if ( isset( $memo[ $bible_id ] ) ) {
+			return $memo[ $bible_id ];
+		}
+
+		$chave  = 'bdwp70_chapters_counts_' . $bible_id;
+		$cached = get_transient( $chave );
+		if ( is_array( $cached ) ) {
+			$memo[ $bible_id ] = $cached;
+			return $cached;
+		}
+
+		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT livroseq, MAX(capitulo) AS chapters FROM `' . esc_sql( $table ) . '` WHERE bible_id = %d AND published = 1 AND livroseq BETWEEN 1 AND 66 GROUP BY livroseq',
 				$bible_id
 			)
 		);
-		$map      = array();
+		$map  = array();
 		if ( is_array( $rows ) ) {
 			foreach ( $rows as $row ) {
 				$map[ (int) $row->livroseq ] = (int) $row->chapters;
 			}
 		}
+
+		if ( ! empty( $map ) ) {
+			set_transient( $chave, $map, 12 * HOUR_IN_SECONDS );
+		}
+
+		$memo[ $bible_id ] = $map;
+
 		return $map;
 	}
 
@@ -2511,7 +3034,16 @@ BDWP70_JS;
 		global $wpdb;
 		$table    = BDWP70_Activator::verses_table();
 		$bible_id = $bible_id ? absint( $bible_id ) : $this->active_bible_id();
-		return $wpdb->get_row(
+
+		// A validação da rota e a descrição SEO pedem o mesmo versículo na mesma
+		// requisição; sem memo seriam duas consultas idênticas.
+		static $memo = array();
+		$chave       = $bible_id . ':' . (int) $book_seq . ':' . (int) $chapter . ':' . (int) $verse;
+		if ( array_key_exists( $chave, $memo ) ) {
+			return $memo[ $chave ];
+		}
+
+		return $memo[ $chave ] = $wpdb->get_row(
 			$wpdb->prepare(
 				'SELECT * FROM `' . esc_sql( $table ) . '` WHERE bible_id = %d AND published = 1 AND livroseq = %d AND capitulo = %d AND versiculo = %d ORDER BY id ASC LIMIT 1',
 				$bible_id,
@@ -2559,6 +3091,17 @@ BDWP70_JS;
 		foreach ( $books as $book ) {
 			if ( $slug === sanitize_title( $book->livro_desc ) || $slug === sanitize_title( $book->livro ) ) {
 				return (int) $book->livro_seq;
+			}
+		}
+
+		// Shortcodes publicados com a grafia antiga continuam funcionando.
+		$aliases = $this->legacy_book_slugs();
+		if ( ! empty( $aliases[ $slug ] ) ) {
+			$novo = sanitize_title( (string) $aliases[ $slug ] );
+			foreach ( $books as $book ) {
+				if ( $novo === sanitize_title( $book->livro_desc ) ) {
+					return (int) $book->livro_seq;
+				}
 			}
 		}
 
@@ -3000,6 +3543,22 @@ JS;
 			return;
 		}
 
+		// Aviso único da correção de nomes de livros feita na atualização.
+		$nomes_corrigidos = get_option( 'bdwp70_book_names_fixed_notice' );
+		if ( is_array( $nomes_corrigidos ) && $nomes_corrigidos ) {
+			delete_option( 'bdwp70_book_names_fixed_notice' );
+			$pares = array();
+			foreach ( $nomes_corrigidos as $troca ) {
+				if ( isset( $troca['de'], $troca['para'] ) ) {
+					$pares[ $troca['de'] . ' → ' . $troca['para'] ] = true;
+				}
+			}
+			echo '<div class="notice notice-success is-dismissible"><p><strong>' . esc_html__( 'Bíblia Digital:', 'estudobiblico-biblia-digital' ) . '</strong> ';
+			/* translators: %s: list of corrected book names. */
+			echo esc_html( sprintf( __( 'grafia dos nomes de livros corrigida: %s. As URLs antigas de Colossenses e Tessalonicenses redirecionam para as novas.', 'estudobiblico-biblia-digital' ), implode( ', ', array_keys( $pares ) ) ) );
+			echo '</p></div>';
+		}
+
 		if ( ! $this->screen_allows_setup_notice() ) {
 			return;
 		}
@@ -3154,6 +3713,22 @@ JS;
 			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Não foi possível concluir a importação.', 'estudobiblico-biblia-digital' ) . ' ' . esc_html( $error ) . '</p></div>';
 		}
 
+		if ( isset( $_GET['bdwp70_version_deleted'] ) ) {
+			$resultado = sanitize_key( wp_unslash( $_GET['bdwp70_version_deleted'] ) );
+			$nome      = isset( $_GET['bdwp70_version_name'] ) ? sanitize_text_field( wp_unslash( $_GET['bdwp70_version_name'] ) ) : '';
+			$avisos    = array(
+				/* translators: %s: Bible version name. */
+				'ok'       => array( 'success', sprintf( __( 'Versão "%s" excluída, com seus livros e versículos. As URLs dela passam a redirecionar para a Bíblia ativa.', 'estudobiblico-biblia-digital' ), $nome ) ),
+				'active'   => array( 'error', __( 'A Bíblia ativa do site não pode ser excluída. Ative outra versão acima e depois exclua esta.', 'estudobiblico-biblia-digital' ) ),
+				'confirm'  => array( 'error', __( 'Marque a confirmação ao lado do botão para excluir a versão.', 'estudobiblico-biblia-digital' ) ),
+				'builtin'  => array( 'error', __( 'Esta versão faz parte do plugin e não pode ser excluída.', 'estudobiblico-biblia-digital' ) ),
+				'notfound' => array( 'error', __( 'Versão não encontrada. Ela pode já ter sido excluída.', 'estudobiblico-biblia-digital' ) ),
+			);
+			if ( isset( $avisos[ $resultado ] ) ) {
+				echo '<div class="notice notice-' . esc_attr( $avisos[ $resultado ][0] ) . ' is-dismissible"><p>' . esc_html( $avisos[ $resultado ][1] ) . '</p></div>';
+			}
+		}
+
 		if ( isset( $_GET['bdwp70_saved'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['bdwp70_saved'] ) ) ) {
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Configurações salvas. Os links permanentes foram atualizados.', 'estudobiblico-biblia-digital' ) . '</p></div>';
 		}
@@ -3279,15 +3854,44 @@ JS;
 		</form>
 
 		<div class="bdwp70-admin-box bdwp70-admin-box--spec">
-			<h3><?php esc_html_e( 'Especificação dos arquivos CSV', 'estudobiblico-biblia-digital' ); ?></h3>
-			<p><?php esc_html_e( 'O ZIP deve conter dois arquivos CSV em UTF-8, com separador vírgula ou ponto e vírgula:', 'estudobiblico-biblia-digital' ); ?></p>
+			<h3><?php esc_html_e( 'Como preparar os arquivos', 'estudobiblico-biblia-digital' ); ?></h3>
+
+			<p>
+				<strong><?php esc_html_e( 'Modelos prontos:', 'estudobiblico-biblia-digital' ); ?></strong>
+				<a class="button button-secondary" href="<?php echo esc_url( BDWP70_URL . 'assets/templates/books.csv' ); ?>" download="books.csv"><?php esc_html_e( 'Baixar books.csv', 'estudobiblico-biblia-digital' ); ?></a>
+				<a class="button button-secondary" href="<?php echo esc_url( BDWP70_URL . 'assets/templates/verses.csv' ); ?>" download="verses.csv"><?php esc_html_e( 'Baixar verses.csv', 'estudobiblico-biblia-digital' ); ?></a>
+			</p>
+			<p class="description"><?php esc_html_e( 'O books.csv de modelo já traz os 66 livros com nome e abreviação em português; troque pelos nomes da sua tradução, se for de outro idioma. O verses.csv de modelo traz só linhas de exemplo: substitua pelo texto completo.', 'estudobiblico-biblia-digital' ); ?></p>
+
+			<ol class="bdwp70-admin-list">
+				<li>
+					<strong>books.csv</strong> — <?php esc_html_e( 'a primeira linha é o cabeçalho, e depois vem um livro por linha, os 66 livros, numerados de 1 (Gênesis) a 66 (Apocalipse) na ordem protestante tradicional:', 'estudobiblico-biblia-digital' ); ?>
+					<pre>livro_seq,livro,livro_desc
+1,Gn,Gênesis
+2,Êx,Êxodo
+…
+66,Ap,Apocalipse</pre>
+				</li>
+				<li>
+					<strong>verses.csv</strong> — <?php esc_html_e( 'a primeira linha é o cabeçalho, e depois vem um versículo por linha. Coloque o texto do versículo entre aspas; aspas dentro do texto são escritas dobradas.', 'estudobiblico-biblia-digital' ); ?>
+					<pre>testamento,livroseq,livro,capitulo,versiculo,palavra
+AT,1,Gn,1,1,"Texto de Gênesis 1:1."
+NT,43,Jo,3,16,"Texto com vírgulas, e ""aspas"" dobradas."</pre>
+				</li>
+				<li><?php esc_html_e( 'Salve os dois arquivos em UTF-8, com vírgula como separador. No Excel, use "CSV UTF-8 (delimitado por vírgulas)". No LibreOffice, marque o conjunto de caracteres Unicode (UTF-8), o separador vírgula e as aspas como delimitador de texto.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Compacte os dois arquivos num ZIP. Eles podem ficar na raiz do ZIP ou dentro de uma única pasta.', 'estudobiblico-biblia-digital' ); ?></li>
+			</ol>
+
+			<h4><?php esc_html_e( 'Antes de importar, confira', 'estudobiblico-biblia-digital' ); ?></h4>
 			<ul class="bdwp70-admin-list">
-				<li><code>books.csv</code>: <code>livro_seq,livro,livro_desc</code></li>
-				<li><code>verses.csv</code>: <code>testamento,livroseq,livro,capitulo,versiculo,palavra</code></li>
+				<li><?php esc_html_e( 'O nome em livro_desc é exibido no site e também forma a URL do livro: "Colossenses" gera /colossenses/. Revise a grafia antes de importar, porque corrigir depois muda a URL.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Cada importação cria uma nova versão e a deixa ativa. Para substituir uma tradução, importe a nova e exclua a antiga na aba Versões.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'O texto é importado sem formatação (HTML é removido), com até 5.000 caracteres por versículo.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'A coluna testamento pode ficar com AT/NT, OT/NT ou vazia: o testamento é deduzido pelo número do livro.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Informe o idioma no formato pt-BR, en-US ou es-ES.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Livros deuterocanônicos (Tobias, Judite, Macabeus e outros) não são suportados.', 'estudobiblico-biblia-digital' ); ?></li>
+				<li><?php esc_html_e( 'Limites: ZIP de até 50 MB e até 25 MB descompactado. O servidor precisa da extensão PHP zip.', 'estudobiblico-biblia-digital' ); ?></li>
 			</ul>
-			<p><strong><?php esc_html_e( 'Exemplo de books.csv:', 'estudobiblico-biblia-digital' ); ?></strong> <code>1,Gn,Genesis</code></p>
-			<p><strong><?php esc_html_e( 'Exemplo de verses.csv:', 'estudobiblico-biblia-digital' ); ?></strong> <code>OT,1,Gn,1,1,In the beginning God created the heaven and the earth.</code></p>
-			<p><?php esc_html_e( 'A numeração dos livros deve seguir a ordem protestante tradicional de 1 a 66, de Gênesis a Apocalipse. O campo palavra deve conter o texto completo do versículo.', 'estudobiblico-biblia-digital' ); ?></p>
 		</div>
 		<?php
 	}
@@ -3321,8 +3925,10 @@ JS;
 			<?php submit_button( __( 'Salvar Bíblia ativa', 'estudobiblico-biblia-digital' ), 'primary', 'submit', false ); ?>
 		</form>
 
+		<p class="description"><strong><?php esc_html_e( 'Excluir uma versão', 'estudobiblico-biblia-digital' ); ?></strong> — <?php esc_html_e( 'apaga o cadastro, os livros e os versículos dela, e não pode ser desfeito. As URLs da versão excluída passam a redirecionar para o mesmo trecho na Bíblia ativa. Para substituir uma tradução, importe a nova, ative-a e então exclua a antiga.', 'estudobiblico-biblia-digital' ); ?></p>
+
 		<table class="widefat striped bdwp70-admin-table">
-			<thead><tr><th><?php esc_html_e( 'ID', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Nome', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Idioma', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Livros', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Versículos', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Status', 'estudobiblico-biblia-digital' ); ?></th></tr></thead>
+			<thead><tr><th><?php esc_html_e( 'ID', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Nome', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Idioma', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Livros', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Versículos', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Status', 'estudobiblico-biblia-digital' ); ?></th><th><?php esc_html_e( 'Excluir', 'estudobiblico-biblia-digital' ); ?></th></tr></thead>
 			<tbody>
 				<?php if ( ! empty( $versions ) ) : ?>
 					<?php foreach ( $versions as $version ) : ?>
@@ -3333,10 +3939,25 @@ JS;
 							<td><?php echo esc_html( number_format_i18n( BDWP70_Activator::count_books( (int) $version->id ) ) ); ?></td>
 							<td><?php echo esc_html( number_format_i18n( BDWP70_Activator::count_verses( (int) $version->id ) ) ); ?></td>
 							<td><?php echo ( (int) $version->id === (int) $active_bible ) ? '<span class="bdwp70-admin-badge">' . esc_html__( 'Ativa', 'estudobiblico-biblia-digital' ) . '</span>' : esc_html__( 'Importada', 'estudobiblico-biblia-digital' ); ?></td>
+							<td>
+								<?php if ( ! empty( $version->is_builtin ) ) : ?>
+									&mdash;
+								<?php elseif ( (int) $version->id === (int) $active_bible ) : ?>
+									<span class="description"><?php esc_html_e( 'Ative outra versão para poder excluir esta.', 'estudobiblico-biblia-digital' ); ?></span>
+								<?php else : ?>
+									<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+										<?php wp_nonce_field( 'bdwp70_delete_version_' . (int) $version->id ); ?>
+										<input type="hidden" name="action" value="bdwp70_delete_version">
+										<input type="hidden" name="bdwp70_bible_id" value="<?php echo esc_attr( (string) (int) $version->id ); ?>">
+										<label><input type="checkbox" name="bdwp70_confirm_delete" value="1" required> <?php esc_html_e( 'Confirmo', 'estudobiblico-biblia-digital' ); ?></label>
+										<button type="submit" class="button button-link-delete"><?php esc_html_e( 'Excluir versão', 'estudobiblico-biblia-digital' ); ?></button>
+									</form>
+								<?php endif; ?>
+							</td>
 						</tr>
 					<?php endforeach; ?>
 				<?php else : ?>
-					<tr><td colspan="6"><?php esc_html_e( 'Nenhuma versão importada ainda.', 'estudobiblico-biblia-digital' ); ?></td></tr>
+					<tr><td colspan="7"><?php esc_html_e( 'Nenhuma versão importada ainda.', 'estudobiblico-biblia-digital' ); ?></td></tr>
 				<?php endif; ?>
 			</tbody>
 		</table>
@@ -3496,11 +4117,12 @@ JS;
 										name="bdwp70_sitemap_include_verses"
 										value="1"
 										<?php checked( 1, $sitemap_incl_v ); ?>
+										disabled
 									>
 									<?php esc_html_e( 'Incluir versículos individuais no sitemap', 'estudobiblico-biblia-digital' ); ?>
 								</label>
 								<span class="description">
-									— <?php esc_html_e( 'Recomendado para indexação completa. Pode gerar dezenas de milhares de URLs.', 'estudobiblico-biblia-digital' ); ?>
+									— <?php esc_html_e( 'Sem efeito: as URLs de versículo declaram o capítulo como canônico e, por isso, não entram no sitemap. Elas continuam funcionando como link direto para o versículo.', 'estudobiblico-biblia-digital' ); ?>
 								</span>
 							</p>
 
@@ -4022,6 +4644,81 @@ JS;
 			)
 		);
 		exit;
+	}
+
+	/**
+	 * Exclui uma versão bíblica importada: cadastro, livros e versículos.
+	 *
+	 * A versão ativa do site não pode ser excluída diretamente. Excluí-la
+	 * obrigaria o plugin a eleger outra Bíblia no meio da requisição, com
+	 * caches ainda apontando para a removida; o administrador ativa outra
+	 * versão primeiro e depois exclui.
+	 */
+	public function handle_delete_version() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Acesso negado.', 'estudobiblico-biblia-digital' ) );
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verificado logo abaixo, com o id no nome da ação.
+		$bible_id = isset( $_POST['bdwp70_bible_id'] ) ? absint( wp_unslash( $_POST['bdwp70_bible_id'] ) ) : 0;
+		check_admin_referer( 'bdwp70_delete_version_' . $bible_id );
+
+		$voltar = static function ( $resultado, $nome = '' ) {
+			wp_safe_redirect(
+				add_query_arg(
+					array_filter(
+						array(
+							'tab'                    => 'versions',
+							'bdwp70_version_deleted' => $resultado,
+							'bdwp70_version_name'    => $nome,
+						)
+					),
+					admin_url( 'options-general.php?page=bdwp70-settings' )
+				)
+			);
+			exit;
+		};
+
+		$versao = null;
+		foreach ( BDWP70_Activator::get_bible_versions() as $item ) {
+			if ( (int) $item->id === $bible_id ) {
+				$versao = $item;
+				break;
+			}
+		}
+
+		if ( $bible_id < 1 || ! $versao ) {
+			$voltar( 'notfound' );
+		}
+
+		if ( ! empty( $versao->is_builtin ) ) {
+			$voltar( 'builtin' );
+		}
+
+		if ( $bible_id === (int) absint( get_option( BDWP70_Activator::OPTION_ACTIVE_BIBLE, 0 ) ) ) {
+			$voltar( 'active' );
+		}
+
+		if ( empty( $_POST['bdwp70_confirm_delete'] ) ) {
+			$voltar( 'confirm' );
+		}
+
+		$nome = sanitize_text_field( (string) $versao->name );
+		BDWP70_Activator::delete_bible_version( $bible_id );
+		update_option( 'bdwp70_sitemap_lastmod', current_time( 'Y-m-d' ) );
+
+		// As páginas em cache da versão excluída não devem continuar no ar.
+		do_action( 'litespeed_purge_all' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- hook do plugin LiteSpeed Cache, não deste plugin.
+
+		/**
+		 * Disparado depois que uma versão bíblica foi excluída pelo painel.
+		 *
+		 * @param int    $bible_id ID da versão excluída.
+		 * @param string $nome     Nome da versão.
+		 */
+		do_action( 'bdwp70_version_deleted', $bible_id, $nome );
+
+		$voltar( 'ok', $nome );
 	}
 
 	public function handle_reimport() {
@@ -4611,6 +5308,26 @@ JS;
 	 * @param string $path Uploaded ZIP path.
 	 * @return true|WP_Error
 	 */
+	/**
+	 * Entradas que sistemas operacionais acrescentam a um ZIP e que não são dados.
+	 *
+	 * "Compactar pasta" no macOS inclui __MACOSX/ e ._arquivo; o Windows e o
+	 * Finder deixam Thumbs.db, desktop.ini e .DS_Store. Antes qualquer uma delas
+	 * recusava o upload com mensagem de caminho inseguro.
+	 *
+	 * @param string $relative Caminho relativo dentro do ZIP.
+	 * @return bool
+	 */
+	private function is_zip_junk_entry( $relative ) {
+		$relative = str_replace( '\\', '/', (string) $relative );
+		$base     = strtolower( basename( $relative ) );
+
+		return 0 === strpos( $relative, '__MACOSX/' )
+			|| false !== strpos( $relative, '/__MACOSX/' )
+			|| 0 === strpos( $base, '._' )
+			|| in_array( $base, array( '.ds_store', 'thumbs.db', 'desktop.ini' ), true );
+	}
+
 	private function validate_uploaded_zip_archive( $path ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			// Without ext-zip the archive cannot be inspected before extraction,
@@ -4648,15 +5365,32 @@ JS;
 				continue;
 			}
 
-			if ( false !== strpos( $name, '../' ) || 0 === strpos( $name, '/' ) || preg_match( '#^[A-Za-z]:/#', $name ) || basename( $name ) !== $name ) {
+			if ( false !== strpos( $name, '../' ) || 0 === strpos( $name, '/' ) || preg_match( '#^[A-Za-z]:/#', $name ) ) {
 				$zip->close();
 				return new WP_Error( 'bdwp70_zip_traversal', __( 'The ZIP contains a potentially unsafe path.', 'estudobiblico-biblia-digital' ) );
+			}
+
+			if ( $this->is_zip_junk_entry( $name ) ) {
+				continue;
+			}
+
+			// Aceita os CSVs na raiz ou dentro de uma única pasta ("Compactar pasta").
+			if ( substr_count( $name, '/' ) > 1 ) {
+				$zip->close();
+				return new WP_Error( 'bdwp70_zip_depth', __( 'Os arquivos books.csv e verses.csv devem estar na raiz do ZIP ou dentro de uma única pasta.', 'estudobiblico-biblia-digital' ) );
 			}
 
 			$basename = strtolower( sanitize_file_name( basename( $name ) ) );
 			if ( ! array_key_exists( $basename, $required ) ) {
 				$zip->close();
-				return new WP_Error( 'bdwp70_zip_unexpected_file', __( 'The ZIP must contain only books.csv and verses.csv.', 'estudobiblico-biblia-digital' ) );
+				/* translators: %s: unexpected file name inside the ZIP. */
+				return new WP_Error( 'bdwp70_zip_unexpected_file', sprintf( __( 'O ZIP deve conter apenas books.csv e verses.csv. Arquivo inesperado: %s', 'estudobiblico-biblia-digital' ), $name ) );
+			}
+
+			if ( $required[ $basename ] ) {
+				$zip->close();
+				/* translators: %s: CSV file name. */
+				return new WP_Error( 'bdwp70_zip_duplicate', sprintf( __( 'O ZIP contém mais de um %s.', 'estudobiblico-biblia-digital' ), $basename ) );
 			}
 
 			++$files;
@@ -4726,9 +5460,24 @@ JS;
 				return new WP_Error( 'bdwp70_zip_traversal', __( 'The ZIP contains a potentially unsafe path.', 'estudobiblico-biblia-digital' ) );
 			}
 
+			$relative_url = str_replace( DIRECTORY_SEPARATOR, '/', $relative );
+			if ( $this->is_zip_junk_entry( $relative_url ) ) {
+				continue;
+			}
+
+			if ( substr_count( $relative_url, '/' ) > 1 ) {
+				return new WP_Error( 'bdwp70_zip_depth', __( 'Os arquivos books.csv e verses.csv devem estar na raiz do ZIP ou dentro de uma única pasta.', 'estudobiblico-biblia-digital' ) );
+			}
+
 			$basename = strtolower( $file->getFilename() );
 			if ( ! array_key_exists( $basename, $required ) ) {
-				return new WP_Error( 'bdwp70_zip_unexpected_file', __( 'The ZIP must contain only books.csv and verses.csv.', 'estudobiblico-biblia-digital' ) );
+				/* translators: %s: unexpected file name inside the ZIP. */
+				return new WP_Error( 'bdwp70_zip_unexpected_file', sprintf( __( 'O ZIP deve conter apenas books.csv e verses.csv. Arquivo inesperado: %s', 'estudobiblico-biblia-digital' ), $relative_url ) );
+			}
+
+			if ( $required[ $basename ] ) {
+				/* translators: %s: CSV file name. */
+				return new WP_Error( 'bdwp70_zip_duplicate', sprintf( __( 'O ZIP contém mais de um %s.', 'estudobiblico-biblia-digital' ), $basename ) );
 			}
 
 			++$files;
@@ -4772,6 +5521,10 @@ JS;
 
 			$path = realpath( $file->getPathname() );
 			if ( ! $path || 0 !== strpos( $path, $root . DIRECTORY_SEPARATOR ) ) {
+				continue;
+			}
+
+			if ( $this->is_zip_junk_entry( str_replace( DIRECTORY_SEPARATOR, '/', substr( $path, strlen( $root ) + 1 ) ) ) ) {
 				continue;
 			}
 

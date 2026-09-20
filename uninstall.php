@@ -70,6 +70,7 @@ if ( ! function_exists( 'bdwp70_uninstall_delete_current_site_options' ) ) {
 			'bdwp70_delete_data_on_uninstall',
 			'bdwp70_sitemap_enabled',
 			'bdwp70_sitemap_include_verses',
+			'bdwp70_book_names_fixed_notice',
 			'bdwp70_sitemap_per_page',
 			'bdwp70_sitemap_lastmod',
 			// Legado: controlavam o índice físico removido na 1.1.70. Continuam
