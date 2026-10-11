@@ -315,11 +315,12 @@ No. Reading and search are processed locally in WordPress. The plugin does not c
 
 == Screenshots ==
 
-1. Bible reader with books, chapters, and search.
-2. Import Bible tab for ZIP packages.
-3. Shortcodes tab with examples and copy buttons.
-4. Bible Versions tab with active version management.
-5. Random verse widget.
+1. Chapter reader with the reading options panel: font size, verse-by-verse or continuous layout, reading font and background.
+2. Bible home with the books of the Old and New Testament, quick access cards and the active translation.
+3. Search results across the whole Bible, with the matched words highlighted and a share button on each verse.
+4. Chapter selector for a book, with the active translation shown.
+5. Admin: Import Bible tab, with the ZIP/CSV upload and ready-made books.csv and verses.csv templates.
+6. Admin: Shortcodes tab, with examples, attributes and copy buttons.
 
 == Privacy ==
 
