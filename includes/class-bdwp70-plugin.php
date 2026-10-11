@@ -97,6 +97,26 @@ class BDWP70_Plugin {
 		add_filter( 'wpseo_canonical', array( $this, 'canonical_seo_plugin' ), 20 );
 		add_filter( 'aioseo_canonical_url', array( $this, 'canonical_seo_plugin' ), 20 );
 		add_filter( 'seopress_titles_canonical', array( $this, 'canonical_seo_plugin' ), 20 );
+
+		/*
+		 * Open Graph: as páginas da Bíblia não são posts, então o plugin de SEO
+		 * não encontra título nem imagem e acaba usando os de outro conteúdo. Os
+		 * filtros abaixo entregam os dados corretos do capítulo.
+		 */
+		add_filter( 'rank_math/opengraph/facebook/og_title', array( $this, 'og_title_seo_plugin' ), 20 );
+		add_filter( 'rank_math/opengraph/facebook/og_description', array( $this, 'og_description_seo_plugin' ), 20 );
+		add_filter( 'rank_math/opengraph/facebook/og_url', array( $this, 'og_url_seo_plugin' ), 20 );
+		add_filter( 'rank_math/opengraph/facebook/og_image', array( $this, 'og_image_seo_plugin' ), 20 );
+		add_filter( 'rank_math/opengraph/twitter/twitter_title', array( $this, 'og_title_seo_plugin' ), 20 );
+		add_filter( 'rank_math/opengraph/twitter/twitter_description', array( $this, 'og_description_seo_plugin' ), 20 );
+		add_filter( 'rank_math/opengraph/twitter/twitter_image', array( $this, 'og_image_seo_plugin' ), 20 );
+		add_filter( 'wpseo_opengraph_title', array( $this, 'og_title_seo_plugin' ), 20 );
+		add_filter( 'wpseo_opengraph_desc', array( $this, 'og_description_seo_plugin' ), 20 );
+		add_filter( 'wpseo_opengraph_url', array( $this, 'og_url_seo_plugin' ), 20 );
+		add_filter( 'wpseo_opengraph_image', array( $this, 'og_image_seo_plugin' ), 20 );
+		add_filter( 'wpseo_twitter_title', array( $this, 'og_title_seo_plugin' ), 20 );
+		add_filter( 'wpseo_twitter_description', array( $this, 'og_description_seo_plugin' ), 20 );
+		add_filter( 'wpseo_twitter_image', array( $this, 'og_image_seo_plugin' ), 20 );
 		// send_headers, e nao template_redirect: o proprio plugin renderiza a
 		// pagina virtual em template_redirect na prioridade 0 e encerra com exit,
 		// entao qualquer callback de prioridade maior nunca chega a rodar.
