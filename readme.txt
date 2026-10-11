@@ -4,7 +4,7 @@ Tags: bible, scripture, search, shortcode, gutenberg
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -331,6 +331,9 @@ This plugin is licensed under GPLv2 or later. Imported Bible data must be public
 
 == Upgrade Notice ==
 
+= 1.2.3 =
+Fixes link previews for Bible pages: sharing a chapter showed the title, description and image of an unrelated article.
+
 = 1.2.2 =
 Cache fixes for Bible content changes: importing a Bible or switching the active Bible now purges the Bible pages, 404 routes are purgeable, and the per-version tag matches the version the page shows.
 
@@ -359,6 +362,11 @@ Adds an organized admin panel with enterprise-style tabs and documents all short
 Keeps the functional translation selector below the book lists and improves dropdown stacking.
 
 == Changelog ==
+
+= 1.2.3 =
+* Social previews of Bible pages were wrong. These pages are not posts, so an SEO plugin cannot resolve a title or an image for them: Rank Math left `og:title` out entirely and filled the description and the image from an unrelated article. Sharing a chapter on WhatsApp or Facebook showed another post's text and picture.
+* The plugin now hands the correct values to Rank Math and Yoast through their Open Graph and Twitter filters: the chapter title, the first verse as the description, the canonical URL, and the image set in Settings > Bíblia Digital, falling back to the site icon.
+* When no SEO plugin handles Open Graph, the plugin prints the tags itself, the same way it already does for the canonical. Filters: `bdwp70_print_opengraph` and `bdwp70_social_image`.
 
 = 1.2.2 =
 * The per-version cache tag now reflects the version the page actually shows. It was assigned before the request state was resolved, so a URL with /versao/<slug>/ or a `version` shortcode attribute was tagged with the site's active Bible instead, and a purge for one version would have missed those pages.

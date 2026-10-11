@@ -24,6 +24,13 @@ trait BDWP70_SEO {
 	 */
 	private $seo_plugin_canonical_done = false;
 
+	/**
+	 * Um plugin de SEO já produziu as marcas sociais desta requisição.
+	 *
+	 * @var bool
+	 */
+	private $seo_plugin_og_done = false;
+
 	public function is_bible_seo_context() {
 		if ( is_admin() || is_feed() || is_robots() || is_trackback() ) {
 			return false;
@@ -199,6 +206,134 @@ trait BDWP70_SEO {
 		if ( apply_filters( 'bdwp70_print_canonical', ! $this->seo_plugin_canonical_done ) ) {
 			echo '<link rel="canonical" href="' . esc_url( $seo['canonical'] ) . '">' . "\n";
 		}
+
+		/**
+		 * Filtra a impressão das marcas sociais próprias da Bíblia Digital.
+		 *
+		 * @param bool $print False quando um plugin de SEO já gerou Open Graph.
+		 */
+		if ( apply_filters( 'bdwp70_print_opengraph', ! $this->seo_plugin_og_done ) ) {
+			$this->print_opengraph_tags( $seo );
+		}
+	}
+
+	/**
+	 * Imprime Open Graph e Twitter Card da página atual.
+	 *
+	 * @param array $seo Contexto SEO.
+	 * @return void
+	 */
+	private function print_opengraph_tags( $seo ) {
+		$imagem = $this->social_image_url();
+
+		echo '<meta property="og:type" content="article">' . "\n";
+		echo '<meta property="og:title" content="' . esc_attr( $seo['title'] ) . '">' . "\n";
+		echo '<meta property="og:description" content="' . esc_attr( $seo['description'] ) . '">' . "\n";
+		echo '<meta property="og:url" content="' . esc_url( $seo['canonical'] ) . '">' . "\n";
+		echo '<meta name="twitter:card" content="' . ( $imagem ? 'summary_large_image' : 'summary' ) . '">' . "\n";
+		echo '<meta name="twitter:title" content="' . esc_attr( $seo['title'] ) . '">' . "\n";
+		echo '<meta name="twitter:description" content="' . esc_attr( $seo['description'] ) . '">' . "\n";
+
+		if ( $imagem ) {
+			echo '<meta property="og:image" content="' . esc_url( $imagem ) . '">' . "\n";
+			echo '<meta name="twitter:image" content="' . esc_url( $imagem ) . '">' . "\n";
+		}
+	}
+
+	/**
+	 * Imagem usada nas prévias de compartilhamento.
+	 *
+	 * Ordem: imagem configurada no painel, ícone do site, nada. As páginas da
+	 * Bíblia não têm imagem destacada própria — é por isso que um plugin de SEO
+	 * acaba pegando a imagem de outro conteúdo qualquer.
+	 *
+	 * @return string URL, ou string vazia.
+	 */
+	public function social_image_url() {
+		$url = '';
+
+		if ( method_exists( $this, 'title_image_url' ) ) {
+			$url = (string) $this->title_image_url();
+		}
+
+		if ( '' === $url && function_exists( 'get_site_icon_url' ) ) {
+			$url = (string) get_site_icon_url( 512 );
+		}
+
+		/**
+		 * Filtra a imagem das prévias de compartilhamento das páginas da Bíblia.
+		 *
+		 * @param string $url URL da imagem.
+		 */
+		return (string) apply_filters( 'bdwp70_social_image', $url );
+	}
+
+	/**
+	 * Entrega o título da página da Bíblia ao Open Graph do plugin de SEO.
+	 *
+	 * @param string $valor Valor calculado pelo plugin de SEO.
+	 * @return string
+	 */
+	public function og_title_seo_plugin( $valor ) {
+		$seo = $this->build_seo_context();
+		if ( ! $seo || empty( $seo['title'] ) ) {
+			return $valor;
+		}
+		$this->seo_plugin_og_done = true;
+		return $seo['title'];
+	}
+
+	/**
+	 * Entrega a descrição da página da Bíblia ao Open Graph do plugin de SEO.
+	 *
+	 * @param string $valor Valor calculado pelo plugin de SEO.
+	 * @return string
+	 */
+	public function og_description_seo_plugin( $valor ) {
+		$seo = $this->build_seo_context();
+		if ( ! $seo || empty( $seo['description'] ) ) {
+			return $valor;
+		}
+		$this->seo_plugin_og_done = true;
+		return $seo['description'];
+	}
+
+	/**
+	 * Entrega a URL canônica da página da Bíblia ao Open Graph do plugin de SEO.
+	 *
+	 * @param string $valor Valor calculado pelo plugin de SEO.
+	 * @return string
+	 */
+	public function og_url_seo_plugin( $valor ) {
+		$seo = $this->build_seo_context();
+		if ( ! $seo || empty( $seo['canonical'] ) ) {
+			return $valor;
+		}
+		$this->seo_plugin_og_done = true;
+		return $seo['canonical'];
+	}
+
+	/**
+	 * Entrega a imagem da Bíblia ao Open Graph do plugin de SEO.
+	 *
+	 * Sem isto, o plugin de SEO usa a imagem de outro conteúdo, porque a página
+	 * virtual não tem imagem destacada.
+	 *
+	 * @param string $valor Valor calculado pelo plugin de SEO.
+	 * @return string
+	 */
+	public function og_image_seo_plugin( $valor ) {
+		if ( ! $this->is_bible_seo_context() ) {
+			return $valor;
+		}
+
+		$imagem = $this->social_image_url();
+		if ( '' === $imagem ) {
+			return $valor;
+		}
+
+		$this->seo_plugin_og_done = true;
+		return $imagem;
 	}
 
 	/**
