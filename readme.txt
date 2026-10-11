@@ -322,7 +322,8 @@ No. Reading and search are processed locally in WordPress. The plugin does not c
 3. Search results across the whole Bible, with the matched words highlighted and a share button on each verse.
 4. Chapter selector for a book, with the active translation shown.
 5. Admin: Import Bible tab, with the ZIP/CSV upload and ready-made books.csv and verses.csv templates.
-6. Admin: Shortcodes tab, with examples, attributes and copy buttons.
+6. Admin: Bible Versions tab, where the active Bible is chosen and imported versions are reviewed or deleted.
+7. Admin: Shortcodes tab, with examples, attributes and copy buttons.
 
 == Privacy ==
 
