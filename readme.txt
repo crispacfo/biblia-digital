@@ -16,6 +16,8 @@ EstudoBiblico Bíblia Digital lets site administrators publish locally stored Bi
 
 This public package does not include copyrighted Bible texts, SQL dumps, or proprietary translations. The site administrator imports licensed Bible data with a ZIP file that contains `books.csv` and `verses.csv`.
 
+**Live demo:** the plugin runs the Bible section of [estudobiblico.org](https://estudobiblico.org/biblia-sagrada-online/), in [English](https://estudobiblico.org/en/holy-bible/) and [Spanish](https://estudobiblico.org/es/santa-biblia-digital/) as well, with the reader, the search and the version switcher working on real content.
+
 Main features:
 
 * Frontend Bible reader by book, chapter, and verse.
