@@ -2,7 +2,7 @@
 Contributors: crispaorg
 Tags: bible, scripture, search, shortcode, gutenberg
 Requires at least: 6.6
-Tested up to: 7.1
+Tested up to: 7.1.3
 Requires PHP: 7.4
 Stable tag: 1.2.3
 License: GPLv2 or later
