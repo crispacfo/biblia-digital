@@ -827,6 +827,146 @@ BDWP70_JS;
 		do_action( 'litespeed_purge', $tags );
 	}
 
+	/**
+	 * Informa se o número do versículo aponta para a âncora da própria página.
+	 *
+	 * @return bool
+	 */
+	public function verse_links_as_anchors() {
+		/**
+		 * Filtra o destino do número do versículo no capítulo.
+		 *
+		 * @param bool $ancora True para âncora local, false para a URL do versículo.
+		 */
+		return (bool) apply_filters( 'bdwp70_verse_anchor_links', true );
+	}
+
+	/**
+	 * Data da última alteração do conteúdo bíblico, em timestamp.
+	 *
+	 * Vem da mesma opção que alimenta o lastmod do sitemap, gravada na importação,
+	 * na troca de Bíblia ativa e na correção de nomes de livros. Sem ela, usa a
+	 * data do arquivo do plugin, que muda a cada atualização.
+	 *
+	 * @return int
+	 */
+	public function bible_last_modified() {
+		$data = (string) get_option( 'bdwp70_sitemap_lastmod', '' );
+		$ts   = $data ? strtotime( $data . ' 00:00:00 UTC' ) : 0;
+
+		if ( ! $ts && defined( 'BDWP70_FILE' ) && file_exists( BDWP70_FILE ) ) {
+			$ts = (int) filemtime( BDWP70_FILE );
+		}
+
+		return (int) apply_filters( 'bdwp70_bible_last_modified', $ts ? $ts : time() );
+	}
+
+	/**
+	 * Identificador da versão desta resposta, para revalidação condicional.
+	 *
+	 * Reúne tudo que muda o HTML sem mudar a data do conteúdo: versão do plugin,
+	 * Bíblia exibida, idioma, título configurado e a própria URL. Assim, mexer
+	 * numa configuração invalida o ETag de imediato, sem esperar prazo nenhum.
+	 *
+	 * @return string
+	 */
+	public function bible_cache_etag() {
+		$partes = array(
+			defined( 'BDWP70_VERSION' ) ? BDWP70_VERSION : '0',
+			(string) $this->bible_last_modified(),
+			(string) $this->active_bible_id(),
+			(string) get_query_var( 'bdwp_versao_slug' ),
+			(string) determine_locale(),
+			(string) get_option( self::OPTION_TITLE, '' ),
+			$this->verse_links_as_anchors() ? 'a' : 'u',
+			isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '',
+		);
+
+		return '"' . md5( implode( '|', $partes ) ) . '"';
+	}
+
+	/**
+	 * Envia os cabeçalhos de cache da página da Bíblia e responde 304 quando cabe.
+	 *
+	 * O texto bíblico muda só na importação, então a borda pode guardar a página
+	 * por uma semana e revalidar em segundo plano, e o rastreador que volta recebe
+	 * 304 sem corpo em vez de ~110 KB. Nada disso vale para quem está logado.
+	 *
+	 * @return void
+	 */
+	public function send_bible_cache_headers() {
+		if ( $this->bible_page_sends_nocache() ) {
+			return;
+		}
+
+		/**
+		 * Filtra por quanto tempo a borda pode servir a página da Bíblia.
+		 *
+		 * @param int $ttl Segundos. Zero desliga o cabeçalho.
+		 */
+		$ttl = (int) apply_filters( 'bdwp70_bible_cdn_ttl', WEEK_IN_SECONDS );
+
+		if ( $ttl > 0 ) {
+			header( 'Cache-Control: public, max-age=0, must-revalidate, s-maxage=' . $ttl . ', stale-while-revalidate=' . $ttl );
+		}
+
+		/**
+		 * Filtra o envio de ETag e Last-Modified nas páginas da Bíblia.
+		 *
+		 * @param bool $condicional True para permitir resposta 304.
+		 */
+		if ( ! apply_filters( 'bdwp70_bible_conditional_get', true ) ) {
+			return;
+		}
+
+		$etag     = $this->bible_cache_etag();
+		$modified = $this->bible_last_modified();
+
+		header( 'ETag: ' . $etag );
+		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s', $modified ) . ' GMT' );
+
+		if ( $this->bible_response_not_modified( $etag, $modified ) ) {
+			status_header( 304 );
+			header_remove( 'Content-Type' );
+			exit;
+		}
+	}
+
+	/**
+	 * Compara os cabeçalhos condicionais da requisição com esta resposta.
+	 *
+	 * O ETag tem precedência sobre a data, como manda a RFC 9110: se o cliente
+	 * mandou ETag e ele não bate, a página mudou, por mais antiga que a data seja.
+	 *
+	 * @param string $etag     ETag desta resposta.
+	 * @param int    $modified Timestamp desta resposta.
+	 * @return bool
+	 */
+	private function bible_response_not_modified( $etag, $modified ) {
+		$enviado = isset( $_SERVER['HTTP_IF_NONE_MATCH'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_IF_NONE_MATCH'] ) ) : '';
+
+		if ( '' !== $enviado ) {
+			foreach ( explode( ',', $enviado ) as $candidato ) {
+				$candidato = trim( $candidato );
+				$candidato = preg_replace( '/^W\//', '', $candidato );
+				if ( '*' === $candidato || $candidato === $etag ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		$desde = isset( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) ) : '';
+		if ( '' === $desde ) {
+			return false;
+		}
+
+		$ts = strtotime( $desde );
+
+		return $ts && $ts >= $modified;
+	}
+
 	public function template_redirect() {
 		$seo = $this->build_seo_context();
 		if ( $seo ) {
@@ -881,6 +1021,8 @@ BDWP70_JS;
 				$wp_query->is_home = false;
 			}
 			status_header( 200 );
+
+			$this->send_bible_cache_headers();
 
 			/*
 			 * O HTML de um capítulo é público e determinístico, e enviar

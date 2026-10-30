@@ -250,9 +250,22 @@ if ( $bdwp70_next_chapter_url ) {
 							$bdwp70_book_name   = $this->book_name_from_seq( $bdwp70_books, (int) $bdwp70_verse->livroseq, (string) $bdwp70_verse->livro );
 							$bdwp70_verse_link  = $this->verse_url( (int) $bdwp70_verse->livroseq, (int) $bdwp70_verse->capitulo, (int) $bdwp70_verse->versiculo, $bdwp70_books, (int) $state['bible_id'] );
 							$bdwp70_is_selected = ! empty( $state['verse'] ) && (int) $state['verse'] === (int) $bdwp70_verse->versiculo && (int) $state['chapter'] === (int) $bdwp70_verse->capitulo && (int) $state['book'] === (int) $bdwp70_verse->livroseq;
+							$bdwp70_verse_id    = sanitize_title( $bdwp70_book_name ) . '-' . (int) $bdwp70_verse->capitulo . '-' . (int) $bdwp70_verse->versiculo;
+
+							/*
+							 * O número do versículo aponta para a âncora da própria página, e não
+							 * para a URL do versículo. Cada capítulo publicava ~25 links novos, o
+							 * que multiplicava o espaço rastreável por 25 sem nada a indexar: a URL
+							 * do versículo já declara o capítulo como canônico e fica fora do
+							 * sitemap. A URL absoluta continua em data-bdwp70-verse-url, que é o
+							 * que o botão de compartilhar usa, então o link direto não se perde.
+							 */
+							$bdwp70_verse_href = $this->verse_links_as_anchors()
+								? '#' . $bdwp70_verse_id
+								: $bdwp70_verse_link;
 							?>
-							<p class="bdwp70__verse-line <?php echo $bdwp70_is_selected ? 'is-selected' : ''; ?>" id="<?php echo esc_attr( sanitize_title( $bdwp70_book_name ) . '-' . (int) $bdwp70_verse->capitulo . '-' . (int) $bdwp70_verse->versiculo ); ?>" data-bdwp70-verse-url="<?php echo esc_url( $bdwp70_verse_link ); ?>">
-								<a class="bdwp70__verse-number" href="<?php echo esc_url( $bdwp70_verse_link ); ?>" aria-label="<?php echo esc_attr( $bdwp70_book_name . ' ' . (int) $bdwp70_verse->capitulo . ':' . (int) $bdwp70_verse->versiculo ); ?>"><?php echo esc_html( (int) $bdwp70_verse->versiculo ); ?></a>
+							<p class="bdwp70__verse-line <?php echo $bdwp70_is_selected ? 'is-selected' : ''; ?>" id="<?php echo esc_attr( $bdwp70_verse_id ); ?>" data-bdwp70-verse-url="<?php echo esc_url( $bdwp70_verse_link ); ?>">
+								<a class="bdwp70__verse-number" href="<?php echo esc_url( $bdwp70_verse_href ); ?>" aria-label="<?php echo esc_attr( $bdwp70_book_name . ' ' . (int) $bdwp70_verse->capitulo . ':' . (int) $bdwp70_verse->versiculo ); ?>"><?php echo esc_html( (int) $bdwp70_verse->versiculo ); ?></a>
 								<span><?php echo esc_html( trim( (string) $bdwp70_verse->palavra ) ); ?></span>
 							</p>
 						<?php endforeach; ?>

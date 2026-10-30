@@ -4,7 +4,7 @@ Tags: bible, scripture, search, shortcode, gutenberg
 Requires at least: 6.6
 Tested up to: 7.1.3
 Requires PHP: 7.4
-Stable tag: 1.2.3
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -335,6 +335,9 @@ This plugin is licensed under GPLv2 or later. Imported Bible data must be public
 
 == Upgrade Notice ==
 
+= 1.3.0 =
+Cuts the crawlable URL space by about 96% and lets crawlers revalidate with 304 instead of downloading the chapter again. Shared verse links keep working.
+
 = 1.2.3 =
 Fixes link previews for Bible pages: sharing a chapter showed the title, description and image of an unrelated article.
 
@@ -366,6 +369,11 @@ Adds an organized admin panel with enterprise-style tabs and documents all short
 Keeps the functional translation selector below the book lists and improves dropdown stacking.
 
 == Changelog ==
+
+= 1.3.0 =
+* Verse numbers in a chapter now link to the verse's anchor on the same page instead of to the verse URL. Each chapter was publishing about 25 new crawlable URLs, which multiplied the crawlable space by 25 with nothing to index: verse URLs already declare the chapter as canonical and stay out of the sitemap. The absolute URL is still in `data-bdwp70-verse-url`, which is what the share button uses, so a shared link still opens the verse. Filter: `bdwp70_verse_anchor_links`.
+* Bible pages answer conditional requests. They now send `ETag` and `Last-Modified`, and a crawler that comes back with `If-None-Match` or `If-Modified-Since` gets `304 Not Modified` with no body instead of the whole chapter. The ETag covers the plugin version, the content date, the Bible shown, the locale, the configured title and the URL, so changing a setting invalidates it immediately. Filter: `bdwp70_bible_conditional_get`.
+* Bible pages send `Cache-Control: public, max-age=0, must-revalidate, s-maxage=604800, stale-while-revalidate=604800`. A CDN or proxy can then hold the page for a week and refresh it in the background, which matters for installs without a server-level page cache. Logged-in users are unaffected: they keep getting no-cache. Filter: `bdwp70_bible_cdn_ttl`.
 
 = 1.2.3 =
 * Social previews of Bible pages were wrong. These pages are not posts, so an SEO plugin cannot resolve a title or an image for them: Rank Math left `og:title` out entirely and filled the description and the image from an unrelated article. Sharing a chapter on WhatsApp or Facebook showed another post's text and picture.
