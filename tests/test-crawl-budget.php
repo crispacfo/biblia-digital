@@ -15,6 +15,7 @@ class Test_BDWP70_Crawl_Budget extends WP_UnitTestCase {
 		remove_all_filters( 'bdwp70_verse_anchor_links' );
 		remove_all_filters( 'bdwp70_bible_last_modified' );
 		delete_option( 'bdwp70_sitemap_lastmod' );
+		delete_option( BDWP70_Plugin::OPTION_RENDER_EPOCH );
 		parent::tear_down();
 	}
 
@@ -73,5 +74,65 @@ class Test_BDWP70_Crawl_Budget extends WP_UnitTestCase {
 
 		add_filter( 'bdwp70_verse_anchor_links', '__return_false' );
 		$this->assertNotSame( $antes, $this->plugin()->bible_cache_etag() );
+	}
+
+	public function test_bump_render_epoch_stamps_the_current_time() {
+		delete_option( BDWP70_Plugin::OPTION_RENDER_EPOCH );
+		$antes = time() - 1;
+
+		BDWP70_Plugin::bump_render_epoch();
+
+		$this->assertGreaterThan( $antes, (int) get_option( BDWP70_Plugin::OPTION_RENDER_EPOCH ) );
+	}
+
+	public function test_render_epoch_moves_the_last_modified_forward() {
+		update_option( 'bdwp70_sitemap_lastmod', '2026-03-04' );
+		$conteudo = $this->plugin()->bible_last_modified();
+		$depois   = $conteudo + DAY_IN_SECONDS;
+
+		update_option( BDWP70_Plugin::OPTION_RENDER_EPOCH, $depois );
+
+		$this->assertSame( $depois, $this->plugin()->bible_last_modified() );
+	}
+
+	public function test_an_older_render_epoch_never_moves_the_date_back() {
+		update_option( 'bdwp70_sitemap_lastmod', '2026-03-04' );
+		$conteudo = $this->plugin()->bible_last_modified();
+
+		update_option( BDWP70_Plugin::OPTION_RENDER_EPOCH, $conteudo - DAY_IN_SECONDS );
+
+		$this->assertSame( $conteudo, $this->plugin()->bible_last_modified() );
+	}
+
+	public function test_etag_changes_when_the_theme_changes() {
+		update_option( 'bdwp70_sitemap_lastmod', '2026-03-04' );
+		$antes = $this->plugin()->bible_cache_etag();
+
+		do_action( 'switch_theme', 'outro-tema' );
+
+		$this->assertNotSame(
+			$antes,
+			$this->plugin()->bible_cache_etag(),
+			'Trocar de tema muda o HTML da página e precisa invalidar a revalidação condicional.'
+		);
+	}
+
+	public function test_every_appearance_change_is_hooked() {
+		$ganchos = array(
+			'switch_theme',
+			'upgrader_process_complete',
+			'customize_save_after',
+			'wp_update_nav_menu',
+			'update_option_sidebars_widgets',
+			'activated_plugin',
+			'deactivated_plugin',
+		);
+
+		foreach ( $ganchos as $gancho ) {
+			$this->assertNotFalse(
+				has_action( $gancho, array( 'BDWP70_Plugin', 'bump_render_epoch' ) ),
+				$gancho . ' precisa carimbar a renderização.'
+			);
+		}
 	}
 }
