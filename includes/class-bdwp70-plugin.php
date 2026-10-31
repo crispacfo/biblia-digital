@@ -37,6 +37,7 @@ class BDWP70_Plugin {
 	const OPTION_SITEMAP_ENABLED          = 'bdwp70_sitemap_enabled';
 	const OPTION_SITEMAP_INCL_VERSES      = 'bdwp70_sitemap_include_verses';
 	const OPTION_SITEMAP_PER_PAGE         = 'bdwp70_sitemap_per_page';
+	const OPTION_RENDER_EPOCH             = 'bdwp70_render_epoch';
 
 	/**
 	 * Text domain público, alinhado ao slug do WordPress.org.
@@ -121,6 +122,19 @@ class BDWP70_Plugin {
 		// pagina virtual em template_redirect na prioridade 0 e encerra com exit,
 		// entao qualquer callback de prioridade maior nunca chega a rodar.
 		add_action( 'send_headers', array( $this, 'maybe_send_verse_robots_header' ), 20 );
+
+		/*
+		 * Carimbo de renderização: o ETag da página só enxerga o que vem deste
+		 * plugin, então trocar de tema ou mexer em menu, widget e Customizer
+		 * mudaria o HTML sem invalidar nada. Estes ganchos avisam.
+		 */
+		add_action( 'switch_theme', array( __CLASS__, 'bump_render_epoch' ) );
+		add_action( 'upgrader_process_complete', array( __CLASS__, 'bump_render_epoch' ) );
+		add_action( 'customize_save_after', array( __CLASS__, 'bump_render_epoch' ) );
+		add_action( 'wp_update_nav_menu', array( __CLASS__, 'bump_render_epoch' ) );
+		add_action( 'update_option_sidebars_widgets', array( __CLASS__, 'bump_render_epoch' ) );
+		add_action( 'activated_plugin', array( __CLASS__, 'bump_render_epoch' ) );
+		add_action( 'deactivated_plugin', array( __CLASS__, 'bump_render_epoch' ) );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
@@ -828,6 +842,21 @@ BDWP70_JS;
 	}
 
 	/**
+	 * Carimba o instante em que a aparência do site mudou.
+	 *
+	 * O ETag reúne só o que vem deste plugin. Trocar de tema, atualizar um
+	 * plugin ou mexer em Customizer, menu e widgets muda o HTML em volta do
+	 * capítulo sem alterar nada que o ETag veja: quem revalida recebe 304 e
+	 * fica com a página antiga. O carimbo entra na data de modificação e,
+	 * por ela, no ETag.
+	 *
+	 * @return void
+	 */
+	public static function bump_render_epoch() {
+		update_option( self::OPTION_RENDER_EPOCH, time(), true );
+	}
+
+	/**
 	 * Informa se o número do versículo aponta para a âncora da própria página.
 	 *
 	 * @return bool
@@ -848,6 +877,10 @@ BDWP70_JS;
 	 * na troca de Bíblia ativa e na correção de nomes de livros. Sem ela, usa a
 	 * data do arquivo do plugin, que muda a cada atualização.
 	 *
+	 * O carimbo de renderização entra aqui porque o texto bíblico não é tudo que
+	 * a página mostra: tema, menu e widgets desenham o resto, e sem ele a
+	 * revalidação devolveria 304 para um HTML que já mudou.
+	 *
 	 * @return int
 	 */
 	public function bible_last_modified() {
@@ -856,6 +889,11 @@ BDWP70_JS;
 
 		if ( ! $ts && defined( 'BDWP70_FILE' ) && file_exists( BDWP70_FILE ) ) {
 			$ts = (int) filemtime( BDWP70_FILE );
+		}
+
+		$epoca = (int) get_option( self::OPTION_RENDER_EPOCH, 0 );
+		if ( $epoca > $ts ) {
+			$ts = $epoca;
 		}
 
 		return (int) apply_filters( 'bdwp70_bible_last_modified', $ts ? $ts : time() );
@@ -867,6 +905,9 @@ BDWP70_JS;
 	 * Reúne tudo que muda o HTML sem mudar a data do conteúdo: versão do plugin,
 	 * Bíblia exibida, idioma, título configurado e a própria URL. Assim, mexer
 	 * numa configuração invalida o ETag de imediato, sem esperar prazo nenhum.
+	 *
+	 * A data de modificação já traz o carimbo de renderização, então mudança de
+	 * tema, menu ou widget também invalida.
 	 *
 	 * @return string
 	 */

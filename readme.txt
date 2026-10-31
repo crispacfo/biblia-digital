@@ -4,7 +4,7 @@ Tags: bible, scripture, search, shortcode, gutenberg
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -335,6 +335,9 @@ This plugin is licensed under GPLv2 or later. Imported Bible data must be public
 
 == Upgrade Notice ==
 
+= 1.3.1 =
+Fixes a stale-page bug from 1.3.0: after a theme change or a plugin update, a returning visitor could keep seeing the previous version of a Bible page. Install this release and the problem clears itself.
+
 = 1.3.0 =
 Cuts the crawlable URL space by about 96% and lets crawlers revalidate with 304 instead of downloading the chapter again. Shared verse links keep working.
 
@@ -369,6 +372,9 @@ Adds an organized admin panel with enterprise-style tabs and documents all short
 Keeps the functional translation selector below the book lists and improves dropdown stacking.
 
 == Changelog ==
+
+= 1.3.1 =
+* Fixes conditional revalidation, which 1.3.0 got wrong. The `ETag` was built only from what the plugin itself knows, so anything else that draws the page — the active theme, a menu, a widget, another plugin — could change the HTML without changing the ETag. Because the page asks the browser to revalidate on every visit, a returning visitor got `304 Not Modified` and kept the old page indefinitely. The plugin now stamps a render time whenever the site's appearance changes (`switch_theme`, `upgrader_process_complete`, `customize_save_after`, `wp_update_nav_menu`, `update_option_sidebars_widgets`, plugin activation and deactivation). The stamp feeds `Last-Modified`, and through it the ETag, so both revalidation paths stop matching. The plugin version is part of the ETag, so installing this release already invalidates every page cached under 1.3.0.
 
 = 1.3.0 =
 * Verse numbers in a chapter now link to the verse's anchor on the same page instead of to the verse URL. Each chapter was publishing about 25 new crawlable URLs, which multiplied the crawlable space by 25 with nothing to index: verse URLs already declare the chapter as canonical and stay out of the sitemap. The absolute URL is still in `data-bdwp70-verse-url`, which is what the share button uses, so a shared link still opens the verse. Filter: `bdwp70_verse_anchor_links`.
